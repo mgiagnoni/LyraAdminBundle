@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="" >
+        <body>
+            <trans-unit id="1">
+                <source>list.actions</source>
+                <target>Actions</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>list.action.new</source>
+                <target>New</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>list.action.edit</source>
+                <target>Edit</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>list.action.delete</source>
+                <target>Delete</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>list.action.boolean.on</source>
+                <target>On</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>list.action.boolean.off</source>
+                <target>Off</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>batch.action.empty</source>
+                <target>Choose an action</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>batch.form.submit</source>
+                <target>Go</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>form.button.submit</source>
+                <target>Save</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>form.action.back</source>
+                <target>Go back</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>dialog.title.delete</source>
+                <target>Confirm delete</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>dialog.message.delete</source>
+                <target>{1}Are you sure you want to delete item?|[2,Inf]Are you sure you want to delete selected items?</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>dialog.submit</source>
+                <target>Yes, confirm</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>dialog.cancel</source>
+                <target>No, abort</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>batch.message.no_selection</source>
+                <target>You must select some items</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>batch.message.no_action</source>
+                <target>You must choose an action</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>flash.delete.success</source>
+                <target>Item has been successfully deleted</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>flash.batch_delete.success</source>
+                <target>Selected items have been successfully deleted</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>pagination.first</source>
+                <target>First</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>pagination.last</source>
+                <target>Last</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>pagination.next</source>
+                <target>Next</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>pagination.prev</source>
+                <target>Previous</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

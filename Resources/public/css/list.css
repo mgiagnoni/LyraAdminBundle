@@ -1,0 +1,114 @@
+#ly-list-wrapper {
+    padding: 2px 2px 4px;
+    border: 1px solid #d3d3d3;
+    background: #f5f5f5;
+}
+#ly-list-wrapper h1 {
+    padding-left: 5px;
+}
+table.ly-list {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 5px;
+}
+table.ly-list caption {
+    padding: .25em
+}
+table.ly-list td {
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  padding: .25em;
+  text-align: left;
+}
+table.ly-list th {
+  border-style: solid;
+  border-width: 1px;
+  overflow: hidden;
+  padding: .25em;
+}
+table.ly-list th .ui-icon {
+    float: right;
+}
+table.ly-list th.batch-select-all {
+    width: 1.5em;
+    text-align: left;
+}
+table.ly-list th.datetime, table.ly-list th.date {
+    width: 9.5em;
+}
+table.ly-list th.boolean {
+    width: 7em;
+}
+
+table.ly-list td.boolean {
+    text-align: center;
+}
+td.boolean .ui-button-icon-only .ui-button-text {
+    padding:0 !important;
+    width: 15px;
+}
+td.boolean .ui-button-icon-only .ui-icon {
+   /* margin-left: -7px !important;*/
+}
+/*
+td.boolean button.ui-button-icon-only {
+    border-style: none !important;
+}
+td.boolean button.ui-state-hover {
+    background: transparent !important;
+}*/
+.list-actions {
+    margin: 10px 0 4px;
+}
+.object-actions form, .order-actions form {
+    display: inline;
+}
+/* Pagination */
+
+.pagination .ui-button-text {
+    padding: .2em .8em !important;
+}
+.pagination a.ui-button {
+    width: 1.8em !important;
+}
+#ly-form-wrapper p {
+    margin: 0;
+    padding: 0;
+}
+.ly-form {
+    margin-top: 15px;
+}
+
+/* Flash messages */
+
+.flash-messages {
+    width: 90%;
+    margin: 5px auto 5px;
+    font-size: 90%;
+}
+.flash-messages div {
+    padding: 2px;
+}
+.ui-lyraselect {
+    width: 170px;
+    padding: .1em 0;
+    vertical-align: middle;
+}
+.ui-lyraselect-current {
+    font-weight: normal !important;
+}
+.ui-lyraselect-items {
+    width: 170px;
+} 
+.ui-lyraselect-items li {
+    border: none !important;
+    padding: 5px 3px;
+    font-weight: normal !important;
+}
+.batch-actions input[type="submit"] {
+    padding: .1em .8em !important;
+    margin: 0 !important;
+    font-weight: normal !important;
+    vertical-align: middle;
+}

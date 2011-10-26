@@ -1,0 +1,20 @@
+{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Admin:form_ajax.html.twig' : 'LyraAdminBundle:Admin:form.html.twig' %}
+{% set dialog = renderer %}
+{% block form_title %}
+<h1>{{ dialog.title|trans({}, 'LyraAdminBundle') }}</h1>
+{% endblock %}
+{% block button_bar %}{% endblock %}
+{% block form %}
+    <p>{{ dialog.message|transchoice(ids|length,{},'LyraAdminBundle') }}</p>
+    <form id="ly-form" action="{{ path(dialog.routePrefix~'_'~'object', dialog.routeParams) }}" method="post">
+    <input type="hidden" name="batch_action" value="{{ dialog.action }}" />
+    <input type="hidden" name="batch_confirm" value="1" />
+    {% for id in ids %}
+        <input type="hidden" name="ids[]" value="{{ id }}" />
+    {% endfor %}
+    {{ form_rest(form) }}
+    <hr class="clear" />
+    <input type="submit" name ="action[batch]" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
+    <a href="{{ path(dialog.routePrefix~'_index') }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
+    </form>
+{% endblock %}

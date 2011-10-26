@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}LyraAdminBundle{% endblock %}</title>
+        {% block javascripts %}
+            {% include 'LyraAdminBundle:Admin:jquery_js.html.twig' %}
+        {% endblock javascripts %}
+        {% block stylesheets %}
+            {% include 'LyraAdminBundle:Admin:theme_css.html.twig' %}
+            {% include 'LyraAdminBundle:Admin:custom_css.html.twig' %}
+        {% endblock stylesheets %}
+    </head>
+    <body>
+        {% block body %}
+            {% block content %}{% endblock %}
+        {% endblock %}
+    </body>
+</html>

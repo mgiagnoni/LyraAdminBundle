@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="lyra_admin.form_factory.class">Lyra\AdminBundle\FormFactory\AdminFormFactory</parameter>
+        <parameter key="lyra_admin.renderer_factory.class">Lyra\AdminBundle\Renderer\RendererFactory</parameter>
+        <parameter key="lyra_admin.list_renderer.class">Lyra\AdminBundle\Renderer\ListRenderer</parameter>
+        <parameter key="lyra_admin.form_renderer.class">Lyra\AdminBundle\Renderer\FormRenderer</parameter>
+        <parameter key="lyra_admin.model_manager_factory.class">Lyra\AdminBundle\Model\ModelManagerFactory</parameter>
+        <parameter key="lyra_admin.dialog_renderer.class">Lyra\AdminBundle\Renderer\DialogRenderer</parameter>
+    </parameters>
+
+    <services>
+        <service id="lyra_admin.form_factory" class="%lyra_admin.form_factory.class%">
+            <argument type="service" id="form.factory" />
+        </service>
+
+        <service id="lyra_admin.renderer_factory" class="%lyra_admin.renderer_factory.class%" scope="request">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="lyra_admin.model_manager_factory" class="%lyra_admin.model_manager_factory.class%" scope="request">
+            <argument type="service" id="service_container" />
+        </service>
+
+        <service id="lyra_admin.list_renderer" class="%lyra_admin.list_renderer.class%" scope="request">
+            <argument type="service" id="request" />
+            <argument type="service" id="session" />
+        </service>
+
+        <service id="lyra_admin.form_renderer" class="%lyra_admin.form_renderer.class%" scope="request">
+            <argument type="service" id="lyra_admin.form_factory" />
+        </service>
+
+        <service id="lyra_admin.dialog_renderer" class="%lyra_admin.dialog_renderer.class%">
+        </service>
+    </services>
+
+</container>

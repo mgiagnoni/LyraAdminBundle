@@ -1,0 +1,57 @@
+{% extends 'LyraAdminBundle::layout.html.twig' %}
+{% set form = renderer %}
+{% form_theme form.view 'LyraAdminBundle:Admin:form_theme.html.twig' %}
+{% block content %}
+<div id="ly-form-wrapper">
+    {% block form_title %}
+        <h1>{{ form.title|trans({}, form.transDomain) }}</h1>   
+    {% endblock %}
+    {% block form_actions %}
+    <div class="form-actions">
+        <a class="button ui-icon-arrowthick-1-w action-back" href="{{ path(form.routePrefix~'_index') }}">{{ 'form.action.back'|trans({}, 'LyraAdminBundle') }}</a>
+    </div>
+    {% endblock %}
+    {% block form %}
+        <form class="ly-form" action="{{ path(form.routePrefix~'_'~form.action, form.routeParams) }}" method="post">
+            <div id="column-1">
+            {% for group in form.groups %}
+                <fieldset>
+                {% if group.caption %}
+                    <legend>{{ group.caption|trans({}, form.transDomain) }}</legend>
+                {% endif %}
+                <ol>
+                {% for field in group.fields %}
+                    {% set fld = form.fields[field] %}
+                    {% set name = fld.name  %}
+                    {% set view = form.view(field) %}
+                    <li>
+                    {{ form_errors(view[name]) }}
+                    {% if not (fld.label is defined and fld.label is empty) %}
+                        {{ form_label(view[name], fld.label is defined ? fld.label : null) }}
+                    {% endif %}
+                    {{ form_widget(view[name]) }}
+                    </li>
+                {% endfor %}
+                </ol>
+                </fieldset>
+                {% if group.break_after %}
+                    </div>
+                    <div id="column-2">
+                {% endif %}
+            {% endfor %}
+            </div>
+            {{ form_row(form.view._token) }}
+            <hr class="clear" />
+            <input type="submit" value="{{ 'form.button.submit'|trans({}, 'LyraAdminBundle') }}" />
+        </form>
+    {% endblock %}
+</div>
+{% endblock %}
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/form.css') }}" />
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/form.js') }}"></script>
+{% endblock %}

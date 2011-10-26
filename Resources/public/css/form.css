@@ -1,0 +1,64 @@
+.form-actions {
+    margin: 10px 0 4px;
+}
+#column-1 {
+  width: 55%;
+  float: left;
+}
+#column-2 {
+  width: 45%;
+  float: right;
+}
+#ly-form-wrapper {
+    padding: 2px 2px 4px;
+}
+#ly-form-wrapper h1 {
+    padding-left: 5px;
+}
+.ly-form fieldset {
+  margin-bottom: 10px;
+}
+.ly-form h3 {
+  cursor: pointer;
+  padding: 0;
+  margin: 0 2px;
+}
+.ly-form h3 span.ui-icon {
+  float: left;
+  margin: 0 5px;
+}
+.ly-form legend {
+  padding: 0 2px;
+  font-weight: bold;
+}
+.ly-form label {
+  display: inline-block;
+  line-height: 1.8;
+  vertical-align: top;
+}
+.ly-form ol {
+  margin: 0;
+  padding: 0;
+}
+.ly-form li {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+}
+.ly-form label {
+  width: 135px; /* Width of labels */
+}
+.ly-form ul.error-list {
+    padding: 0;
+}
+.ly-form ul.error-list li {
+    margin-left: 122px;
+    padding: 0;
+} 
+.ly-form input[type="text"] {
+    width: 230px;
+}
+.ly-form textarea {
+    width: 230px;
+    height: 120px;
+}
