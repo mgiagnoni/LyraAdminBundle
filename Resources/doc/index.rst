@@ -11,7 +11,7 @@ from the CMS as a standalone standard Symfony2 bundle.
 
 This is a work in progress and many essential features are still missing.
 However existing features should work and it should be possible to successfully
-follow the basic (currently incomplete) `Getting started` tutorial you will
+follow the basic (currently incomplete) ``Getting started`` tutorial you will
 find below.
 
 If you test the bundle and find errors please use the GitHub issue tracker
@@ -25,7 +25,7 @@ From your project root folder run::
     git submodule add git://github.com/mgiagnoni/LyraAdminBundle.git vendor/bundles/Lyra/AdminBundle
 
 To install the bundle as git submodule your whole project must be under version
-control with git or the command `git submodule add` will return an error. In
+control with git or the command ``git submodule add`` will return an error. In
 this case, you can simply clone the repository::
 
     git clone git://github.com/mgiagnoni/LyraAdminBundle.git vendor/bundles/Lyra/AdminBundle
@@ -95,7 +95,7 @@ to::
     [Your project folder]/app/Resources/LyraAdminBundle/views/Admin/jquery_js.html.twig
 
 Edit the file as you need. For example if you have stored *jquery.min.js* and
-*jquery-ui.min.js* in `web/js`::
+*jquery-ui.min.js* in ``web/js``::
 
     {# jquery_js.html.twig #}
 
@@ -116,7 +116,7 @@ root folder run the following command::
 
     app/console generate:bundle --namespace=Acme/ClassifiedsBundle --dir=src --format=yml --no-interaction
 
-Generate a `Listing` entity::
+Generate a ``Listing`` entity::
 
     app/console generate:doctrine:entity --entity=AcmeClassifiedsBundle:Listing --fields="ad_title:string(255) ad_text:text posted_at:datetime expires_at:datetime published:boolean" --with-repository --no-interaction
 
@@ -125,7 +125,7 @@ Create the table in the database::
     app/console doctrine:schema:update --force
 
 Configure LyraAdminBundle to create an admin area where you will perform all
-CRUD operations on the `Listing` entity::
+CRUD operations on the ``Listing`` entity::
 
     # app/config.yml
 
@@ -144,19 +144,19 @@ CRUD operations on the `Listing` entity::
 Access backend area
 -------------------
 
-If you go to `http://.../app_dev.php/admin/listing/list` you will see an
+If you go to ``http://.../app_dev.php/admin/listing/list`` you will see an
 empty list of *Listings*: you can then add, edit, delete, publish/unpublish
 a listing object.
 
 Some configuration options are available to customize the list of records
-(`Listings` in our example).
+(``Listings`` in our example).
 
 Basic list configuration
 ------------------------
 
 The label displayed inside colum headings is guessed from entity mapping
 informations, you can change it for each column by explicitly setting the
-`label` option::
+``label`` option::
 
     # app/config.yml
 
@@ -169,7 +169,7 @@ informations, you can change it for each column by explicitly setting the
                         label: Date
 
 All list columns are sortable, you can change this default behavior with the
-`sortable` option. The following configuration will make the list not sortable
+``sortable`` option. The following configuration will make the list not sortable
 by the value of the *Published* column::
 
     # app/config.yml
