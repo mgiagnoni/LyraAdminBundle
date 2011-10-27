@@ -90,7 +90,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function hasBatchActions()
     {
-        return count($this->options['list']['batch_actions']);
+        return (boolean)count($this->options['list']['batch_actions']);
     }
 
     public function getObjectActions()
@@ -197,12 +197,14 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColValue($colName, $object)
     {
-        return $object[$this->columns[$colName]['property_name']];
+        $columns = $this->getColumns();
+        return $object[$columns[$colName]['property_name']];
     }
 
     public function getBooleanAction($colName, $object)
     {
-        return $this->columns[$colName]['boolean_actions'][$this->getColValue($colName, $object) ? 1:0].'_'.$colName;
+        $columns = $this->getColumns();
+        return $columns[$colName]['boolean_actions'][$this->getColValue($colName, $object) ? 1:0].'_'.$colName;
     }
 
     public function hasBooleanActions($colName)
