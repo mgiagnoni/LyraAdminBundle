@@ -201,6 +201,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('sortable')->defaultTrue()->end()
                             ->scalarNode('property_name')->end()
                             ->scalarNode('label')->end()
+                            ->scalarNode('format')->defaultNull()->end()
                             ->arrayNode('boolean_actions')
                                 ->defaultValue(array('_boolean_on','_boolean_off'))
                                 ->prototype('scalar')->end()

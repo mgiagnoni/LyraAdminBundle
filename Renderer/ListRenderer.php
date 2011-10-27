@@ -224,6 +224,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->getColValue($colName, $object) ? 'on' : 'off';
     }
 
+    public function getColFormat($colName)
+    {
+        $columns = $this->getColumns();
+        return $columns[$colName]['format'];
+    }
     protected function initColumns()
     {
         $sort = $this->getSort();

@@ -95,7 +95,7 @@
                                         <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[{{ list.booleanAction(col.name, object) }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
                                     {% elseif col.type == 'date' or col.type == 'datetime' %}
                                         {# TODO: make date format configurable #}
-                                        {{ object[col.name]|date("d/M/Y") }}
+                                        {{ object[col.name]|date(list.colFormat(col.name)|default("d/M/Y")) }}
                                     {% else %}
                                         {{ list.colValue(col.name, object) }}
                                     {% endif %}

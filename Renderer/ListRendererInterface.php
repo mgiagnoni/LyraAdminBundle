@@ -173,4 +173,13 @@ interface ListRendererInterface extends BaseRendererInterface
      * @return string
      */
     function getBooleanText($columnName, $object);
+
+    /**
+     * Gets the column format.
+     *
+     * @param $columnName
+     *
+     * @return string
+     */
+    function getColFormat($columnName);
 }
