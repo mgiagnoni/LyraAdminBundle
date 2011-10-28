@@ -198,7 +198,12 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function getColValue($colName, $object)
     {
         $columns = $this->getColumns();
-        return $object[$columns[$colName]['property_name']];
+        $value = $object[$columns[$colName]['property_name']];
+        if ($format = $columns[$colName]['format']) {
+            $value = sprintf($format, $value);
+        }
+
+        return $value;
     }
 
     public function getBooleanAction($colName, $object)

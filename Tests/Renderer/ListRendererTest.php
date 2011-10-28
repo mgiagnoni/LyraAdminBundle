@@ -47,7 +47,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'class' => null,
                 'th_class' => 'class="col-test-1 string"',
                 'sorted' => null,
-                'property_name' => 'test-1'
+                'property_name' => 'test-1',
+                'format' => null
             ),
             'test-2' => array(
                 'name' => 'test-2',
@@ -56,7 +57,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'class' => null,
                 'th_class' => 'class="col-test-2 datetime"',
                 'sorted' => null,
-                'property_name' => 'test-2'
+                'property_name' => 'test-2',
+                'format' => null
             )
         ), $this->renderer->getColumns());
     }
@@ -120,14 +122,16 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                         'label' => 'Test 1',
                         'type' => null,
                         'sorted' => null,
-                        'property_name' => 'test-1'
+                        'property_name' => 'test-1',
+                        'format' => null
                     ),
                     'test-2' => array(
                         'name' => 'test-2',
                         'label' => 'Test 2',
                         'type' => null,
                         'sorted' => null,
-                        'property_name' => 'test-2'
+                        'property_name' => 'test-2',
+                        'format' => null
                     )
                 ),
                 'object_actions' => array('edit', 'delete'),
