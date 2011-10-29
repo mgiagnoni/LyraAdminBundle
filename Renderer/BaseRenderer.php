@@ -117,11 +117,21 @@ abstract class BaseRenderer
             if (isset($attrs['id']) && $attrs['id'] === true) {
                 continue;
             }
-            $defaults = array('name' => $field, 'form' => null);
+            $defaults = array('name' => $field, 'form' => null, 'options' => array());
             if (!isset($this->fields[$field])) {
                 $this->fields[$field] = $defaults;
             }
+
+            if (isset($attrs['options'])) {
+                $options = $attrs['options'];
+            } else {
+                $options = array();
+            }
+
+            $options = array_merge($options, $this->fields[$field]['options']);
+            unset($this->fields[$field]['options']);
             $this->fields[$field] = array_merge($attrs, $defaults, $this->fields[$field]);
+            $this->fields[$field]['options'] = $options;
         }
     }
 }

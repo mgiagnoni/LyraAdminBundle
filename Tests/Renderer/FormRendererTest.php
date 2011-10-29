@@ -40,7 +40,8 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
             'test' => array(
                 'name' => 'test',
                 'type' => 'text',
-                'form' => null
+                'form' => null,
+                'options' => array()
             )
         ), $renderer->getFields());
 
@@ -73,11 +74,11 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
 
         $options = array(
             'fields' => array(
-                'test-1' => array('label' => 'test'),
-                'test-2' => array('type' => 'string')
+                'test-1' => array('label' => 'test', 'options' => array()),
+                'test-2' => array('type' => 'string', 'options' => array())
             ),
             'form' => array(
-                                'groups' => array(),
+                'groups' => array(),
                 'new' => array('groups' => array())
             )
         );
@@ -90,12 +91,14 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
                 'name' => 'test-1',
                 'type' => 'integer',
                 'form' => null,
-                'label' => 'test'
+                'label' => 'test',
+                'options' => array()
             ),
             'test-2' => array(
                 'name' => 'test-2',
                 'type' => 'string',
                 'form' => null,
+                'options' => array()
             )
         ), $renderer->getFields());
     }

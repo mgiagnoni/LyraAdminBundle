@@ -39,10 +39,19 @@ class AdminFormType extends AbstractType
                 case 'datetime':
                     $type = 'datetime';
                     break;
+                case 'entity':
+                    $type = 'entity';
+                    break;
                 default:
                     $type = 'text';
             }
-            $builder->add($field, $type);
+
+            $options = array();
+            if(isset($attrs['options'])) {
+                $options = $attrs['options'];
+            }
+
+            $builder->add($field, $type, $options);
         }
     }
 

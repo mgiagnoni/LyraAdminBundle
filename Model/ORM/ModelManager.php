@@ -13,6 +13,7 @@ namespace Lyra\AdminBundle\Model\ORM;
 
 use Lyra\AdminBundle\Model\ModelManager as BaseManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 /**
  * Generic model manager class (Doctrine ORM).
@@ -95,6 +96,13 @@ class ModelManager extends BaseManager
             }
             if (isset($attrs['length'])) {
                 $fields[$key]['length'] = $attrs['length'];
+            }
+        }
+
+        foreach ($metadata->associationMappings as $name => $attrs) {
+            if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type']) {
+                $fields[$name]['type'] = 'entity';
+                $fields[$name]['options'] = array('class' => $attrs['targetEntity']);
             }
         }
 

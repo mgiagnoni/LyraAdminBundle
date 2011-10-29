@@ -23,12 +23,14 @@ class BaseRendererTest extends \PHPUnit_Framework_TestCase
                 'type' => 'string',
                 'length' => 255,
                 'label' => 'test',
-                'form' => null
+                'form' => null,
+                'options' => array()
             ),
             'test-2' => array(
                 'name' => 'test-2',
                 'type' => 'string',
-                'form' => null
+                'form' => null,
+                'options' => array()
             )
         ), $renderer->getFields());
     }
@@ -81,8 +83,8 @@ class BaseRendererTest extends \PHPUnit_Framework_TestCase
             'route_prefix' => 'test_prefix',
             'theme' => 'test_theme',
             'fields' => array(
-                'test-1' => array('label' => 'test'),
-                'test-2' => array('type' => 'string')
+                'test-1' => array('label' => 'test', 'options' => array()),
+                'test-2' => array('type' => 'string', 'options' => array())
             )
         );
         $mock->setOptions($options);
