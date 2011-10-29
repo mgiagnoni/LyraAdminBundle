@@ -10,7 +10,7 @@
         <div class="list-actions">
         {% for action in list.listActions %}
             {% set act = list.actions[action] %}
-            <a href="{{ path(list.routePrefix~'_'~action) }}" class="button action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : ''}}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+            <a href="{{ path(list.routePrefix~'_'~action) }}" class="button action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
         {% endfor %}
         </div>
     {% endblock %}
@@ -24,7 +24,7 @@
             {% endfor %}
         </div>
     {% endblock %}
-    <table class="ly-list">
+    <table class="ly-list {{ list.name }}">
         <thead>
             {% block table_head %}
                 <tr>
@@ -55,20 +55,21 @@
         <tfoot>
             {% block table_pagination %}
                 <tr>
-                    <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1}}">
+                    <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">
                     {% if list.nbPages > 1 %}
                         <span class="pagination">      
                             {{ page_link(list, 'first', 1) }}
-                            {{ page_link(list, 'prev', list.prevPage)}}
+                            {{ page_link(list, 'prev', list.prevPage) }}
                             {% for p in list.pageLinks %}
                                 {% if p == list.currentPage %}
                                     {{ p }}
                                 {% else %}
-                                    {{ page_link(list, 'page', p)}}
+                                    {{ page_link(list, 'page', p) }}
                                 {% endif %}
                             {% endfor %}
-                            {{ page_link(list, 'next', list.nextPage )}}
+                            {{ page_link(list, 'next', list.nextPage ) }}
                             {{ page_link(list, 'last', list.nbPages) }}
+                            <span class="info"></span>
                         </span>
                     {% endif %}
                     </td>
@@ -94,7 +95,6 @@
                                     {% if col.type == 'boolean' %}
                                         <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[{{ list.booleanAction(col.name, object) }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
                                     {% elseif col.type == 'date' or col.type == 'datetime' %}
-                                        {# TODO: make date format configurable #}
                                         {{ object[col.name]|date(list.colFormat(col.name)|default("d/M/Y")) }}
                                     {% else %}
                                         {{ list.colValue(col.name, object) }}
@@ -107,7 +107,7 @@
                             {% block table_object_actions %}
                                 {% for action in list.objectActions %}
                                     {% set act = list.actions[action] %}
-                                    <a href="{{ path(list.routePrefix~'_'~action, { 'id' : object.id }) }}" class="button icon-only action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : ''}}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+                                    <a href="{{ path(list.routePrefix~'_'~action, { 'id' : object.id }) }}" class="button icon-only action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
                                 {% endfor %}
                             {% endblock %}
                         </td>
