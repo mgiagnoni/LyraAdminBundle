@@ -60,6 +60,17 @@ Add bundle to application kernel
 
     // ...
 
+Importing routes
+----------------
+
+The bundle routing file must be imported in your application configuration::
+
+    # app/config/routing.yml
+
+    LyraAdminBundle:
+        resource: "@LyraAdminBundle/Resources/config/routing.yml"
+
+
 Enable translator
 -----------------
 

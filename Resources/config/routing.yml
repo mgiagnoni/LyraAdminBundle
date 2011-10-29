@@ -1,0 +1,3 @@
+lyra_admin:
+    resource: .
+    type: lyra_admin
