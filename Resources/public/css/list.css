@@ -48,16 +48,9 @@ td.boolean .ui-button-icon-only .ui-button-text {
     padding:0 !important;
     width: 15px;
 }
-td.boolean .ui-button-icon-only .ui-icon {
-   /* margin-left: -7px !important;*/
+table.ly-list td.no-records {
+    text-align: center;
 }
-/*
-td.boolean button.ui-button-icon-only {
-    border-style: none !important;
-}
-td.boolean button.ui-state-hover {
-    background: transparent !important;
-}*/
 .list-actions {
     margin: 10px 0 4px;
 }

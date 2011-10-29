@@ -112,6 +112,10 @@
                             {% endblock %}
                         </td>
                     </tr>
+                {% else %}
+                    <tr>
+                        <td class="no-records" colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">{{ 'list.message.no_records'|trans({}, 'LyraAdminBundle') }}</td>
+                    </tr>
                 {% endfor %}
             {% endblock %}
         </tbody>

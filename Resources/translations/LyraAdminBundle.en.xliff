@@ -94,6 +94,10 @@
                 <source>pagination.info</source>
                 <target>Page %page% of %count%</target>
             </trans-unit>
+            <trans-unit id="24">
+                <source>list.message.no_records</source>
+                <target>No records found</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
