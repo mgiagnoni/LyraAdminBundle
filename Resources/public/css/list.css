@@ -66,12 +66,19 @@ td.boolean button.ui-state-hover {
 }
 /* Pagination */
 
+.pagination .info
+{
+    display: block;
+    float: right;
+    font-size: 90%;
+}
 .pagination .ui-button-text {
     padding: .2em .8em !important;
 }
 .pagination a.ui-button {
     width: 1.8em !important;
 }
+
 #ly-form-wrapper p {
     margin: 0;
     padding: 0;

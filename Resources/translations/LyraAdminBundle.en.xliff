@@ -90,6 +90,10 @@
                 <source>pagination.prev</source>
                 <target>Previous</target>
             </trans-unit>
+            <trans-unit id="23">
+                <source>pagination.info</source>
+                <target>Page %page% of %count%</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -58,6 +58,7 @@
                     <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">
                     {% if list.nbPages > 1 %}
                         <span class="pagination">      
+                            <span class="info">{{ 'pagination.info'|trans({'%page%' : list.currentPage, '%count%' : list.nbPages}, 'LyraAdminBundle') }}</span>
                             {{ page_link(list, 'first', 1) }}
                             {{ page_link(list, 'prev', list.prevPage) }}
                             {% for p in list.pageLinks %}
@@ -69,7 +70,6 @@
                             {% endfor %}
                             {{ page_link(list, 'next', list.nextPage ) }}
                             {{ page_link(list, 'last', list.nbPages) }}
-                            <span class="info"></span>
                         </span>
                     {% endif %}
                     </td>
