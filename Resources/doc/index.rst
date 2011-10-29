@@ -193,4 +193,44 @@ by the value of the *Published* column::
                         sortable: false
                     posted_at: ~ 
 
+Use the ``format`` option to format a column content. For columns displaying
+dates you can use all format strings allowed by the PHP function ``date``,for
+any other column you can use all format placeholders allowed by PHP functions
+``printf``, ``sprintf``::
+
+    # app/config.yml
+
+        # ... #
+            list:
+                columns:
+                    ad_title: ~
+                    published: ~
+                    posted_at:
+                        label: Date
+                        format: 'j/M/Y'
+
+Action buttons configuration
+----------------------------
+
+The button to create a new record has a generic text *New* and a default icon.
+Here is how you can you change the configuration if you prefer a more descriptive
+text and a different icon::
+
+    # app/config.yml
+
+        # ... #
+            actions:
+                new:
+                    text: 'New listing'
+                    icon: circle-plus
+            list:
+                columns:
+                    # ... #
+
+The value of the ``icon`` option must be the class name (without the ``ui-icon-``
+part) used in **jQuery UI** theme stylesheet for the icon. You can find all
+available icons on the `Theme roller`_  home page.
+
+.. _Theme roller: http://jqueryui.com/themeroller/
+
 [to be continued ...]
