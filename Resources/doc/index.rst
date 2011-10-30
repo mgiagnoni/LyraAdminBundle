@@ -152,6 +152,10 @@ CRUD operations on the ``Listing`` entity::
                         posted_at: ~
 
 
+Do not forget to clear cache before proceeding::
+
+    app/console cache:clear
+
 Access backend area
 -------------------
 
@@ -232,5 +236,39 @@ part) used in **jQuery UI** theme stylesheet for the icon. You can find all
 available icons on the `Theme roller`_  home page.
 
 .. _Theme roller: http://jqueryui.com/themeroller/
+
+You can customize all the other default actions (``edit``, ``delete``) in the
+same way.
+
+Basic form configuration
+------------------------
+
+Even if the form to create and edit a ``Listing`` object is fully functional
+without any configuration, you will usually need to re-order the fields, group
+them in panels or remove some fields from view. A simple example::
+
+    lyra_admin:
+        models:
+            listing:
+                class: 'Acme\ClassifiedsBundle\Entity\Listing'
+                form:
+                    groups:
+                        listing:
+                            # panel title
+                            caption: Listing
+                            fields: [ad_title,ad_text]
+                            # column break after this panel
+                            break_after: true
+                        status:
+                            caption: Status
+                            fields: [published,expires_at]
+                list:
+                    # ... #
+
+With this configuration form fields are grouped in two panels displayed on two
+columns (see the ``break_after`` option). You will notice that the ``posted_at``
+field is not present in any panel: this field will not be visible and not
+editable through the form. This can be useful for fields you want to automatically
+update via a Doctrine *lifecycle callback* and that cannot be changed by users.
 
 [to be continued ...]
