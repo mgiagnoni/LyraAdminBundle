@@ -35,7 +35,16 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('db_driver')->defaultValue('orm')->cannotBeEmpty()->end()
                 ->scalarNode('route_pattern_prefix')->defaultValue('admin')->end()
-                ->scalarNode('theme')->defaultValue('ui-lightness')->cannotBeEmpty()->end()
+                ->scalarNode('theme')
+                    ->defaultValue('bundles/lyraadmin/css/ui/ui-lightness')
+                    ->cannotBeEmpty()
+                    ->beforeNormalization()
+                        ->ifTrue(function($v) {return !empty($v) && false === strpos($v, '/');})
+                        ->then(function($v) {
+                            return 'bundles/lyraadmin/css/ui/'.$v;
+                        })
+                    ->end()
+                ->end()
             ->end();
 
         $actionDefaults = array(

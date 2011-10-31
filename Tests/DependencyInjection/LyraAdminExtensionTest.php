@@ -97,6 +97,34 @@ EOF;
         $this->assertEquals($options['actions'], $defaults);
     }
 
+    public function testNormalizeThemeOption()
+    {
+        $yaml = <<<EOF
+theme: smoothness
+EOF;
+
+        $config = $this->parseConfiguration($yaml);
+        $loader = new LyraAdminExtension();
+        $this->configuration = new ContainerBuilder();
+        $loader->load(array($config), $this->configuration);
+
+        $options = $this->configuration->getParameter('lyra_admin.options');
+        $this->assertEquals('bundles/lyraadmin/css/ui/smoothness', $options['theme']);
+
+        //TODO: DRY
+        $yaml = <<<EOF
+theme: css/ui/redmond
+EOF;
+
+        $config = $this->parseConfiguration($yaml);
+        $loader = new LyraAdminExtension();
+        $this->configuration = new ContainerBuilder();
+        $loader->load(array($config), $this->configuration);
+
+        $options = $this->configuration->getParameter('lyra_admin.options');
+        $this->assertEquals('css/ui/redmond', $options['theme']);
+    }
+
     protected function getActionDefaults()
     {
         return array(
