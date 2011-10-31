@@ -22,32 +22,24 @@ class LyraAdminExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowsExceptionUnlessClassSet()
     {
-        $config = $this->getConfiguration();
-        unset($config['models']['test']['class']);
-
-        $loader = new LyraAdminExtension();
-        $loader->load(array($config), new ContainerBuilder());
+        $yaml = <<<EOF
+models:
+    test:
+        controller: AcmeMyBundle:Test
+EOF;
+        $config = $this->getConfiguration($yaml);
     }
 
     public function testClassParameter()
     {
         $config = $this->getConfiguration();
-        $loader = new LyraAdminExtension();
-        $this->configuration = new ContainerBuilder();
-        $loader->load(array($config), $this->configuration);
-
-        $this->assertParameter('Acme\MyBundle\Entity\MyEntity', 'lyra_admin.test.class');
+        $this->assertEquals('Acme\MyBundle\Entity\MyEntity', $config->getParameter('lyra_admin.test.class'));
     }
 
     public function testDefaultActions()
     {
         $config = $this->getConfiguration();
-        $loader = new LyraAdminExtension();
-        $this->configuration = new ContainerBuilder();
-        $loader->load(array($config), $this->configuration);
-
-        $options = $this->configuration->getParameter('lyra_admin.test.options');
-
+        $options = $config->getParameter('lyra_admin.test.options');
         $this->assertEquals($options['actions'], $this->getActionDefaults());
     }
 
@@ -58,15 +50,12 @@ actions:
     edit:
         icon: dummy
 EOF;
-        $config = $this->parseConfiguration($yaml);
-        $loader = new LyraAdminExtension();
-        $this->configuration = new ContainerBuilder();
-        $loader->load(array($config), $this->configuration);
 
+        $config = $this->getConfiguration($yaml);
         $defaults = $this->getActionDefaults();
         $defaults['edit']['icon'] = 'dummy';
 
-        $options = $this->configuration->getParameter('lyra_admin.options');
+        $options = $config->getParameter('lyra_admin.options');
         $this->assertEquals($options['actions'], $defaults);
     }
 
@@ -84,16 +73,12 @@ models:
                 route_pattern: dummy
 EOF;
 
-        $config = $this->parseConfiguration($yaml);
-        $loader = new LyraAdminExtension();
-        $this->configuration = new ContainerBuilder();
-        $loader->load(array($config), $this->configuration);
-
+        $config = $this->getConfiguration($yaml);
         $defaults = $this->getActionDefaults();
         $defaults['new']['icon'] = 'dummy';
         $defaults['delete']['route_pattern'] = 'dummy';
 
-        $options = $this->configuration->getParameter('lyra_admin.test.options');
+        $options = $config->getParameter('lyra_admin.test.options');
         $this->assertEquals($options['actions'], $defaults);
     }
 
@@ -103,25 +88,17 @@ EOF;
 theme: smoothness
 EOF;
 
-        $config = $this->parseConfiguration($yaml);
-        $loader = new LyraAdminExtension();
-        $this->configuration = new ContainerBuilder();
-        $loader->load(array($config), $this->configuration);
+        $config = $this->getConfiguration($yaml);
 
-        $options = $this->configuration->getParameter('lyra_admin.options');
+        $options = $config->getParameter('lyra_admin.options');
         $this->assertEquals('bundles/lyraadmin/css/ui/smoothness', $options['theme']);
 
-        //TODO: DRY
         $yaml = <<<EOF
 theme: css/ui/redmond
 EOF;
 
-        $config = $this->parseConfiguration($yaml);
-        $loader = new LyraAdminExtension();
-        $this->configuration = new ContainerBuilder();
-        $loader->load(array($config), $this->configuration);
-
-        $options = $this->configuration->getParameter('lyra_admin.options');
+        $config = $this->getConfiguration($yaml);
+        $options = $config->getParameter('lyra_admin.options');
         $this->assertEquals('css/ui/redmond', $options['theme']);
     }
 
@@ -165,16 +142,24 @@ EOF;
         );
     }
 
-    protected function getConfiguration()
+    protected function getConfiguration($yaml = null)
     {
+        if (null === $yaml) {
+
         $yaml = <<<EOF
 models:
     test:
         class: Acme\MyBundle\Entity\MyEntity
         controller: AcmeMyBundle:Test
 EOF;
+        }
 
-        return $this->parseConfiguration($yaml);
+        $parsed = $this->parseConfiguration($yaml);
+        $loader = new LyraAdminExtension();
+        $configuration = new ContainerBuilder();
+        $loader->load(array($parsed), $configuration);
+
+        return $configuration;
     }
 
     protected function parseConfiguration($yaml)
@@ -182,10 +167,5 @@ EOF;
         $parser = new Parser();
 
         return $parser->parse($yaml);
-    }
-
-    private function assertParameter($value, $key)
-    {
-        $this->assertEquals($value, $this->configuration->getParameter($key));
     }
 }
