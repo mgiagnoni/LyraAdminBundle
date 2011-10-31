@@ -271,4 +271,43 @@ field is not present in any panel: this field will not be visible and not
 editable through the form. This can be useful for fields you want to automatically
 update via a Doctrine *lifecycle callback* and that cannot be changed by users.
 
+Change admin theme
+------------------
+
+The bundle includes two themes: ``ui-lightness`` (default) and ``smoothness``.
+To change theme use this configuration::
+
+    lyra_admin:
+        theme: smoothness
+        models:
+            listing:
+                # ... #
+
+You can get additional themes from the `Theme roller`_ page on the jQuery UI website.
+Once you have downloaded the desired theme, *Redmond* for example, uncompress
+the package::
+
+    jquery-ui-#.#.#.custom.zip
+        css
+            redmond <- only this folder and its contents are needed
+                images
+                    jquery-ui-#.#.#.custom.css <- rename as jquery-ui.custom.css
+
+
+The package contains some stuff you will not need for use with the bundle.
+Move only the folder with the same name of the theme somewhere inside your
+project public folder (usually ``web``), for example ``web/css/ui_themes``, 
+renaming the theme css file as indicated above. To use the new theme edit the
+bundle configuration in this way::
+
+    lyra_admin:
+        # path to theme folder *relative* to application public folder
+        theme: css/ui_themes/redmond
+        models:
+            listing:
+                # ... #
+
+
+.. _Theme roller: http://jqueryui.com/themeroller/
+
 [to be continued ...]
