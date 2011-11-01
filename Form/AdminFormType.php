@@ -19,10 +19,13 @@ use Symfony\Component\Form\FormBuilder;
  */
 class AdminFormType extends AbstractType
 {
+    protected $name;
+
     protected $fields;
 
-    public function __construct($fields)
+    public function __construct($name, $fields)
     {
+        $this->name = $name;
         $this->fields = $fields;
     }
 
@@ -57,6 +60,6 @@ class AdminFormType extends AbstractType
 
     public function getName()
     {
-        return 'lyra_admin_form';
+        return 'lyra_admin_form_'.$this->name;
     }
 }

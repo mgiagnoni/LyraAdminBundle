@@ -152,7 +152,7 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
         }
 
         $fields = array_intersect_key($fields, $existing);
-        $type = new $typeClass($fields);
+        $type = new $typeClass($this->getName(), $fields);
 
         return $this->factory->createForm($type, $this->getName(), $data, array('data_class' => $this->options['class']));
     }
