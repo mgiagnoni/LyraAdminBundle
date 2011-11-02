@@ -100,9 +100,12 @@ class ModelManager extends BaseManager
         }
 
         foreach ($metadata->associationMappings as $name => $attrs) {
-            if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type']) {
+            if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type'] || ClassMetadataInfo::MANY_TO_MANY == $attrs['type']) {
                 $fields[$name]['type'] = 'entity';
-                $fields[$name]['options'] = array('class' => $attrs['targetEntity']);
+                $fields[$name]['options'] = array(
+                    'class' => $attrs['targetEntity'],
+                    'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
+                );
             }
         }
 
