@@ -138,7 +138,7 @@ Create the table in the database::
 Configure LyraAdminBundle to create an admin area where you will perform all
 CRUD operations on the ``Listing`` entity::
 
-    # app/config.yml
+    # app/config/config.yml
 
     lyra_admin:
         models:
@@ -173,7 +173,7 @@ The label displayed inside colum headings is guessed from entity mapping
 informations, you can change it for each column by explicitly setting the
 ``label`` option::
 
-    # app/config.yml
+    # app/config/config.yml
 
         # ... #
             list:
@@ -187,7 +187,7 @@ All list columns are sortable, you can change this default behavior with the
 ``sortable`` option. The following configuration will make the list not sortable
 by the value of the *Published* column::
 
-    # app/config.yml
+    # app/config/config.yml
 
         # ... #
             list:
@@ -202,7 +202,7 @@ dates you can use all format strings allowed by the PHP function ``date``,for
 any other column you can use all format placeholders allowed by PHP functions
 ``printf``, ``sprintf``::
 
-    # app/config.yml
+    # app/config/config.yml
 
         # ... #
             list:
@@ -220,7 +220,7 @@ The button to create a new record has a generic text *New* and a default icon.
 Here is how you can you change the configuration if you prefer a more descriptive
 text and a different icon::
 
-    # app/config.yml
+    # app/config/config.yml
 
         # ... #
             actions:
@@ -246,6 +246,8 @@ Basic form configuration
 Even if the form to create and edit a ``Listing`` object is fully functional
 without any configuration, you will usually need to re-order the fields, group
 them in panels or remove some fields from view. A simple example::
+
+    # app/config/config.yml
 
     lyra_admin:
         models:
@@ -277,6 +279,8 @@ Change admin theme
 The bundle includes two themes: ``ui-lightness`` (default) and ``smoothness``.
 To change theme use this configuration::
 
+    # app/config/config.yml
+
     lyra_admin:
         theme: smoothness
         models:
@@ -299,6 +303,8 @@ Move only the folder with the same name of the theme somewhere inside your
 project public folder (usually ``web``), for example ``web/css/ui_themes``, 
 renaming the theme css file as indicated above. To use the new theme edit the
 bundle configuration in this way::
+
+    # app/config/config.yml
 
     lyra_admin:
         # path to theme folder *relative* to application public folder
