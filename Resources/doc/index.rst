@@ -17,6 +17,54 @@ find below.
 If you test the bundle and find errors please use the GitHub issue tracker
 to report them. Suggestions are also welcome.
 
+Note
+====
+
+Former symfony users will notice quite a few similarities between this bundle
+and the symfony 1.x *Admin Generator*: the backend area is organized in a
+similar way and offers the same kind of *views*.
+
+List view
+---------
+
+This view displays a set of records in a grid layout with sortable columns and
+pagination. From the list view you can perform different *actions*.
+
+*   **List actions**: ``new`` is the default list action.
+
+*   **Object actions**: these actions always affects a single record displayed
+    in a grid row. Default object actions are ``edit`` and ``delete``.
+
+*   **Batch actions**: these actions affects multiple records selected with
+    the grid *check boxes*. Default batch actions is ``delete``.
+
+Form view
+---------
+
+This view displays the form to insert and edit a record. Form fields can be
+ordered and grouped in *panels*. Separate configuration options are available
+for ``new`` and ``edit`` form.
+
+----
+
+That being said, there are important differences between LyraAdminBundle and
+the symfony *Admin Generator*.
+
+*   This bundle is not a **code generator**, it utilizes Twig template
+    inheritance and class inheritance to provide a base backend interface users
+    can extend to fit their needs.
+
+*   In place of storing configuration options in a dedicated file (``generator.yml``),
+    the bundle exposes a semantic configuration handled by a `service container
+    extension`_ and stores configuration options as Dependency Injection Container
+    parameters.
+
+*   The overall layout of the backend area can be customized with one of the
+    many jQuery UI *themes*, while the user interface is enhanced by standard 
+    jQuery UI *widgets* (buttons, modal dialogs).
+
+.. _service container extension: http://symfony.com/doc/current/book/service_container.html#importing-configuration-via-container-extensions
+
 Installation
 ============
 
