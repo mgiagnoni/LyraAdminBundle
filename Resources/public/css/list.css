@@ -89,6 +89,11 @@ table.ly-list td.no-records {
 }
 .flash-messages div {
     padding: 2px;
+    vertical-align: middle;
+}
+.flash-messages .ui-icon {
+    float:left;
+    margin-right: .5em;
 }
 .ui-lyraselect {
     width: 170px;

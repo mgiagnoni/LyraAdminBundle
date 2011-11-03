@@ -94,6 +94,7 @@ jQuery().ready(function() {
             $('<div></div>')
                 .text(batchMessages.noAction)
                 .addClass('ui-state-error')
+                .append('<span class="ui-icon ui-icon-alert"></span>')
                 .appendTo($(this).find('.flash-messages'));
 
             return false;
@@ -107,6 +108,7 @@ jQuery().ready(function() {
             $('<div></div>')
                 .text(batchMessages.noSelection)
                 .addClass('ui-state-error')
+                .append('<span class="ui-icon ui-icon-alert"></span>')
                 .appendTo($(this).find('.flash-messages'));
 
             return false;
