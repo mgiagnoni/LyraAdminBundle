@@ -27,43 +27,32 @@ jQuery().ready(function() {
     // Flash messages
     $('.flash-messages .success').addClass('ui-state-highlight');
 
-    // Link buttons
-    $('a.button')
-        .each(function() {
-            // Extracts icon name from class attribute
-            var icon = /ui-icon-(\S+)/.exec(this.className);
-            $(this).button({
-                disabled: $(this).hasClass('disabled') ? true : false,
-                text: $(this).hasClass('icon-only') ? false : true,
-                icons: {
-                  primary: icon !== null ? 'ui-icon-' + icon[1] : null
-                }
-            });
-        });
-
     // Actions buttons
-
     var batchSubmit = false;
     $('input.button')
         .each(function() {
-            // Extracts icon name from class attribute
-            var icon = /ui-icon-(\S+)/.exec(this.className);
             $('<button></button>')
+                .attr('class', $(this).attr('class'))
                 .text($(this).attr('value'))
-                .button({
-                    disabled: $(this).hasClass('disabled') ? true : false,
-                    text: $(this).hasClass('icon-only') ? false : true,
-                    icons: {
-                        primary: icon !== null ? 'ui-icon-' + icon[1] : null
-                    }
-                })
                 .click(function(e) {
                     e.preventDefault();
                     batchSubmit = false;
-                    $(this).next().click();
+                    $(this).prev().click();
                 })
-                .insertBefore($(this).hide())
+                .insertAfter($(this).hide())
         });
+
+    $('a.button, input.button + button').each(function() {
+        // Extracts icon name from class attribute
+        var icon = /ui-icon-(\S+)/.exec(this.className);
+        $(this).button({
+            disabled: $(this).hasClass('disabled') ? true : false,
+            text: $(this).hasClass('icon-only') ? false : true,
+            icons: {
+                primary: icon !== null ? 'ui-icon-' + icon[1] : null
+            }
+        });
+    });
 
     $(".action-delete")
         .click(function(e) {
