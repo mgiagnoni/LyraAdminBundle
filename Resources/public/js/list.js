@@ -54,6 +54,13 @@ jQuery().ready(function() {
         });
     });
 
+    // Search action
+    $('.search-actions a')
+        .first()
+        .click(function() {
+            showSearch();
+        });
+
     $(".action-delete")
         .click(function(e) {
             e.preventDefault();
@@ -122,6 +129,11 @@ jQuery().ready(function() {
       }
     );
 
+    // Search form
+    $('#ly-filter-wrapper').hide();
+    $('#ly-filter-wrapper li')
+        .addClass('ui-widget-content');
+
     // Modal dialog for confirmation messages
 
     var showDialog = function() {
@@ -140,10 +152,30 @@ jQuery().ready(function() {
             autoOpen: true,
             resizable: false,
             minHeight: 90,
-            width: 400,
+            width: 450,
             title: $("h1", this).hide().text(),
             close: function() {$(this).remove()},
             buttons: buttonsOpts
         })
+    }
+
+    // Filter modal dialog
+    var showSearch = function() {
+        var title = $('#ly-filter-wrapper h2').hide().text();
+        var buttonOk = $('#ly-filter-wrapper input[type="submit"]').hide();
+        $('#ly-filter-wrapper').dialog({
+            modal: true,
+            autoOpen: true,
+            resizable: false,
+            minHeight: 90,
+            width: 530,
+            title: title,
+            buttons: [
+                {
+                 'text': buttonOk.val(),
+                 'click': function() { buttonOk.click(); }
+                }
+            ]
+        });
     }
 });

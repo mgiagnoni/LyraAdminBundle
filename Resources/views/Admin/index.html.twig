@@ -6,6 +6,14 @@
     {% block list_title %}
         <h1>{{ list.title|trans({}, list.transDomain) }}</h1>
     {% endblock %}
+    {% block search_actions %}
+    {% if filter.hasFields %}
+    <div class="search-actions">
+        <a href="#filter" class="button">{{ 'list.action.search'|trans({}, 'LyraAdminBundle') }}</a>
+        <a href="{{ path(filter.routePrefix~'_filter', {'reset' : 'reset'}) }}" class="button">{{ 'filter.button.reset'|trans({}, 'LyraAdminBundle') }}</a>
+    </div>
+    {% endif %}
+    {% endblock %}
     {% block list_actions %}
         <div class="list-actions">
         {% for action in list.listActions %}
@@ -135,6 +143,9 @@
         {% endif %}
     {% endblock batch_actions %}
     </form>
+    {% block filter %}
+        {% include 'LyraAdminBundle:Admin:filter_form.html.twig' %}
+    {% endblock %}
 </div>
 {% block batch_message %}
     <script type="text/javascript">

@@ -26,12 +26,15 @@ class AdminController extends ContainerAware
      */
     public function indexAction()
     {
+        $filterRenderer = $this->getFilterRenderer();
         $listRenderer = $this->getListRenderer();
-        $listRenderer->setQueryBuilder($this->getModelManager()->getBaseListQueryBuilder());
+        $listRenderer->setFilterCriteria($this->getFilterCriteria());
+        $listRenderer->setBaseQueryBuilder($this->getModelManager()->getBaseListQueryBuilder());
 
         return $this->container->get('templating')
             ->renderResponse($listRenderer->getTemplate(), array(
                 'renderer' => $listRenderer,
+                'filter' => $filterRenderer
             ));
     }
 
@@ -154,6 +157,20 @@ class AdminController extends ContainerAware
         return $this->getRedirectToListResponse();
     }
 
+    public function filterAction($reset)
+    {
+        $request = $this->getRequest();
+        if ($reset)  {
+            $this->container->get('session')->set($this->getModelName().'.criteria', array());
+        } else if ('POST' == $request->getMethod()) {
+            $form = $this->getFilterRenderer()->getForm();
+            $form->bindRequest($request);
+            $this->container->get('session')->set($this->getModelName().'.criteria', $form->getData());
+        }
+
+        return $this->getRedirectToListResponse();
+    }
+
     /**
      * Gets the Request service.
      *
@@ -198,6 +215,18 @@ class AdminController extends ContainerAware
     public function getDialogRenderer($name = null)
     {
         return $this->container->get('lyra_admin.renderer_factory')->getDialogRenderer($name);
+    }
+
+    /**
+     * Gets a filter renderer service.
+     *
+     * @param string $name model name
+     *
+     * @return \Lyra\AdminBundle\Renderer\FilterRenderer
+     */
+    public function getFilterRenderer($name = null)
+    {
+        return $this->container->get('lyra_admin.renderer_factory')->getFilterRenderer($name);
     }
 
     /**
@@ -284,5 +313,19 @@ class AdminController extends ContainerAware
             $object->$method($colValue);
             $this->getModelManager()->save($object);
         }
+    }
+
+    protected function getFilterCriteria()
+    {
+        return $this->container->get('session')->get($this->getModelName().'.criteria', array());
+    }
+
+    protected function getModelName()
+    {
+        if (null === $name = $this->getRequest()->get('lyra_admin_model')) {
+           throw new \InvalidArgumentException('Unspecified model name, lyra_admin_model parameter not present in Request');
+        }
+
+        return $name;
     }
 }

@@ -33,6 +33,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     /**
      * @var mixed
      */
+    protected $baseQueryBuilder;
+
+    /**
+     * @var mixed
+     */
     protected $queryBuilder;
 
     /**
@@ -54,6 +59,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
      * @var integer
      */
     protected $total;
+
+    /**
+     * @var array
+     */
+    protected $filterCriteria = array();
 
     public function __construct(Request $request, Session $session, array $options = array())
     {
@@ -120,27 +130,28 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $sort;
     }
 
-    public function setQueryBuilder($qb)
+    public function setBaseQueryBuilder($qb)
     {
         $this->total = null;
-        $sort = $this->getSort();
+        $this->baseQueryBuilder = $qb;
+    }
 
-        if (isset($sort['field'])) {
-            $columns = $this->getColumns();
-            $column = $columns[$sort['field']];
-
-            $qb->orderBy($qb->getRootAlias().'.'.$column['property_name'], $sort['order']);
+    public function getQueryBuilder()
+    {
+        if (null === $this->queryBuilder) {
+            $this->initQueryBuilder();
         }
 
-        $this->queryBuilder = $qb;
+        return $this->queryBuilder;
     }
 
     public function getTotal()
     {
         if (null === $this->total) {
-            $alias = $this->queryBuilder->getRootAlias();
+            $qb = $this->getQueryBuilder();
+            $alias = $qb->getRootAlias();
 
-            $this->total = $this->queryBuilder
+            $this->total = $qb
                 ->select('COUNT('.$alias.')')
                 ->setFirstResult(null)
                 ->getQuery()->getSingleScalarResult();
@@ -151,10 +162,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getResults()
     {
-        $alias = $this->queryBuilder->getRootAlias();
         $maxRows = $this->options['list']['max_page_rows'];
+        $qb = $this->getQueryBuilder();
+        $alias = $qb->getRootAlias();
 
-        return $this->queryBuilder
+        return $qb
             ->select($alias)
             ->setFirstResult(($this->getCurrentPage() - 1) * $maxRows)
             ->setMaxResults($maxRows)
@@ -234,6 +246,17 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         $columns = $this->getColumns();
         return $columns[$colName]['format'];
     }
+
+    public function getFilterCriteria()
+    {
+        return $this->filterCriteria;
+    }
+
+    public function setFilterCriteria($criteria)
+    {
+        $this->filterCriteria = $criteria;
+    }
+
     protected function initColumns()
     {
         $sort = $this->getSort();
@@ -272,5 +295,74 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
             $this->columns[$name]['th_class'] = $class;
 
         }
+    }
+
+    protected function initQueryBuilder()
+    {
+        $this->queryBuilder = $this->baseQueryBuilder;
+        $this->addFilterCriteria();
+        $this->addSort();
+    }
+
+    protected function addFilterCriteria()
+    {
+        $fields = $this->getFields();
+        $criteria = $this->getFilterCriteria();
+        $alias = $this->queryBuilder->getRootAlias();
+
+        foreach ($criteria as $field => $value) {
+            if(null === $value || '' == $value) {
+                continue;
+            }
+
+            if (isset($fields[$field])) {
+                switch ($fields[$field]['type']) {
+                    case 'string':
+                    case 'text':
+                        $this->queryBuilder->andWhere(
+                            $this->queryBuilder->expr()->like($alias.'.'.$field, $this->queryBuilder->expr()->literal($value.'%'))
+                        );
+                        break;
+                    case 'date':
+                    case 'datetime':
+                        if (null !== $value['from']) {
+                            $this->queryBuilder->andWhere(
+                                $this->queryBuilder->expr()->gte($alias.'.'.$field, $this->formatDate($value['from']))
+                            );
+                        }
+                        if (null !== $value['to']) {
+                            $this->queryBuilder->andWhere(
+                                $this->queryBuilder->expr()->lte($alias.'.'.$field, $this->formatDate($value['to']))
+                            );
+                        }
+                        break;
+
+                    case 'boolean':
+                         $this->queryBuilder->andWhere(
+                                $this->queryBuilder->expr()->eq($alias.'.'.$field, $value)
+                            );
+
+                        break;
+                }
+            }
+        }
+
+    }
+
+    protected function addSort()
+    {
+        $sort = $this->getSort();
+
+        if (isset($sort['field'])) {
+            $columns = $this->getColumns();
+            $column = $columns[$sort['field']];
+
+            $this->queryBuilder->orderBy($this->queryBuilder->getRootAlias().'.'.$column['property_name'], $sort['order']);
+        }
+    }
+
+    protected function formatDate($date)
+    {
+        return $this->queryBuilder->expr()->literal($date->format('Y-m-d H:i:s'));
     }
 }

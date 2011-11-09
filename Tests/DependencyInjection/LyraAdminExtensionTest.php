@@ -138,6 +138,12 @@ EOF;
             'object' => array(
                 'route_pattern' => 'object',
                 'route_defaults' => array()
+            ),
+            'filter' => array(
+                'route_pattern' => 'filter/{reset}',
+                'route_defaults' => array(
+                    'reset' => null
+                )
             )
         );
     }

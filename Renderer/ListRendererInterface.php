@@ -77,11 +77,11 @@ interface ListRendererInterface extends BaseRendererInterface
     function getSort();
 
     /**
-     * Sets the query builder used to retrieve list rows.
+     * Sets the base query builder used to retrieve list rows.
      *
      * @param mixed $queryBuilder
      */
-    function setQueryBuilder($queryBuilder);
+    function setBaseQueryBuilder($queryBuilder);
 
     /**
      * Gets the total number of list rows.

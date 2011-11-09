@@ -81,6 +81,25 @@ class RendererFactory implements RendererFactoryInterface, ContainerAwareInterfa
         return $renderer;
     }
 
+    public function getFilterRenderer($name = null)
+    {
+        $renderer = $this->container->get('lyra_admin.filter_renderer');
+
+        if (null === $name) {
+            $name = $this->getModelName();
+        }
+
+        $factory = $this->container->get('lyra_admin.model_manager_factory');
+        $manager = $factory->getModelManager($name);
+
+        $fields = $manager->getFieldsInfo();
+        $renderer->setMetadata($fields);
+        $renderer->setName($name);
+        $renderer->setOptions($this->container->getParameter(sprintf('lyra_admin.%s.filter.options', $name)));
+
+        return $renderer;
+    }
+
     protected function getModelName()
     {
         if (null === $name = $this->container->get('request')->get('lyra_admin_model')) {
