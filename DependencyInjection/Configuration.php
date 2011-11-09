@@ -81,6 +81,12 @@ class Configuration implements ConfigurationInterface
             'object' => array(
                 'route_pattern' => 'object',
                 'route_defaults' => array()
+            ),
+            'filter' => array(
+                'route_pattern' => 'filter/{reset}',
+                'route_defaults' => array(
+                    'reset' => null
+                )
             )
         );
 
@@ -309,6 +315,24 @@ class Configuration implements ConfigurationInterface
                                     ->arrayNode('fields')
                                         ->prototype('scalar')->end()
                                     ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        $filter = $models
+            ->children()
+                ->arrayNode('filter')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('title')->defaultValue('Filter')->end()
+                        ->arrayNode('fields')
+                            ->useAttributeAsKey('name')
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('widget')->end()
                                 ->end()
                             ->end()
                         ->end()

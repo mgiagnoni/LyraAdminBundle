@@ -1,0 +1,18 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block daterange_widget %}
+{% spaceless %}
+    <div class="daterange-container">
+        <div class="daterange-from">
+            {{ form_errors(form.from) }}
+            {{ form_label(form.from) }}
+            {{ form_widget(form.from) }}
+        </div>
+        <div class="daterange-to">
+            {{ form_errors(form.to) }}
+            {{ form_label(form.to) }}
+            {{ form_widget(form.to) }}
+        </div>
+    </div>
+{% endspaceless %}
+{% endblock %}

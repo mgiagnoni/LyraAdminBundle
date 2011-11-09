@@ -51,8 +51,11 @@ td.boolean .ui-button-icon-only .ui-button-text {
 table.ly-list td.no-records {
     text-align: center;
 }
-.list-actions {
+.list-actions, .search-actions {
     margin: 10px 0 4px;
+}
+.search-actions {
+    float: right;
 }
 .object-actions form, .order-actions form {
     display: inline;
@@ -116,4 +119,48 @@ table.ly-list td.no-records {
     margin: 0 !important;
     font-weight: normal !important;
     vertical-align: middle;
+}
+
+/* Filter form */
+.ly-form-filter ol {
+    margin: 0;
+    padding: 0;
+}
+.ly-form-filter li {
+    list-style: none;
+    margin: 0;
+    padding: 5px 0 5px;
+    border-width: 0 0 1px;
+    border-style: solid;
+    background-image: none !important;
+}
+.ly-form-filter li:last-child {
+    border-style: none;
+}
+.ly-form-filter label {
+    width: 115px;
+    margin: 3px 0 3px;
+    display: inline-block;
+    vertical-align: top;
+}
+.ly-form-filter .choices-list {
+    display: inline-block;
+}
+.ly-form-filter .daterange-container {
+    display: inline-block;
+}
+.ly-form-filter .daterange-from {
+    margin-bottom: 3px;
+}
+.ly-form-filter .daterange-from label,
+.ly-form-filter .daterange-to label {
+    width: 45px;
+    display: inline-block;
+}
+.ly-form-filter .choices-list label {
+    margin: 0 0 0 3px;
+    width: auto;
+}
+.ly-form-filter input[type="text"] {
+    width: 325px;
 }

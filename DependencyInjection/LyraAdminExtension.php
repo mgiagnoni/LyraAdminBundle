@@ -30,7 +30,7 @@ class LyraAdminExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        foreach (array($config['db_driver'], 'services', 'routing_loader') as $basename) {
+        foreach (array($config['db_driver'], 'services', 'routing_loader', 'form') as $basename) {
             $loader->load(sprintf('%s.xml', $basename));
         }
 
@@ -87,9 +87,16 @@ class LyraAdminExtension extends Extension
             $container->setParameter(sprintf('lyra_admin.%s.actions.options', $name), array_diff_key($options, array('form' => null,'list'=>null)));
             $container->setParameter(sprintf('lyra_admin.%s.list.options', $name), array_diff_key($options, array('form' => null)));
             $container->setParameter(sprintf('lyra_admin.%s.form.options', $name), array_diff_key($options, array('list' => null)));
+            $container->setParameter(sprintf('lyra_admin.%s.filter.options', $name), array_diff_key($options, array('form' => null,'list' => null)));
             $container->setParameter(sprintf('lyra_admin.%s.class', $name), $options['class']);
         }
 
         $container->setParameter('lyra_admin.routes', $routes);
+        $resources = array();
+        if ($container->has('twig.form.resources')) {
+            $resources = $container->getParameter('twig.form.resources');
+        }
+        $resources[] = 'LyraAdminBundle:Admin:fields.html.twig';
+        $container->setParameter('twig.form.resources', $resources);
     }
 }

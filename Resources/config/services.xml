@@ -11,6 +11,8 @@
         <parameter key="lyra_admin.form_renderer.class">Lyra\AdminBundle\Renderer\FormRenderer</parameter>
         <parameter key="lyra_admin.model_manager_factory.class">Lyra\AdminBundle\Model\ModelManagerFactory</parameter>
         <parameter key="lyra_admin.dialog_renderer.class">Lyra\AdminBundle\Renderer\DialogRenderer</parameter>
+        <parameter key="lyra_admin.filter_renderer.class">Lyra\AdminBundle\Renderer\FilterRenderer</parameter>
+
     </parameters>
 
     <services>
@@ -36,6 +38,10 @@
         </service>
 
         <service id="lyra_admin.dialog_renderer" class="%lyra_admin.dialog_renderer.class%">
+        </service>
+
+        <service id="lyra_admin.filter_renderer" class="%lyra_admin.filter_renderer.class%">
+            <argument type="service" id="lyra_admin.form_factory" />
         </service>
     </services>
 

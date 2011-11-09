@@ -98,6 +98,18 @@
                 <source>list.message.no_records</source>
                 <target>No records found</target>
             </trans-unit>
+            <trans-unit id="25">
+                <source>filter.button.submit</source>
+                <target>Search</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>filter.button.reset</source>
+                <target>Reset</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>list.action.search</source>
+                <target>Search</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

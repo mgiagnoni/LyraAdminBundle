@@ -39,5 +39,14 @@ interface RendererFactoryInterface
      * @return DialogRendererInterface
      */
     function getDialogRenderer($name);
+
+    /**
+     * Gets an instance of a filter renderer
+     *
+     * @param string $name model name
+     *
+     * @return FilterRendererInterface
+     */
+    function getFilterRenderer($name);
 }
 

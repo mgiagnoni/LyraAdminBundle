@@ -1,0 +1,22 @@
+{% if filter.hasFields %}
+{% set view = filter.view() %}
+{% form_theme view 'LyraAdminBundle:Admin:form_theme.html.twig' %}
+<div id="ly-filter-wrapper">
+    <h2>{{ filter.title|trans({}, filter.transDomain)}}</h2>
+    <form class="ly-form-filter" action="{{ path(filter.routePrefix~'_filter') }}" method="post">
+    <ol>
+    {% for field, attrs in filter.filterFields %}
+        <li>
+        {{ form_errors(view[field]) }}
+        {% if not (attrs.label is defined and attrs.label is empty) %}
+            {{ form_label(view[field], attrs.label is defined ? attrs.label : null) }}
+        {% endif %}
+        {{ form_widget(view[field]) }}
+        </li>
+    {% endfor %}
+    </ol>
+    <input type="submit" value="{{ 'filter.button.submit'|trans({}, 'LyraAdminBundle') }}" />
+    </form>
+</div>
+{% endif %}
+
