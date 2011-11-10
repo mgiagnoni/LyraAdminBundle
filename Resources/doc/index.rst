@@ -288,6 +288,32 @@ available icons on the `Theme roller`_  home page.
 You can customize all the other default actions (``edit``, ``delete``) in the
 same way.
 
+Filter configuration
+--------------------
+
+List results can be filtered by the value of one or more of the ``Listing``
+entity fields. Example::
+
+    # app/config/config.yml
+
+        # ... #
+            filter:
+                # search dialog title
+                title: Search listings
+                fields:
+                    ad_title: ~
+                    posted_at: ~
+                    published: ~
+            list:
+                columns:
+                    # ... #
+
+With these options ``Listing`` objects are searchable by title, posting date
+(from/to range) and published status.
+
+This feature is not fully implemented yet and it works only for string, datetime
+and boolean fields.
+
 Basic form configuration
 ------------------------
 
