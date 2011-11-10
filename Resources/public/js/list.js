@@ -12,17 +12,25 @@ jQuery().ready(function() {
         .addClass('ui-widget-content');
 
     // Sortable headers
-    $('table.ly-list th.sorted-asc')
+    $('table.ly-list th.sorted-asc a')
         .append("<span class='ui-icon ui-icon-triangle-1-s'></span>");
 
-    $('table.ly-list th.sorted-desc')
+    $('table.ly-list th.sorted-desc a')
         .append("<span class='ui-icon ui-icon-triangle-1-n'></span>");
 
-    $('table.ly-list th').not('.sorted-asc, .sorted-desc').has('a')
+    $('table.ly-list th.sortable a')
         .append("<span class='ui-icon ui-icon-triangle-2-n-s'></span>");
 
     $('table.ly-list th')
         .addClass('ui-widget-content ui-state-default');
+
+    $('table.ly-list th a')
+        .mousemove(function() {
+            $(this).addClass('ui-state-hover');
+        })
+        .mouseleave(function() {
+            $(this).removeClass('ui-state-hover');
+        })
 
     // Flash messages
     $('.flash-messages .success').addClass('ui-state-highlight');

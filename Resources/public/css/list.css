@@ -27,8 +27,18 @@ table.ly-list th {
   overflow: hidden;
   padding: .25em;
 }
+table.ly-list th.sortable,
+table.ly-list th.sorted-asc,
+table.ly-list th.sorted-desc {
+    padding: 0;
+}
 table.ly-list th .ui-icon {
     float: right;
+}
+table.ly-list th a {
+    display: block;
+    border: 1px solid transparent;
+    padding: .25em;
 }
 table.ly-list th.batch-select-all {
     width: 1.5em;

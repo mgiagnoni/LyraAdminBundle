@@ -280,10 +280,13 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
             $this->columns[$name]['class'] = $class;
 
             $class = '';
-            if ($sort['field'] == $name) {
-                $this->columns[$name]['sorted'] = true;
-                $this->columns[$name]['sort'] = $sort['order'];
-                $class .= 'sorted-'.$sort['order'];
+            if ($this->columns[$name]['sortable']) {
+                $class = 'sortable';
+                if ($sort['field'] == $name) {
+                    $this->columns[$name]['sorted'] = true;
+                    $this->columns[$name]['sort'] = $sort['order'];
+                    $class = 'sorted-'.$sort['order'];
+                }
             }
 
             $class .= ' col-'.$name.' '.$type;
