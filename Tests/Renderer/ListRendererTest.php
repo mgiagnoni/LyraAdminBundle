@@ -27,16 +27,6 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test_title', $this->renderer->getTitle());
     }
 
-    public function testGetSort()
-    {
-        $session = $this->getMockSession(true);
-        $renderer = new ListRenderer($this->getMockRequest(), $session, $this->getOptions());
-        $renderer->setName('test');
-        $renderer->setMetadata($this->getMetadata());
-
-        $this->assertEquals(array('field' => 'test-1', 'order' => 'desc'), $renderer->getSort());
-    }
-
     public function testGetColumns()
     {
         $this->assertEquals(array(
@@ -45,8 +35,9 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'label' => 'Test 1',
                 'type' => 'string',
                 'class' => null,
-                'th_class' => 'class="col-test-1 string"',
+                'th_class' => 'class="sortable col-test-1 string"',
                 'sorted' => null,
+                'sortable' => true,
                 'property_name' => 'test-1',
                 'format' => null
             ),
@@ -57,6 +48,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'class' => null,
                 'th_class' => 'class="col-test-2 datetime"',
                 'sorted' => null,
+                'sortable' => false,
                 'property_name' => 'test-2',
                 'format' => null
             )
@@ -65,8 +57,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testGetColumnsWithSort()
     {
-        $session = $this->getMockSession(true);
-        $renderer = new ListRenderer($this->getMockRequest(), $session, $this->getOptions());
+        $renderer = new ListRenderer($this->getOptions());
+        $renderer->setSort(array('field' => 'test-1', 'order' => 'desc'));
         $renderer->setName('test');
         $renderer->setMetadata($this->getMetadata());
 
@@ -104,9 +96,10 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
     }
     protected function setUp()
     {
-        $this->renderer = new ListRenderer($this->getMockRequest(), $this->getMockSession(), $this->getOptions());
+        $this->renderer = new ListRenderer($this->getOptions());
         $this->renderer->setMetadata($this->getMetadata());
         $this->renderer->setName('test');
+        $this->renderer->setSort(array('field' => null, 'order' => null));
     }
 
     private function getOptions()
@@ -123,7 +116,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                         'type' => null,
                         'sorted' => null,
                         'property_name' => 'test-1',
-                        'format' => null
+                        'format' => null,
+                        'sortable' => true
                     ),
                     'test-2' => array(
                         'name' => 'test-2',
@@ -131,7 +125,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                         'type' => null,
                         'sorted' => null,
                         'property_name' => 'test-2',
-                        'format' => null
+                        'format' => null,
+                        'sortable' => false
                     )
                 ),
                 'object_actions' => array('edit', 'delete'),
@@ -159,34 +154,5 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         );
 
         return $metadata;
-    }
-
-    private function getMockRequest()
-    {
-        return
-            $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-                ->disableOriginalConstructor()
-                ->getMock();
-    }
-
-    private function getMockSession($withExpects = false)
-    {
-        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        if ($withExpects) {
-            $session->expects($this->at(0))
-                ->method('get')
-                ->with('test.field')
-                ->will($this->returnValue('test-1'));
-
-            $session->expects($this->at(1))
-                ->method('get')
-                ->with('test.sort.order')
-                ->will($this->returnValue('desc'));
-        }
-
-        return $session;
     }
 }

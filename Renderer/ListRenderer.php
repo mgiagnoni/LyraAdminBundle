@@ -21,16 +21,6 @@ use Doctrine\ORM\Query;
 class ListRenderer extends BaseRenderer implements ListRendererInterface
 {
     /**
-     * @var \Symfony\Component\HttpFoundation\Request
-     */
-    protected $request;
-
-    /**
-     * @var \Symfony\Component\HttpFoundation\Session
-     */
-    protected $session;
-
-    /**
      * @var mixed
      */
     protected $baseQueryBuilder;
@@ -53,7 +43,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     /**
      * @var integer
      */
-    protected $maxPageLinks = 3;
+    protected $maxPageLinks = 7;
 
     /**
      * @var integer
@@ -65,13 +55,15 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
      */
     protected $filterCriteria = array();
 
-    public function __construct(Request $request, Session $session, array $options = array())
-    {
-        parent::__construct($options);
+    /**
+     * @var array
+     */
+    protected $sort;
 
-        $this->request = $request;
-        $this->session = $session;
-    }
+    /**
+     * @var integer
+     */
+    protected $page;
 
     public function getTemplate()
     {
@@ -118,16 +110,14 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->options['actions'];
     }
 
+    public function setSort(array $sort)
+    {
+        $this->sort = $sort;
+    }
+
     public function getSort()
     {
-        if ($this->request->get('field')) {
-            $this->session->set($this->name.'.field', $this->request->get('field'));
-            $this->session->set($this->name.'.sort.order', $this->request->get('order'));
-        }
-
-        $sort = array('field' => $this->session->get($this->name.'.field', null), 'order' => $this->session->get($this->name.'.sort.order', 'asc'));
-
-        return $sort;
+        return $this->sort;
     }
 
     public function setBaseQueryBuilder($qb)
@@ -165,10 +155,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         $maxRows = $this->options['list']['max_page_rows'];
         $qb = $this->getQueryBuilder();
         $alias = $qb->getRootAlias();
+        $page = min($this->getPage(), $this->getNbPages());
 
         return $qb
             ->select($alias)
-            ->setFirstResult(($this->getCurrentPage() - 1) * $maxRows)
+            ->setFirstResult(($page - 1) * $maxRows)
             ->setMaxResults($maxRows)
             ->getQuery()->getResult(Query::HYDRATE_ARRAY);
     }
@@ -178,28 +169,29 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return ceil($this->getTotal() / $this->options['list']['max_page_rows']);
     }
 
-    public function getCurrentPage()
+    public function setPage($page)
     {
-        if ($page = $this->request->get('page')) {
-            $this->session->set($this->name.'.page', $page);
-        }
+        $this->page = $page;
+    }
 
-        return $this->session->get($this->name.'.page', 1);
+    public function getPage()
+    {
+        return $this->page;
     }
 
     public function getPrevPage()
     {
-        return max(1, $this->getCurrentPage() - 1);
+        return max(1, $this->getPage() - 1);
     }
 
     public function getNextPage()
     {
-        return min($this->getNbPages(), $this->getCurrentPage() + 1);
+        return min($this->getNbPages(), $this->getPage() + 1);
     }
 
     public function getPageLinks()
     {
-        $page = $this->getCurrentPage();
+        $page = $this->getPage();
         $start = max(1, $page - floor($this->maxPageLinks / 2));
         $end = min($this->getNbPages(), $page + $this->maxPageLinks - ($page - $start + 1));
         $start = max(1, $start - ($this->maxPageLinks - ($end - $start + 1)));

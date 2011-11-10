@@ -1,5 +1,5 @@
 {% macro page_link(list, type, page) %}
-{% set disabled = type in ['first','prev'] and list.currentPage == 1 or type in ['last','next'] and list.currentPage == list.nbPages %}
+{% set disabled = type in ['first','prev'] and list.page == 1 or type in ['last','next'] and list.page == list.nbPages %}
 {% set icon = {'first' : 'ui-icon-arrowthickstop-1-w', 'prev' : 'ui-icon-arrowthick-1-w', 'next' : 'ui-icon-arrowthick-1-e', 'last' : 'ui-icon-arrowthickstop-1-e', 'page' : ''} %}
 <a href="{{ path(list.routePrefix~'_index', list.routeParams|merge({ 'page': page })) }}" class="button icon-only {{ icon[type] }}{{ disabled ? ' disabled' : ''}}">
     {% if type == 'page' %}

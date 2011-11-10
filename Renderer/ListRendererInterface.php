@@ -105,11 +105,18 @@ interface ListRendererInterface extends BaseRendererInterface
     function getNbPages();
 
     /**
+     * Sets the current page number.
+     *
+     * @param integer $page
+     */
+    function setPage($page);
+
+    /**
      * Gets the current page number.
      *
      * @return integer
      */
-    function getCurrentPage();
+    function getPage();
 
     /**
      * Gets the previous page number.

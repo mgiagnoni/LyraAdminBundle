@@ -29,6 +29,8 @@ class AdminController extends ContainerAware
         $filterRenderer = $this->getFilterRenderer();
         $listRenderer = $this->getListRenderer();
         $listRenderer->setFilterCriteria($this->getFilterCriteria());
+        $listRenderer->setPage($this->getCurrentPage());
+        $listRenderer->setSort($this->getSort());
         $listRenderer->setBaseQueryBuilder($this->getModelManager()->getBaseListQueryBuilder());
 
         return $this->container->get('templating')
@@ -181,6 +183,11 @@ class AdminController extends ContainerAware
         return $this->container->get('request');
     }
 
+    public function getSession()
+    {
+        return $this->container->get('session');
+    }
+
     /**
      * Gets a list renderer service.
      *
@@ -318,6 +325,27 @@ class AdminController extends ContainerAware
     protected function getFilterCriteria()
     {
         return $this->container->get('session')->get($this->getModelName().'.criteria', array());
+    }
+
+    protected function getSort()
+    {
+        if ($field = $this->getRequest()->get('field')) {
+            $this->getSession()->set($this->getModelName().'.field', $field);
+            $this->getSession()->set($this->getModelName().'.sort.order', $this->getRequest()->get('order'));
+        }
+
+        $sort = array('field' => $this->getSession()->get($this->getModelName().'.field', null), 'order' => $this->getSession()->get($this->getModelName().'.sort.order', 'asc'));
+
+        return $sort;
+    }
+
+    protected function getCurrentPage()
+    {
+        if ($page = $this->getRequest()->get('page')) {
+            $this->getSession()->set($this->getModelName().'.page', $page);
+        }
+
+        return $this->getSession()->get($this->getModelName().'.page', 1);
     }
 
     protected function getModelName()
