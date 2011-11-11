@@ -201,9 +201,8 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColValue($colName, $object)
     {
-        $columns = $this->getColumns();
-        $value = $object[$columns[$colName]['property_name']];
-        if ($format = $columns[$colName]['format']) {
+        $value = $object[$this->getColOption($colName, 'property_name')];
+        if ($format = $this->getColOption($colName,'format')) {
             $value = sprintf($format, $value);
         }
 
@@ -212,14 +211,14 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getBooleanAction($colName, $object)
     {
-        $columns = $this->getColumns();
-        return $columns[$colName]['boolean_actions'][$this->getColValue($colName, $object) ? 1:0].'_'.$colName;
+        $actions = $this->getColOption($colName, 'boolean_actions');
+
+        return $actions[$this->getColValue($colName, $object) ? 1:0].'_'.$colName;
     }
 
     public function hasBooleanActions($colName)
     {
-        $columns = $this->getColumns();
-        return 'boolean' == $columns[$colName]['type'] && count($columns[$colName]['boolean_actions']) == 2;
+        return 'boolean' == $this->getColOption($colName, 'type') && count($this->getColOption($colName, 'boolean_actions')) == 2;
     }
 
     public function getBooleanIcon($colName, $object)
@@ -235,8 +234,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColFormat($colName)
     {
-        $columns = $this->getColumns();
-        return $columns[$colName]['format'];
+        return $this->getColOption($colName,'format');
     }
 
     public function getFilterCriteria()
@@ -247,6 +245,17 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function setFilterCriteria($criteria)
     {
         $this->filterCriteria = $criteria;
+    }
+
+    public function getColOption($colName, $key)
+    {
+        $columns = $this->getColumns();
+
+        if (!array_key_exists($key,$columns[$colName])) {
+           throw new \InvalidArgumentException(sprintf('Column option %s does not exist', $key));
+        }
+
+        return $columns[$colName][$key];
     }
 
     protected function initColumns()
@@ -341,7 +350,6 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
                 }
             }
         }
-
     }
 
     protected function addSort()
