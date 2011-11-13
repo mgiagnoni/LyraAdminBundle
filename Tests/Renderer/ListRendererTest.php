@@ -39,7 +39,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'sorted' => null,
                 'sortable' => true,
                 'property_name' => 'test-1',
-                'format' => null
+                'format' => null,
+                'format_function' => null
             ),
             'test-2' => array(
                 'name' => 'test-2',
@@ -50,7 +51,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'sorted' => null,
                 'sortable' => false,
                 'property_name' => 'test-2',
-                'format' => null
+                'format' => null,
+                'format_function' => null
             )
         ), $this->renderer->getColumns());
     }
@@ -117,6 +119,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                         'sorted' => null,
                         'property_name' => 'test-1',
                         'format' => null,
+                        'format_function' => null,
                         'sortable' => true
                     ),
                     'test-2' => array(
@@ -126,6 +129,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                         'sorted' => null,
                         'property_name' => 'test-2',
                         'format' => null,
+                        'format_function' => null,
                         'sortable' => false
                     )
                 ),
