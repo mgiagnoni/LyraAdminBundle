@@ -334,7 +334,8 @@ class AdminController extends ContainerAware
             $this->getSession()->set($this->getModelName().'.sort.order', $this->getRequest()->get('order'));
         }
 
-        $sort = array('field' => $this->getSession()->get($this->getModelName().'.field', null), 'order' => $this->getSession()->get($this->getModelName().'.sort.order', 'asc'));
+        $default = $this->getListRenderer()->getDefaultSort();
+        $sort = array('field' => $this->getSession()->get($this->getModelName().'.field', $default['field']), 'order' => $this->getSession()->get($this->getModelName().'.sort.order', $default['order']));
 
         return $sort;
     }

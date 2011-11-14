@@ -105,6 +105,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->options['list']['list_actions'];
     }
 
+    public function getDefaultSort()
+    {
+        return $this->options['list']['default_sort'];
+    }
+
     public function getActions()
     {
         return $this->options['actions'];
@@ -362,9 +367,13 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
         if (isset($sort['field'])) {
             $columns = $this->getColumns();
-            $column = $columns[$sort['field']];
+            if (isset($columns[$sort['field']])) {
+                $field = $columns[$sort['field']]['property_name'];
+            } else {
+                $field = $sort['field'];
+            }
 
-            $this->queryBuilder->orderBy($this->queryBuilder->getRootAlias().'.'.$column['property_name'], $sort['order']);
+            $this->queryBuilder->orderBy($this->queryBuilder->getRootAlias().'.'.$field, $sort['order']);
         }
     }
 

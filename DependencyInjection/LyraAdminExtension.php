@@ -90,7 +90,6 @@ class LyraAdminExtension extends Extension
             $container->setParameter(sprintf('lyra_admin.%s.filter.options', $name), array_diff_key($options, array('form' => null,'list' => null)));
             $container->setParameter(sprintf('lyra_admin.%s.class', $name), $options['class']);
         }
-
         $container->setParameter('lyra_admin.routes', $routes);
         $resources = array();
         if ($container->has('twig.form.resources')) {
