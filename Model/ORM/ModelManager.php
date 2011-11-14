@@ -85,17 +85,15 @@ class ModelManager extends BaseManager
     {
         $metadata = $this->em->getClassMetadata($this->class);
         $fields = array();
-        $mappings = $metadata->fieldMappings;
 
-        foreach ($mappings as $name => $attrs) {
-            $key = $attrs['columnName'];
-            $fields[$key]['name'] = $key;
-            $fields[$key]['type'] = $attrs['type'];
+        foreach ($metadata->fieldMappings as $name => $attrs) {
+            $fields[$name]['name'] = $name;
+            $fields[$name]['type'] = $attrs['type'];
             if (isset($attrs['id']) && $attrs['id'] === true) {
-                $fields[$key]['id'] = true;
+                $fields[$name]['id'] = true;
             }
             if (isset($attrs['length'])) {
-                $fields[$key]['length'] = $attrs['length'];
+                $fields[$name]['length'] = $attrs['length'];
             }
         }
 
