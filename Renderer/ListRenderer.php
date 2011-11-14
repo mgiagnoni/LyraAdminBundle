@@ -207,12 +207,13 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function getColValue($colName, $object)
     {
         $value = $object[$this->getColOption($colName, 'property_name')];
-        if ($format = $this->getColOption($colName,'format') || $function = $this->getColOption($colName,'format_function')) {
-            if ($function) {
-                $value = call_user_func($function, $value, $format, $object);
-            } else if($format) {
-                $value = sprintf($format, $value);
-            }
+        $function = $this->getColOption($colName,'format_function');
+        $format = $this->getColOption($colName,'format');
+
+        if ($function) {
+            $value = call_user_func($function, $value, $format, $object);
+        } else if($format) {
+            $value = sprintf($format, $value);
         }
 
         return $value;
@@ -259,7 +260,6 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function getColOption($colName, $key)
     {
         $columns = $this->getColumns();
-
         if (!array_key_exists($key,$columns[$colName])) {
            throw new \InvalidArgumentException(sprintf('Column option %s does not exist', $key));
         }
