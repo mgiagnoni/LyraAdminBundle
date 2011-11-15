@@ -80,6 +80,11 @@ class LyraAdminExtension extends Extension
                 if (!isset($attrs['property_name'])) {
                     $options['list']['columns'][$col]['property_name'] = $col;
                 }
+
+                if (isset($attrs['template'])) {
+                    $options['list']['columns'][$col]['type'] = 'template';
+                }
+
             }
 
             $options['theme'] = $config['theme'];

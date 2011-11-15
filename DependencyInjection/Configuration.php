@@ -234,6 +234,7 @@ class Configuration implements ConfigurationInterface
                                 ->defaultValue(array('_boolean_on','_boolean_off'))
                                 ->prototype('scalar')->end()
                             ->end()
+                            ->scalarNode('template')->end()
                         ->end()
                     ->end()
                 ->end()
