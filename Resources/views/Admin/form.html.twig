@@ -21,9 +21,9 @@
                 {% endif %}
                 <ol>
                 {% for field in group.fields %}
-                    {% set fld = form.fields[field] %}
-                    {% set name = fld.name  %}
-                    {% set view = form.view(field) %}
+                    {% set fld = not group.embed is defined ? form.fields[field] : '' %}
+                    {% set name = fld is empty ? field : fld.tag %}
+                    {% set view = form.view(group.embed|default(null)) %}
                     <li>
                     {{ form_errors(view[name]) }}
                     {% if not (fld.label is defined and fld.label is empty) %}

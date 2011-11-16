@@ -23,16 +23,16 @@ class BaseRendererTest extends \PHPUnit_Framework_TestCase
                 'type' => 'string',
                 'length' => 255,
                 'label' => 'test',
-                'form' => null,
                 'options' => array(),
-                'get_method' => 'getTest-1'
+                'get_method' => 'getTest-1',
+                'tag' => 'test-1'
             ),
             'test-2' => array(
                 'name' => 'test-2',
                 'type' => 'string',
-                'form' => null,
                 'options' => array(),
-                'get_method' => 'getTest-2'
+                'get_method' => 'getTest-2',
+                'tag' => 'test-2'
             )
         ), $renderer->getFields());
     }

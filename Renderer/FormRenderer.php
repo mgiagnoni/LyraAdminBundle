@@ -82,20 +82,13 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
         return $this->form;
     }
 
-    public function getView($field = null)
+    public function getView($form = null)
     {
         if (null === $this->formView) {
             $this->formView = $this->createFormView();
         }
 
-        if (null !== $field && $this->fields[$field]) {
-            $fields = $this->getFields();
-            if (null !== $form = $fields[$field]['form']) {
-                return $this->formView[$form];
-            }
-        }
-
-        return $this->formView;
+        return null === $form ? $this->formView : $this->formView[$form];
     }
 
     public function setGroups(array $groups)

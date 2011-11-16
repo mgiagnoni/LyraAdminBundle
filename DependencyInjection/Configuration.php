@@ -280,6 +280,7 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('caption')->defaultNull()->end()
                             ->scalarNode('break_after')->defaultFalse()->end()
+                            ->scalarNode('embed')->end()
                             ->arrayNode('fields')
                                 ->prototype('scalar')->end()
                             ->end()
