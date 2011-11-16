@@ -163,6 +163,7 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('label')->end()
                             ->scalarNode('type')->end()
+                            ->scalarNode('get_method')->end()
                             ->arrayNode('options')
                                 ->useAttributeAsKey('name')
                                 ->prototype('variable')->end()

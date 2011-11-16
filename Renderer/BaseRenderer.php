@@ -10,6 +10,7 @@
  */
 
 namespace Lyra\AdminBundle\Renderer;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Base class for all renderer services.
@@ -132,6 +133,12 @@ abstract class BaseRenderer
             unset($this->fields[$field]['options']);
             $this->fields[$field] = array_merge($attrs, $defaults, $this->fields[$field]);
             $this->fields[$field]['options'] = $options;
+        }
+
+        foreach ($this->fields as $field => $attrs) {
+            if (!isset($attrs['get_method'])) {
+                $this->fields[$field]['get_method'] = ($attrs['type'] == 'boolean' ? 'is' : 'get').Container::camelize($field);
+            }
         }
     }
 }

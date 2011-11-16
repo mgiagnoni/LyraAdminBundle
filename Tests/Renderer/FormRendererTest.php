@@ -41,7 +41,8 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
                 'name' => 'test',
                 'type' => 'text',
                 'form' => null,
-                'options' => array()
+                'options' => array(),
+                'get_method' => 'getTest'
             )
         ), $renderer->getFields());
 
@@ -92,13 +93,15 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
                 'type' => 'integer',
                 'form' => null,
                 'label' => 'test',
-                'options' => array()
+                'options' => array(),
+                'get_method' => 'getTest-1'
             ),
             'test-2' => array(
                 'name' => 'test-2',
                 'type' => 'string',
                 'form' => null,
-                'options' => array()
+                'options' => array(),
+                'get_method' => 'getTest-2'
             )
         ), $renderer->getFields());
     }

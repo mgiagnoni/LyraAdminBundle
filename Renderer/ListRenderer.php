@@ -166,7 +166,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
             ->select($alias)
             ->setFirstResult(($page - 1) * $maxRows)
             ->setMaxResults($maxRows)
-            ->getQuery()->getResult(Query::HYDRATE_ARRAY);
+            ->getQuery()->getResult();
     }
 
     public function getNbPages()
@@ -206,14 +206,21 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColValue($colName, $object)
     {
-        $value = $object[$this->getColOption($colName, 'property_name')];
-        $function = $this->getColOption($colName,'format_function');
-        $format = $this->getColOption($colName,'format');
+        $fields = $this->getFields();
+        $method = $fields[$colName]['get_method'];
+        $value = $object->$method();
+        $function = $this->getColOption($colName, 'format_function');
+        $format = $this->getColOption($colName, 'format');
+        $type = $this->getColOption($colName, 'type');
 
         if ($function) {
             $value = call_user_func($function, $value, $format, $object);
         } else if($format) {
-            $value = sprintf($format, $value);
+            if ('date' == $type || 'datetime' == $type) {
+                $value = $value->format($format);
+            } else {
+                $value = sprintf($format, $value);
+            }
         }
 
         return $value;
@@ -276,6 +283,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
             if(null === $type && isset($fields[$name])) {
                 $type = $fields[$name]['type'];
                 $this->columns[$name]['type'] = $type;
+            }
+
+            if ('date' == $type || 'datetime' == $type && !isset($attrs['format'])) {
+                //TODO: make default date format configurable
+                $this->columns[$name]['format'] = 'j/M/Y';
             }
 
             $class = '';

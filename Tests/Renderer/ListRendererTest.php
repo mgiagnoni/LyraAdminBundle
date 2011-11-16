@@ -51,7 +51,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'sorted' => null,
                 'sortable' => false,
                 'property_name' => 'test-2',
-                'format' => null,
+                'format' => 'j/M/Y',
                 'format_function' => null
             )
         ), $this->renderer->getColumns());
@@ -94,7 +94,13 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testGetColValue()
     {
-        $this->assertEquals('val-1', $this->renderer->getColValue('test-1', array('test-1' => 'val-1', 'test-2' => 'val-2')));
+        $options = $this->renderer->getOptions();
+        $options['fields']['test-1']['get_method'] = 'getField1';
+        $options['fields']['test-1']['options'] = array();
+        $this->renderer->setOptions($options);
+        $object = new \Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
+        $object->setField1('val-1');
+        $this->assertEquals('val-1', $this->renderer->getColValue('test-1', $object));
     }
     protected function setUp()
     {

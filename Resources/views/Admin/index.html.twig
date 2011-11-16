@@ -102,8 +102,6 @@
                                 {% block table_data_field %}
                                     {% if col.type == 'boolean' %}
                                         <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[{{ list.booleanAction(col.name, object) }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
-                                    {% elseif col.type == 'date' or col.type == 'datetime' %}
-                                        {{ object[col.name]|date(list.colFormat(col.name)|default("d/M/Y")) }}
                                     {% elseif col.type == 'template' %}
                                         {% include col.template %}
                                     {% else %}
