@@ -137,7 +137,7 @@ abstract class BaseRenderer
 
         foreach ($this->fields as $field => $attrs) {
             if (!isset($attrs['get_method'])) {
-                $this->fields[$field]['get_method'] = ($attrs['type'] == 'boolean' ? 'is' : 'get').Util::camelize($field);
+                $this->fields[$field]['get_method'] = 'get'.Util::camelize($field);
             }
             $this->fields[$field]['tag'] = Util::underscore($field);
         }
