@@ -160,7 +160,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         $maxRows = $this->options['list']['max_page_rows'];
         $qb = $this->getQueryBuilder();
         $alias = $qb->getRootAlias();
-        $page = min($this->getPage(), $this->getNbPages());
+        $page = min($this->getPage(), max(1, $this->getNbPages()));
 
         return $qb
             ->select($alias)
