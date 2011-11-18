@@ -42,6 +42,16 @@ class ModelManager extends BaseManager
         return $qb->getQuery()->getResult();
     }
 
+    public function setFieldValueByIds($field, $value, array $ids)
+    {
+        $qb = $this->getRepository()->createQueryBuilder('a');
+        $qb->update()
+            ->set('a.'.$field, $qb->expr()->literal($value))
+            ->where($qb->expr()->in('a.id', $ids));
+
+        return $qb->getQuery()->execute();
+    }
+
     public function getBaseListQueryBuilder()
     {
         $qb = $this->getRepository()

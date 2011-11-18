@@ -72,6 +72,15 @@ interface ModelManagerInterface
     function findByIds(array $ids);
 
     /**
+     * Sets a field value on multiple objects selected by primary key.
+     *
+     * @param string $field field name
+     * @param mixed $value value to set
+     * @param array $ids array of primary keys
+     */
+    function setFieldValueByIds($field, $value, array $ids);
+
+    /**
      * Gets the query builder to retrieve list results.
      *
      * @return mixed
