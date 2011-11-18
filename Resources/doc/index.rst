@@ -314,6 +314,62 @@ With these options ``Listing`` objects are searchable by title, posting date
 This feature is not fully implemented yet and it works only for string, datetime
 and boolean fields.
 
+Creating custom batch actions
+-----------------------------
+
+A batch action to delete multiple records is available by default. Here is
+how you can add your own custom batch actions, for example to publish/unpublish
+multiple listings::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                class: 'Acme\ClassifiedsBundle\Entity\Listing'
+                controller: 'AcmeClassifiedsBundle:Admin'
+                actions:
+                    publish:
+                        # text displayed in drop down list
+                        text: Publish
+                    unpublish:
+                        text: Unpublish
+                list:
+                    # ... #
+                    batch_actions: [publish,unpublish,delete]
+
+With the ``controller`` option you can use your own controller in place of
+the default controller provided by the bundle. This is needed now because you
+will write custom php code to process your batch actions::
+
+    // Acme/ClassifiedsBundle/Controller/AdminController.php
+
+    namespace Acme\ClassifiedsBundle\Controller;
+    use Lyra\AdminBundle\Controller\AdminController as BaseAdminController;
+
+    class AdminController extends BaseAdminController
+    {
+        protected function executeBatchPublish($ids)
+        {
+            $this->getModelManager()->setFieldValueByIds('published', true, $ids);
+        }
+
+        protected function executeBatchUnpublish($ids)
+        {
+            $this->getModelManager()->setFieldValueByIds('published', false, $ids);
+        }
+    }
+
+Your controller class must extend LyraAdminBundle base controller. A method
+created to process a batch action must be named ``executeBatch`` + action name.
+It will receive as argument an array containing the primary keys of selected
+records.
+
+**getModelManager()** is a shortcut method defined in base controller that
+returns an instance of the manager service for the ``listing`` model;
+**setFieldValueByIds()** is one of the methods provided by the manager service
+and allows you to modify a field value of multiple objects selected by primary key.
+
 Basic form configuration
 ------------------------
 
@@ -389,5 +445,61 @@ bundle configuration in this way::
 
 
 .. _Theme roller: http://jqueryui.com/themeroller/
+
+Configuration summary
+---------------------
+
+Below you will find an example with all the configuration options you have
+seen up to this point::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        theme: smoothness # or ui-lightness (default)
+        # additional themes installed in web/css/ui_themes
+        #theme: css/ui_themes/redmond
+        models:
+            listing:
+                class: 'Acme\ClassifiedsBundle\Entity\Listing'
+                controller: 'AcmeClassifiedsBundle:Admin'
+                actions:
+                    publish:
+                        # for batch actions it's the text displayed in drop down list
+                        text: Publish
+                    unpublish:
+                        text: Unpublish
+                    new:
+                        # for list/object actions it's the button text
+                        text: 'New listing'
+                        # button icon
+                        icon: circle-plus
+                list:
+                    title: Listings
+                    columns:
+                        ad_title: ~
+                        published:
+                            sortable: false
+                        posted_at:
+                            label: Date
+                            format: 'j/M/Y'
+                    batch_actions: [publish,unpublish,delete]
+                filter:
+                    # search dialog title
+                    title: Search listings
+                    fields:
+                        ad_title: ~
+                        posted_at: ~
+                        published: ~
+                form:
+                    groups:
+                        listing:
+                            # panel title
+                            caption: Listing
+                            fields: [ad_title,ad_text]
+                            # column break after this panel
+                            break_after: true
+                        status:
+                            caption: Status
+                            fields: [published,expires_at]
 
 [to be continued ...]
