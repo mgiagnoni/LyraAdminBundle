@@ -33,6 +33,11 @@ class RouteLoader extends FileLoader
 
         foreach ($this->options['models'] as $model => $options) {
             foreach ($options['actions'] as $action => $actionOpts) {
+
+                if (!isset($actionOpts['route_pattern'])) {
+                    continue;
+                }
+
                 $defaults = array_merge(array(
                     '_controller' => $options['controller'].':'.$action,
                     'lyra_admin_model' => $model,
