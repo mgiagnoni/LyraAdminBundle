@@ -47,6 +47,28 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
+        $this->addActionsSection($rootNode);
+
+        $models = $this->addModelsSection($rootNode);
+        $this->addModelFieldsSection($models);
+        $this->addModelActionsSection($models);
+
+        $list = $this->addModelListSection($models);
+        $this->addModelListColumnsSection($list);
+        $this->addModelListActionsSection($list);
+
+        $form = $this->addModelFormSection($models);
+        $this->addModelFormGroupsSection($form);
+        $this->addModelFormNewSection($form);
+        $this->addModelFormEditSection($form);
+
+        $filter = $this->addModelFilterSection($models);
+
+        return $treeBuilder;
+    }
+
+    private function addActionsSection(ArrayNodeDefinition $node)
+    {
         $actionDefaults = array(
             'index' => array(
                 'route_pattern' => 'list/{page}/{field}/{order}',
@@ -90,30 +112,29 @@ class Configuration implements ConfigurationInterface
             )
         );
 
-        $rootNode
+        $node
             ->children()
                 ->arrayNode('actions')
                     ->addDefaultsIfNotSet()
                     ->useAttributeAskey('name')
-                        ->beforeNormalization()
-                            ->always()
-                            ->then(function($v) use ($actionDefaults)
-                            {
-                                $actions = array();
+                    ->beforeNormalization()
+                        ->always()
+                        ->then(function($v) use ($actionDefaults)
+                        {
+                            $actions = array();
 
-                                foreach ($actionDefaults as $key => $options) {
-                                    if (isset($v[$key])) {
-                                        $actions[$key] = array_merge($options, $v[$key]);
-                                    } else {
-                                        $actions[$key] = $options;
-                                    }
+                            foreach ($actionDefaults as $key => $options) {
+                                if (isset($v[$key])) {
+                                    $actions[$key] = array_merge($options, $v[$key]);
+                                } else {
+                                    $actions[$key] = $options;
                                 }
-
-                                return $actions;
                             }
-                        )
-                        ->end()
 
+                            return $actions;
+                        }
+                    )
+                    ->end()
                     ->prototype('array')
                         ->children()
                             ->scalarNode('route_pattern')->end()
@@ -135,26 +156,27 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue($actionDefaults)
                 ->end()
             ->end();
+    }
 
-
-        $models = $rootNode
+    private function addModelsSection(ArrayNodeDefinition $node)
+    {
+       return $node
             ->children()
                 ->arrayNode('models')
                 ->useAttributeAskey('name')
-                ->prototype('array');
+                ->prototype('array')
+                    ->children()
+                        ->scalarNode('class')->isRequired()->end()
+                        ->scalarNode('controller')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin')->end()
+                        ->scalarNode('route_prefix')->end()
+                        ->scalarNode('route_pattern_prefix')->end()
+                        ->scalarNode('trans_domain')->defaultValue('LyraAdminBundle')->end()
+                    ->end();
+    }
 
-        $models
-            ->children()
-                ->scalarNode('class')->isRequired()->end()
-                ->scalarNode('controller')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin')->end()
-                ->scalarNode('route_prefix')->end()
-                ->scalarNode('route_pattern_prefix')->end()
-                ->scalarNode('trans_domain')->defaultValue('LyraAdminBundle')->end()
-            ->end();
-
-        // Fields
-
-        $models
+    private function addModelFieldsSection(ArrayNodeDefinition $node)
+    {
+        $node
             ->children()
                  ->arrayNode('fields')
                     ->addDefaultsIfNotSet()
@@ -172,10 +194,11 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
 
-        // Actions
-
-        $models
+    private function addModelActionsSection(ArrayNodeDefinition $node)
+    {
+        $node
             ->children()
                 ->arrayNode('actions')
                     ->addDefaultsIfNotSet()
@@ -200,27 +223,33 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
 
-        // List
-
-        $list = $models
+    private function addModelListSection(ArrayNodeDefinition $node)
+    {
+        return $node
             ->children()
                 ->arrayNode('list')
-                ->addDefaultsIfNotSet();
-
-        $list
-            ->children()
-                ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin:index.html.twig')->end()
-                ->scalarNode('max_page_rows')->defaultValue(20)->end()
-                ->scalarNode('title')->defaultNull()->end()
-                ->scalarNode('auto_labels')->defaultTrue()->end()
-                ->arrayNode('default_sort')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('field')->defaultNull()->end()
-                        ->scalarNode('order')->defaultValue('asc')->end()
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin:index.html.twig')->end()
+                    ->scalarNode('max_page_rows')->defaultValue(20)->end()
+                    ->scalarNode('title')->defaultNull()->end()
+                    ->scalarNode('auto_labels')->defaultTrue()->end()
+                    ->arrayNode('default_sort')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->scalarNode('field')->defaultNull()->end()
+                            ->scalarNode('order')->defaultValue('asc')->end()
+                        ->end()
                     ->end()
-                ->end()
+                ->end();
+    }
+
+    private function addModelListColumnsSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
                 ->arrayNode('columns')
                     ->useAttributeAskey('name')
                     ->prototype('array')
@@ -240,10 +269,11 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
 
-        // List actions
-
-        $list
+    private function addModelListActionsSection(ArrayNodeDefinition $node)
+    {
+        $node
             ->children()
                 ->arrayNode('object_actions')
                     ->defaultValue(array('edit','delete'))
@@ -258,21 +288,23 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
             ->end();
+    }
 
-        // Form
-
-        $form = $models
+    private function addModelFormSection(ArrayNodeDefinition $node)
+    {
+        return $node
             ->children()
                 ->arrayNode('form')
-                ->addDefaultsIfNotSet();
+                ->addDefaultsIfNotSet()
+                 ->children()
+                    ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin:form.html.twig')->end()
+                    ->scalarNode('class')->cannotBeEmpty()->defaultValue('Lyra\AdminBundle\Form\AdminFormType')->end()
+                ->end();
+    }
 
-        $form
-            ->children()
-                ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin:form.html.twig')->end()
-                ->scalarNode('class')->cannotBeEmpty()->defaultValue('Lyra\AdminBundle\Form\AdminFormType')->end()
-            ->end();
-
-        $form
+    private function addModelFormGroupsSection(ArrayNodeDefinition $node)
+    {
+        $node
             ->children()
                 ->arrayNode('groups')
                     ->useAttributeAsKey('name')
@@ -288,52 +320,35 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
+    }
 
-        $form
+    private function addModelFormNewSection(ArrayNodeDefinition $node)
+    {
+        $new = $node
             ->children()
                 ->arrayNode('new')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('title')->defaultValue('New')->end()
-                        ->arrayNode('groups')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('caption')->defaultNull()->end()
-                                    ->scalarNode('break_after')->defaultFalse()->end()
-                                    ->arrayNode('fields')
-                                        ->prototype('scalar')->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
+                    ->end();
+        $this->addModelFormGroupsSection($new);
+    }
 
-        $form
+    private function addModelFormEditSection(ArrayNodeDefinition $node)
+    {
+        $edit = $node
             ->children()
                 ->arrayNode('edit')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('title')->defaultValue('Edit')->end()
-                        ->arrayNode('groups')
-                            ->useAttributeAsKey('name')
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('caption')->defaultNull()->end()
-                                    ->scalarNode('break_after')->defaultFalse()->end()
-                                    ->arrayNode('fields')
-                                        ->prototype('scalar')->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
+                    ->end();
+        $this->addModelFormGroupsSection($edit);
+    }
 
-        $filter = $models
+    private function addModelFilterSection(ArrayNodeDefinition $node)
+    {
+        $node
             ->children()
                 ->arrayNode('filter')
                     ->addDefaultsIfNotSet()
@@ -350,7 +365,5 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
             ->end();
-
-        return $treeBuilder;
     }
 }
