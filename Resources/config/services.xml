@@ -20,11 +20,11 @@
             <argument type="service" id="form.factory" />
         </service>
 
-        <service id="lyra_admin.renderer_factory" class="%lyra_admin.renderer_factory.class%" scope="request">
+        <service id="lyra_admin.renderer_factory" class="%lyra_admin.renderer_factory.class%">
             <argument type="service" id="service_container" />
         </service>
 
-        <service id="lyra_admin.model_manager_factory" class="%lyra_admin.model_manager_factory.class%" scope="request">
+        <service id="lyra_admin.model_manager_factory" class="%lyra_admin.model_manager_factory.class%">
             <argument type="service" id="service_container" />
         </service>
 
