@@ -50,7 +50,9 @@ table.ly-list th.datetime, table.ly-list th.date {
 table.ly-list th.boolean {
     width: 7em;
 }
-
+table.ly-list th.object-actions {
+    width: 12em;
+}
 table.ly-list td.boolean {
     text-align: center;
 }
