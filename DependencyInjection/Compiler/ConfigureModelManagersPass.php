@@ -23,10 +23,8 @@ class ConfigureModelManagersPass implements CompilerPassInterface
 
             $definition = $container->getDefinition($id);
             $arguments = $definition->getArguments();
-
             $reference = new Reference('doctrine.orm.entity_manager');
             $definition->setArguments(array($reference));
-
         }
     }
 }

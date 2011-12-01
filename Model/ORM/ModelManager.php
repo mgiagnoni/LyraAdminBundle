@@ -90,33 +90,4 @@ class ModelManager extends BaseManager
 
         $this->em->flush();
     }
-
-    public function getFieldsInfo()
-    {
-        $metadata = $this->em->getClassMetadata($this->class);
-        $fields = array();
-
-        foreach ($metadata->fieldMappings as $name => $attrs) {
-            $fields[$name]['name'] = $name;
-            $fields[$name]['type'] = $attrs['type'];
-            if (isset($attrs['id']) && $attrs['id'] === true) {
-                $fields[$name]['id'] = true;
-            }
-            if (isset($attrs['length'])) {
-                $fields[$name]['length'] = $attrs['length'];
-            }
-        }
-
-        foreach ($metadata->associationMappings as $name => $attrs) {
-            if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type'] || ClassMetadataInfo::MANY_TO_MANY == $attrs['type']) {
-                $fields[$name]['type'] = 'entity';
-                $fields[$name]['options'] = array(
-                    'class' => $attrs['targetEntity'],
-                    'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
-                );
-            }
-        }
-
-        return $fields;
-    }
-}
+ }

@@ -93,11 +93,4 @@ interface ModelManagerInterface
      * @return mixed
      */
     function getRepository();
-
-    /**
-     * Gets fields informations extracted from class metadata.
-     *
-     * @return array
-     */
-    function getFieldsInfo();
 }

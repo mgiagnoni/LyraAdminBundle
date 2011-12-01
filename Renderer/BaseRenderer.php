@@ -34,16 +34,6 @@ abstract class BaseRenderer
      */
     protected $routeParams = array();
 
-    /**
-     * @var array
-     */
-    protected $fields;
-
-    /**
-     * @var array
-     */
-    protected $metadata = array();
-
     protected $securityContext;
 
     public function __construct(array $options = array())
@@ -103,22 +93,7 @@ abstract class BaseRenderer
 
     public function getFields()
     {
-        if (null === $this->fields) {
-            $this->fields = $this->options['fields'];
-            $this->setFieldsDefaults();
-        }
-
-        return $this->fields;
-    }
-
-    public function setMetadata(array $metadata)
-    {
-        $this->metadata = $metadata;
-    }
-
-    public function getMetadata()
-    {
-        return $this->metadata;
+        return $this->fields = $this->options['fields'];
     }
 
     public function isActionAllowed($action)
@@ -135,36 +110,5 @@ abstract class BaseRenderer
         }
 
         return false;
-    }
-
-    protected function setFieldsDefaults()
-    {
-        foreach ($this->getMetadata() as $field => $attrs) {
-            if (isset($attrs['id']) && $attrs['id'] === true) {
-                continue;
-            }
-            $defaults = array('name' => $field, 'options' => array());
-            if (!isset($this->fields[$field])) {
-                $this->fields[$field] = $defaults;
-            }
-
-            if (isset($attrs['options'])) {
-                $options = $attrs['options'];
-            } else {
-                $options = array();
-            }
-
-            $options = array_merge($options, $this->fields[$field]['options']);
-            unset($this->fields[$field]['options']);
-            $this->fields[$field] = array_merge($attrs, $defaults, $this->fields[$field]);
-            $this->fields[$field]['options'] = $options;
-        }
-
-        foreach ($this->fields as $field => $attrs) {
-            if (!isset($attrs['get_method'])) {
-                $this->fields[$field]['get_method'] = 'get'.Util::camelize($field);
-            }
-            $this->fields[$field]['tag'] = Util::underscore($field);
-        }
     }
 }

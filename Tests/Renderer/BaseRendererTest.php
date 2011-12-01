@@ -24,15 +24,11 @@ class BaseRendererTest extends \PHPUnit_Framework_TestCase
                 'length' => 255,
                 'label' => 'test',
                 'options' => array(),
-                'get_method' => 'getTest-1',
-                'tag' => 'test-1'
             ),
             'test-2' => array(
                 'name' => 'test-2',
                 'type' => 'string',
                 'options' => array(),
-                'get_method' => 'getTest-2',
-                'tag' => 'test-2'
             )
         ), $renderer->getFields());
     }
@@ -62,31 +58,13 @@ class BaseRendererTest extends \PHPUnit_Framework_TestCase
     {
         $mock = $this->getMockForAbstractClass('Lyra\AdminBundle\Renderer\BaseRenderer');
 
-        $metadata = array(
-            'id' => array(
-                'name' => 'id',
-                'type' => 'integer',
-                'id' => true
-            ),
-            'test-1' => array(
-                'name' => 'test-1',
-                'type' => 'string',
-                'length' => 255
-            ),
-            'test-2' => array(
-                'name' => 'test-2',
-                'type' => 'datetime'
-            )
-        );
-        $mock->setMetadata($metadata);
-
         $options = array(
             'trans_domain' => 'LyraAdminBundle',
             'route_prefix' => 'test_prefix',
             'theme' => 'test_theme',
             'fields' => array(
-                'test-1' => array('label' => 'test', 'options' => array()),
-                'test-2' => array('type' => 'string', 'options' => array())
+                'test-1' => array('name' => 'test-1', 'type' => 'string', 'length' => 255, 'label' => 'test', 'options' => array()),
+                'test-2' => array('name' => 'test-2', 'type' => 'datetime', 'type' => 'string', 'options' => array())
             )
         );
         $mock->setOptions($options);

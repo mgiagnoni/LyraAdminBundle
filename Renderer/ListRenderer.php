@@ -283,48 +283,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     protected function initColumns()
     {
         $sort = $this->getSort();
-        $fields = $this->getFields();
-        foreach ($this->columns as $name => $attrs) {
-            $type = $attrs['type'];
-            if(null === $type && isset($fields[$name])) {
-                $type = $fields[$name]['type'];
-                $this->columns[$name]['type'] = $type;
-            }
 
-            if ('date' == $type || 'datetime' == $type && !isset($attrs['format'])) {
-                //TODO: make default date format configurable
-                $this->columns[$name]['format'] = 'j/M/Y';
-            }
-
-            $class = '';
-            if ('boolean' == $type) {
-                $class .= $type;
-            }
-
-            if ($class) {
-                $class = 'class="'.trim($class).'"';
-            }
-
-            $this->columns[$name]['class'] = $class;
-
-            $class = '';
-            if ($this->columns[$name]['sortable']) {
-                $class = 'sortable';
-                if ($sort['field'] == $name) {
-                    $this->columns[$name]['sorted'] = true;
-                    $this->columns[$name]['sort'] = $sort['order'];
-                    $class = 'sorted-'.$sort['order'];
-                }
-            }
-
-            $class .= ' col-'.$name.' '.$type;
-
-            if ($class) {
-                $class = 'class="'.trim($class).'"';
-            }
-
-            $this->columns[$name]['th_class'] = $class;
-
+        if ($sorted = $sort['field']) {
+            $this->columns[$sorted]['sorted'] = true;
+            $this->columns[$sorted]['sort'] = $sort['order'];
+            $this->columns[$sorted]['th_class'] = str_replace('sortable', 'sorted-'.$sort['order'], $this->columns[$sorted]['th_class']);
         }
     }
 

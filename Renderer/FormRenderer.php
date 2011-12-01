@@ -131,6 +131,7 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
     {
         $typeClass = $this->options['form']['class'];
         $fields = $this->getFields();
+
         $existing = array();
 
         foreach ($this->getGroups() as $group) {

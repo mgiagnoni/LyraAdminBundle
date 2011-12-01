@@ -17,7 +17,6 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
 {
     protected $factory;
     protected $options;
-    protected $metadata;
 
     public function testGetTitle()
     {
@@ -54,7 +53,6 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
     public function testGetFilterFields()
     {
         $renderer = new FilterRenderer($this->factory, $this->options);
-        $renderer->setMetadata($this->metadata);
 
         $this->assertEquals(array(
             'field1' => array('type' => 'text'),
@@ -81,15 +79,9 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
         $this->options = array('filter' => array(
             'title' => 'test',
             'fields' => array(
-                'field1' => array(),
-                'field2' => array(),
+                'field1' => array('type' => 'text'),
+                'field2' => array('type' => 'boolean'),
             )
         ));
-
-        $this->metadata = array(
-            'field1' => array('type' => 'text'),
-            'field2' => array('type' => 'boolean')
-        );
     }
-
 }

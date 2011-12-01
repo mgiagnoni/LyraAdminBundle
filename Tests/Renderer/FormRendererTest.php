@@ -41,21 +41,17 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
         $factory = $this->getMockFormFactory();
         $renderer = new FormRenderer($factory);
 
-        $metadata = array(
-            'test-1' => array(
-                'name' => 'test-1',
-                'type' => 'integer',
-            ),
-            'test-2' => array(
-                'name' => 'test-2',
-                'type' => 'text'
-            ),
-        );
-
-        $renderer->setMetadata($metadata);
-
         $options = array(
-            'fields' => array(),
+            'fields' => array(
+                'test-1' => array(
+                    'name' => 'test-1',
+                    'type' => 'integer',
+                ),
+                'test-2' => array(
+                    'name' => 'test-2',
+                    'type' => 'text'
+                ),
+            ),
             'form' => array(
                 'groups' => array('main' => array(
                     'fields' => array('test-1', 'test-2')

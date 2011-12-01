@@ -38,10 +38,6 @@ class RendererFactory implements RendererFactoryInterface, ContainerAwareInterfa
             $name = $this->getModelName();
         }
 
-        $factory = $this->container->get('lyra_admin.model_manager_factory');
-        $manager = $factory->getModelManager($name);
-
-        $renderer->setMetadata($manager->getFieldsInfo());
         $renderer->setName($name);
         $renderer->setOptions($this->container->getParameter(sprintf('lyra_admin.%s.list.options', $name)));
 
@@ -56,11 +52,6 @@ class RendererFactory implements RendererFactoryInterface, ContainerAwareInterfa
             $name = $this->getModelName();
         }
 
-        $factory = $this->container->get('lyra_admin.model_manager_factory');
-        $manager = $factory->getModelManager($name);
-
-        $fields = $manager->getFieldsInfo();
-        $renderer->setMetadata($fields);
         $renderer->setName($name);
         $renderer->setOptions($this->container->getParameter(sprintf('lyra_admin.%s.form.options', $name)));
         $renderer->setAction($this->container->get('request')->get('lyra_admin_action'));
@@ -89,11 +80,6 @@ class RendererFactory implements RendererFactoryInterface, ContainerAwareInterfa
             $name = $this->getModelName();
         }
 
-        $factory = $this->container->get('lyra_admin.model_manager_factory');
-        $manager = $factory->getModelManager($name);
-
-        $fields = $manager->getFieldsInfo();
-        $renderer->setMetadata($fields);
         $renderer->setName($name);
         $renderer->setOptions($this->container->getParameter(sprintf('lyra_admin.%s.filter.options', $name)));
 

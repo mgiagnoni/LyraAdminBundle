@@ -31,11 +31,10 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(array(
             'test-1' => array(
+                'type' => 'string',
                 'name' => 'test-1',
                 'label' => 'Test 1',
-                'type' => 'string',
-                'class' => null,
-                'th_class' => 'class="sortable col-test-1 string"',
+                'th_class' => 'sortable',
                 'sorted' => null,
                 'sortable' => true,
                 'property_name' => 'test-1',
@@ -43,11 +42,10 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'format_function' => null
             ),
             'test-2' => array(
+                'type' => 'datetime',
                 'name' => 'test-2',
                 'label' => 'Test 2',
-                'type' => 'datetime',
-                'class' => null,
-                'th_class' => 'class="col-test-2 datetime"',
+                'th_class' => '',
                 'sorted' => null,
                 'sortable' => false,
                 'property_name' => 'test-2',
@@ -62,7 +60,6 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         $renderer = new ListRenderer($this->getOptions());
         $renderer->setSort(array('field' => 'test-1', 'order' => 'desc'));
         $renderer->setName('test');
-        $renderer->setMetadata($this->getMetadata());
 
         $cols = $renderer->getColumns();
 
@@ -105,7 +102,6 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->renderer = new ListRenderer($this->getOptions());
-        $this->renderer->setMetadata($this->getMetadata());
         $this->renderer->setName('test');
         $this->renderer->setSort(array('field' => null, 'order' => null));
     }
@@ -120,24 +116,26 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'default_sort' => array('field' => null, 'order' => 'asc'),
                 'columns' => array(
                     'test-1' => array(
+                        'type' => 'string',
                         'name' => 'test-1',
                         'label' => 'Test 1',
-                        'type' => null,
                         'sorted' => null,
                         'property_name' => 'test-1',
                         'format' => null,
                         'format_function' => null,
-                        'sortable' => true
+                        'sortable' => true,
+                        'th_class' => 'sortable'
                     ),
                     'test-2' => array(
+                        'type' => 'datetime',
                         'name' => 'test-2',
                         'label' => 'Test 2',
-                        'type' => null,
                         'sorted' => null,
                         'property_name' => 'test-2',
-                        'format' => null,
+                        'format' => 'j/M/Y',
                         'format_function' => null,
-                        'sortable' => false
+                        'sortable' => false,
+                        'th_class' => ''
                     )
                 ),
                 'object_actions' => array('edit', 'delete'),
@@ -148,22 +146,5 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         );
 
         return $options;
-    }
-
-    private function getMetadata()
-    {
-        $metadata = array(
-            'test-1' => array(
-                'name' => 'test-1',
-                'type' => 'string',
-                'length' => 255
-            ),
-            'test-2' => array(
-                'name' => 'test-2',
-                'type' => 'datetime'
-            )
-        );
-
-        return $metadata;
     }
 }
