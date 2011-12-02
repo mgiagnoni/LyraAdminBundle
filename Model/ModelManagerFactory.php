@@ -36,12 +36,11 @@ class ModelManagerFactory implements ModelManagerFactoryInterface, ContainerAwar
 
     public function getModelManager($name = null)
     {
-        $manager = $this->container->get('lyra_admin.model_manager');
-
         if (null === $name) {
             $name = $this->getModelName();
         }
 
+        $manager = $this->container->get(sprintf('lyra_admin.%s.model_manager', $name));
         $manager->setClass($this->container->getParameter(sprintf('lyra_admin.%s.class', $name)));
 
         return $manager;

@@ -63,6 +63,7 @@ class Configuration implements ConfigurationInterface
         $this->addModelFormEditSection($form);
 
         $filter = $this->addModelFilterSection($models);
+        $this->addModelServicesSection($models);
 
         return $treeBuilder;
     }
@@ -363,6 +364,18 @@ class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                ->end()
+            ->end();
+    }
+
+    private function addModelServicesSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('services')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('model_manager')->defaultValue('lyra_admin.default.model_manager')->end()
                 ->end()
             ->end();
     }

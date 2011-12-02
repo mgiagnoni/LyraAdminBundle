@@ -87,6 +87,7 @@ class LyraAdminExtension extends Extension
 
             }
 
+            $container->setAlias(sprintf('lyra_admin.%s.model_manager', $name), $options['services']['model_manager']);
             $options['theme'] = $config['theme'];
             $container->setParameter(sprintf('lyra_admin.%s.options', $name), $options);
             $container->setParameter(sprintf('lyra_admin.%s.actions.options', $name), array_diff_key($options, array('form' => null,'list'=>null)));
