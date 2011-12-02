@@ -69,7 +69,7 @@ jQuery().ready(function() {
             showSearch();
         });
 
-    $(".action-delete")
+    $(".dialog")
         .click(function(e) {
             e.preventDefault();
 

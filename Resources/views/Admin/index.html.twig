@@ -18,7 +18,7 @@
         <div class="list-actions">
         {% for action in list.listActions %}
             {% set act = list.actions[action] %}
-            <a href="{{ path(list.routePrefix~'_'~action) }}" class="button action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+            <a href="{{ path(list.routePrefix~'_'~action) }}" class="button action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}{{ act.dialog is defined ? ' dialog' : ''}}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
         {% endfor %}
         </div>
     {% endblock %}
@@ -115,7 +115,7 @@
                             {% block table_object_actions %}
                                 {% for action in list.objectActions %}
                                     {% set act = list.actions[action] %}
-                                    <a href="{{ path(list.routePrefix~'_'~action, { 'id' : object.id }) }}" class="button icon-only action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+                                    <a href="{{ path(list.routePrefix~'_'~action, { 'id' : object.id }) }}" class="button icon-only action-{{ action }}{{ act.dialog is defined ? ' dialog' : ''}}{{ act.icon ? ' ui-icon-'~act.icon : '' }}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
                                 {% endfor %}
                             {% endblock %}
                         </td>
