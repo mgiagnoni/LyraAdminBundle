@@ -36,7 +36,8 @@ class AdminController extends ContainerAware
         return $this->container->get('templating')
             ->renderResponse($listRenderer->getTemplate(), array(
                 'renderer' => $listRenderer,
-                'filter' => $filterRenderer
+                'filter' => $filterRenderer,
+                'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list')
             ));
     }
 
@@ -94,14 +95,13 @@ class AdminController extends ContainerAware
     public function deleteAction($id)
     {
         $object = $this->getModelManager()->find($id);
+        $request = $this->getRequest();
 
-        $form = $this->container->get('form.factory')
-            ->createBuilder('form')
-            ->getForm();
-
-        if ('POST' === $this->getRequest()->getMethod()) {
-            $this->getModelManager()->remove($object);
-            $this->setFlash('lyra_admin success', 'flash.delete.success');
+        if ('POST' === $request->getMethod()) {
+            if ($this->container->get('form.csrf_provider')->isCsrfTokenValid('delete', $request->get('_token'))) {
+                $this->getModelManager()->remove($object);
+                $this->setFlash('lyra_admin success', 'flash.delete.success');
+            }
 
             return $this->getRedirectToListResponse();
         }
@@ -112,7 +112,7 @@ class AdminController extends ContainerAware
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Admin:delete.html.twig', array(
                 'object' => $object,
-                'form' => $form->createView(),
+                'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('delete'),
                 'renderer' => $renderer
             ));
     }
@@ -290,13 +290,11 @@ class AdminController extends ContainerAware
 
     protected function executeBatchDelete($ids)
     {
-        $form = $this->container->get('form.factory')
-            ->createBuilder('form')
-            ->getForm();
-
         if ($this->getRequest()->get('batch_confirm')) {
-            $this->setFlash('lyra_admin success', 'flash.batch_delete.success');
-            $this->getModelManager()->removeByIds($ids);
+            if ($this->container->get('form.csrf_provider')->isCsrfTokenValid('batch_delete', $this->getRequest()->get('_token'))) {
+                $this->setFlash('lyra_admin success', 'flash.batch_delete.success');
+                $this->getModelManager()->removeByIds($ids);
+            }
 
             return $this->getRedirectToListResponse();
         }
@@ -307,18 +305,20 @@ class AdminController extends ContainerAware
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Admin:batch_dialog.html.twig', array(
                 'ids' => $ids,
-                'form' => $form->createView(),
-                'renderer' => $renderer
+                'renderer' => $renderer,
+                'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('batch_delete'),
             ));
     }
 
     protected function executeBoolean($id, $colName, $colValue)
     {
         if ($this->getListRenderer()->hasBooleanActions($colName)) {
-            $object = $this->getModelManager()->find($id);
-            $method = 'set'.ucfirst($colName);
-            $object->$method($colValue);
-            $this->getModelManager()->save($object);
+            if ($this->container->get('form.csrf_provider')->isCsrfTokenValid('list', $this->getRequest()->get('_token'))) {
+                $object = $this->getModelManager()->find($id);
+                $method = 'set'.ucfirst($colName);
+                $object->$method($colValue);
+                $this->getModelManager()->save($object);
+            }
         }
     }
 

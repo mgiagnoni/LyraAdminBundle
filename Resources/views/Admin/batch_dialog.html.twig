@@ -12,7 +12,7 @@
     {% for id in ids %}
         <input type="hidden" name="ids[]" value="{{ id }}" />
     {% endfor %}
-    {{ form_rest(form) }}
+    <input type="hidden" name="_token" value="{{ csrf }}" />
     <hr class="clear" />
     <input type="submit" name ="action[batch]" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
     <a href="{{ path(dialog.routePrefix~'_index') }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>

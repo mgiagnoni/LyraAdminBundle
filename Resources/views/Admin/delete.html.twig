@@ -7,7 +7,7 @@
 {% block form %}
     <p>{{ dialog.message|transchoice(1, {'%object%': object}, 'LyraAdminBundle') }}</p>
     <form id="ly-form" action="{{ path(dialog.routePrefix~'_'~dialog.action, dialog.routeParams) }}" method="post">
-    {{ form_rest(form) }}
+    <input type="hidden" name="_token" value="{{ csrf }}" />
     <hr class="clear" />
     <input type="submit" name ="submit" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
     <a href="{{ path(dialog.routePrefix~'_index') }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>

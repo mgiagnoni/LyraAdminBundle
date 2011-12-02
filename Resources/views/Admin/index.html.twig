@@ -142,6 +142,7 @@
             </div>
         {% endif %}
     {% endblock batch_actions %}
+    <input type="hidden" name="_token" value="{{ csrf }}" />
     </form>
     {% block filter %}
         {% include 'LyraAdminBundle:Admin:filter_form.html.twig' %}
