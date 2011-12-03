@@ -446,8 +446,7 @@ but for more complex tasks you should avoid to stuff everything inside a control
 as this will make a lot more difficult to reuse the code.
 
 A far better solution involves the creation of a custom model manager for the
-``Listing`` object and will be explained below (see 'Extending model manager services',
-not yet there :) ).
+``Listing`` object and will be explained below (see 'Extending model manager services').
 
 Basic form configuration
 ------------------------
@@ -528,7 +527,83 @@ bundle configuration in this way::
 Extending model manager services
 --------------------------------
 
-(coming soon)
+All the essential operations needed to manage objects (create, update,
+delete, find and more) are performed by a model manager service.
+A default model manager is provided by the bundle and can be extended by
+user defined model managers.
+
+By definining a model manager for the ``Listing`` object you will be able
+to clean up the controller that executes the custom list action to delete
+expired listings. First create your service class::
+
+    // Acme/ClassifiedsBundle/Model/ListingManager.php
+
+    namespace Acme\ClassifiedsBundle\Model;
+
+    use Lyra\AdminBundle\Model\ORM\ModelManager as BaseManager;
+
+    class ListingManager extends BaseManager
+    {
+        public function deleteExpiredListings()
+        {
+            $this->getRepository()->createQueryBuilder('a')
+                ->delete()
+                ->where('a.expires_at < :d')
+                ->setParameter('d', new \DateTime('now'))
+                ->getQuery()->execute();
+
+            return true;
+        }
+    }
+
+You must extend the base model manager provided by LyraAdminBundle as
+default functionalities cannot be lost. Define your service in configuration::
+
+    // app/config/config.yml
+
+    services:
+        classifieds_listing_manager:
+            class: Acme\ClassifiedsBundle\Model\ListingManager
+            tags:
+                -  { name: lyra_admin.model_manager }
+
+The tag ``lyra_admin.model_manager`` allows LyraAdminBundle to recognize the
+service as model manager and appropriately configure it. Finally change the
+configuration of the ``Listing`` model to use your custom manager::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                services:
+                    # service id of user defined model manager
+                    model_manager: classifieds_listing_manager
+
+The controller used by the custom action to delete expired listings can now
+be cleaned up::
+
+    // Acme/ClassifiedsBundle/Controller/AdminController.php
+
+    namespace Acme\ClassifiedsBundle\Controller;
+    use Lyra\AdminBundle\Controller\AdminController as BaseAdminController;
+
+    class AdminController extends BaseAdminController
+    {
+
+        public function expiredAction()
+        {
+            if ('POST' === $this->getRequest()->getMethod()) {
+                if ($this->getModelManager()->deleteExpiredListings()) {
+                    $this->setFlash('acme_classifieds success', 'Expired ads have been successfully deleted');
+                }
+
+                return $this->getRedirectToListResponse();
+            }
+                // No changes from here
+        }
+    }
 
 Configuration summary
 ---------------------
@@ -593,5 +668,9 @@ seen up to this point::
                         status:
                             caption: Status
                             fields: [published,expires_at]
+                services:
+                    # service id of user defined model manager
+                    model_manager: classifieds_listing_manager
+
 
 [to be continued ...]
