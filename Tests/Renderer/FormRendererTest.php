@@ -60,7 +60,8 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
                 'groups' => array('main' => array(
                     'fields' => array('test-1', 'test-2')
                 )),
-                'new' => array('groups' => array())
+                'new' => array('groups' => array()),
+                'edit' => array('groups' => array())
             )
         );
 
@@ -82,6 +83,15 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array(
             'main' => array(
                 'fields' =>  array('test-1')
+            )
+        ), $renderer->getGroups());
+
+        $renderer->setOptions($options);
+        $renderer->setAction('edit');
+
+        $this->assertEquals(array(
+            'main' => array(
+                'fields' =>  array('test-1', 'test-2')
             )
         ), $renderer->getGroups());
     }
