@@ -16,3 +16,5 @@ MIT license
     Resources/meta/LICENSE
 
 ![List](http://i1180.photobucket.com/albums/x402/mgiagnoni/lyra_admin_small.png)
+
+[More screenshots](https://github.com/mgiagnoni/LyraAdminBundle/wiki)
