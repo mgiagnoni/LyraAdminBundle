@@ -370,6 +370,85 @@ returns an instance of the manager service for the ``listing`` model;
 **setFieldValueByIds()** is one of the methods provided by the manager service
 and allows you to modify a field value of multiple objects selected by primary key.
 
+Creating custom list actions
+----------------------------
+
+You can also create buttons to perform administrative tasks. Assuming for example
+that you want to provide backend users with a quick way to delete all expired
+listings, you can configure a custom **list action**::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                actions:
+                    expired:
+                        # action route is admin/listing/expired
+                        route_pattern: expired
+                        text: 'Delete expired'
+                        icon: trash
+                        dialog:
+                            title: 'Confirm delete expired'
+                            message: 'Do you really want to delete all expired listings?'
+                    # ... #
+                list:
+                    # ... #
+                    list_actions: [new,expired]
+
+Because this action will permanently remove records from the database it's a
+good idea to configure a confirmation dialog. Note that in ``list_actions``
+option you need to also include the default list action ``new`` or it will be
+removed.
+
+The code that will be executed when the button is pressed and confirmation given
+goes in the controller class you have already created for custom batch actions::
+
+    // Acme/ClassifiedsBundle/Controller/AdminController.php
+
+    namespace Acme\ClassifiedsBundle\Controller;
+    use Lyra\AdminBundle\Controller\AdminController as BaseAdminController;
+
+    class AdminController extends BaseAdminController
+    {
+
+        public function expiredAction()
+        {
+            if ('POST' === $this->getRequest()->getMethod()) {
+                $this->getModelManager()->getRepository()->createQueryBuilder('a')
+                    ->delete()->where('a.expires_at < :d')
+                    ->setParameter('d', new \DateTime('now'))
+                    ->getQuery()->execute();
+
+                $this->setFlash('acme_classifieds success', 'Expired ads have been successfully deleted');
+
+                return $this->getRedirectToListResponse();
+            }
+
+            $renderer = $this->getDialogRenderer();
+
+            return $this->container->get('templating')
+                ->renderResponse('LyraAdminBundle:Admin:dialog.html.twig', array(
+                    'renderer' => $renderer
+            ));
+        }
+
+        // ...
+    }
+
+When a confirmation dialog is configured, the controller displays the dialog
+when the request method is GET and performs the action task when the method
+is POST (i.e user has given confirmation through the dialog window).
+
+This solution works and it's maybe acceptable for a simple action like this,
+but for more complex tasks you should avoid to stuff everything inside a controller
+as this will make a lot more difficult to reuse the code.
+
+A far better solution involves the creation of a custom model manager for the
+``Listing`` object and will be explained below (see 'Extending model manager services',
+not yet there :) ).
+
 Basic form configuration
 ------------------------
 
@@ -446,6 +525,11 @@ bundle configuration in this way::
 
 .. _Theme roller: http://jqueryui.com/themeroller/
 
+Extending model manager services
+--------------------------------
+
+(coming soon)
+
 Configuration summary
 ---------------------
 
@@ -473,6 +557,13 @@ seen up to this point::
                         text: 'New listing'
                         # button icon
                         icon: circle-plus
+                    expired:
+                        route_pattern: expired
+                        text: 'Delete expired'
+                        icon: trash
+                        dialog:
+                            title: 'Confirm delete expired'
+                            message: 'Do you really want to delete all expired listings?'
                 list:
                     title: Listings
                     columns:
@@ -483,6 +574,7 @@ seen up to this point::
                             label: Date
                             format: 'j/M/Y'
                     batch_actions: [publish,unpublish,delete]
+                    list_actions: [new,expired]
                 filter:
                     # search dialog title
                     title: Search listings
