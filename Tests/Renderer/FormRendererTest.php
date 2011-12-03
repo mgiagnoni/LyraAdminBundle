@@ -6,27 +6,18 @@ use Lyra\AdminBundle\Renderer\FormRenderer;
 
 class FormRendererTest extends \PHPUnit_Framework_TestCase
 {
-    public function testDefaults()
+    public function testGetGroups()
     {
         $factory = $this->getMockFormFactory();
         $renderer = new FormRenderer($factory);
 
-        $metadata = array(
-            'id' => array(
-                'name' => 'id',
-                'type' => 'integer',
-                'id' => true
-            ),
-            'test' => array(
-                'name' => 'test',
-                'type' => 'text'
-            ),
-        );
-
-        $renderer->setMetadata($metadata);
-
         $options = array(
-            'fields' => array(),
+            'fields' => array(
+                'test' => array(
+                    'name' => 'test',
+                    'type' => 'text'
+                ),
+            ),
             'form' => array(
                 'groups' => array(),
                 'new' => array('groups' => array())
@@ -35,16 +26,6 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
 
         $renderer->setOptions($options);
         $renderer->setAction('new');
-
-        $this->assertEquals(array(
-            'test' => array(
-                'name' => 'test',
-                'type' => 'text',
-                'options' => array(),
-                'get_method' => 'getTest',
-                'tag' => 'test'
-            )
-        ), $renderer->getFields());
 
         $this->assertEquals(array(
             'main' => array(
@@ -53,57 +34,6 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
                 'fields' => array('test')
                 )
             ), $renderer->getGroups());
-    }
-
-    public function testMergeFields()
-    {
-        $factory = $this->getMockFormFactory();
-        $renderer = new FormRenderer($factory);
-
-        $metadata = array(
-            'test-1' => array(
-                'name' => 'test-1',
-                'type' => 'integer',
-            ),
-            'test-2' => array(
-                'name' => 'test-2',
-                'type' => 'text'
-            ),
-        );
-
-        $renderer->setMetadata($metadata);
-
-        $options = array(
-            'fields' => array(
-                'test-1' => array('label' => 'test', 'options' => array()),
-                'test-2' => array('type' => 'string', 'options' => array())
-            ),
-            'form' => array(
-                'groups' => array(),
-                'new' => array('groups' => array())
-            )
-        );
-
-        $renderer->setOptions($options);
-        $renderer->setAction('new');
-
-        $this->assertEquals(array(
-            'test-1' => array(
-                'name' => 'test-1',
-                'type' => 'integer',
-                'label' => 'test',
-                'options' => array(),
-                'get_method' => 'getTest-1',
-                'tag' => 'test-1'
-            ),
-            'test-2' => array(
-                'name' => 'test-2',
-                'type' => 'string',
-                'options' => array(),
-                'get_method' => 'getTest-2',
-                'tag' => 'test-2'
-            )
-        ), $renderer->getFields());
     }
 
     public function testMergeGroups()
