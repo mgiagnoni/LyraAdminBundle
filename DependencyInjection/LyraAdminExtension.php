@@ -60,7 +60,14 @@ class LyraAdminExtension extends Extension
             $routes['models'][$name]['controller'] = $options['controller'];
             $routes['models'][$name]['route_pattern_prefix'] = $options['route_pattern_prefix'];
             $routes['models'][$name]['route_prefix'] = $options['route_prefix'];
-            $routes['models'][$name]['actions'] = $options['actions'];
+
+            foreach ($options['actions'] as $action => $attrs) {
+                if (!isset($attrs['route_pattern'])) {
+                    continue;
+                }
+                $routes['models'][$name]['actions'][$action]['route_pattern'] = $attrs['route_pattern'];
+                $routes['models'][$name]['actions'][$action]['route_defaults'] = $attrs['route_defaults'];
+            }
 
             // Default columns options
 

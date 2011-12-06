@@ -14,6 +14,7 @@ namespace Lyra\AdminBundle\Routing;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * Admin routes loader.
@@ -21,10 +22,12 @@ use Symfony\Component\Routing\Route;
 class RouteLoader extends FileLoader
 {
     protected $options;
+    protected $cacheDir;
 
-    public function __construct($options)
+    public function __construct($options, $cacheDir)
     {
         $this->options = $options;
+        $this->cacheDir = $cacheDir;
     }
 
     public function load($resource, $type = null)
@@ -48,6 +51,9 @@ class RouteLoader extends FileLoader
                 $collection->add($options['route_prefix'].'_'.$action, $route);
             }
         }
+
+        $resource = new FileResource($this->cacheDir.'/lyra_admin.routes.meta');
+        $collection->addResource($resource);
 
         return $collection;
     }
