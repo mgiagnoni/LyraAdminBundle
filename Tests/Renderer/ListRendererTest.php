@@ -117,6 +117,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
             'list' => array(
                 'title' => 'test_title',
                 'template' => 'test_template',
+                'default_sort' => array('field' => null, 'order' => 'asc'),
                 'columns' => array(
                     'test-1' => array(
                         'name' => 'test-1',

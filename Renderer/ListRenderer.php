@@ -117,6 +117,12 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function setSort(array $sort)
     {
+        if (!$sort['field']) {
+            $default = $this->getDefaultSort();
+            $sort['field'] = $default['field'];
+            $sort['order'] = $default['order'];
+        }
+
         $this->sort = $sort;
     }
 
