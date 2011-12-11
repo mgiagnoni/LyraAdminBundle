@@ -28,10 +28,6 @@ class AdminController extends ContainerAware
     {
         $filterRenderer = $this->getFilterRenderer();
         $listRenderer = $this->getListRenderer();
-        $listRenderer->setFilterCriteria($this->getFilterCriteria());
-        $listRenderer->setPage($this->getCurrentPage());
-        $listRenderer->setSort($this->getSort());
-        $listRenderer->setBaseQueryBuilder($this->getModelManager()->getBaseListQueryBuilder());
 
         return $this->container->get('templating')
             ->renderResponse($listRenderer->getTemplate(), array(
@@ -197,7 +193,13 @@ class AdminController extends ContainerAware
      */
     public function getListRenderer($name = null)
     {
-        return $this->container->get('lyra_admin.renderer_factory')->getListRenderer($name);
+        $renderer = $this->container->get('lyra_admin.renderer_factory')->getListRenderer($name);
+        $renderer->setFilterCriteria($this->getFilterCriteria());
+        $renderer->setPage($this->getCurrentPage());
+        $renderer->setSort($this->getSort());
+        $renderer->setBaseQueryBuilder($this->getModelManager()->getBaseListQueryBuilder());
+
+        return $renderer;
     }
 
     /**
