@@ -20,6 +20,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 {
     protected $services;
     protected $listRenderer;
+    protected $filterRenderer;
     protected $session;
 
     public function testIndexAction()
@@ -87,9 +88,64 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('desc', $this->session->get('test.sort.order'));
     }
 
+    public function testIndexActionSortFromSession()
+    {
+        $this->session->set('test.field', 'name');
+        $this->session->set('test.sort.order', 'desc');
+        $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
+
+        $this->listRenderer->expects($this->once())
+            ->method('setSort')
+            ->with(array('field' => 'name', 'order' => 'desc'));
+
+        $controller = new AdminController();
+        $controller->setContainer($this->getMockContainer());
+        $controller->indexAction();
+    }
+
+    public function testFilterAction()
+    {
+        $this->services['request'] = Request::create('/', 'POST', array('lyra_admin_model' => 'test'));
+
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form->expects($this->once())
+            ->method('bindRequest')
+            ->with($this->services['request']);
+
+        $form->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue(array('field' => 'value')));
+
+        $this->filterRenderer->expects($this->once())
+            ->method('getForm')
+            ->will($this->returnValue($form));
+
+        $this->services['router']->expects($this->exactly(2))
+            ->method('generate')
+            ->will($this->returnValue('/'));
+
+        $controller = new AdminController();
+        $controller->setContainer($this->getMockContainer());
+        $controller->filterAction(null);
+
+        $this->assertEquals(array('field' => 'value'), $this->session->get('test.criteria'));
+
+        $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
+        $controller->filterAction('reset');
+
+        $this->assertEquals(array(), $this->session->get('test.criteria'));
+    }
+
     protected function setUp()
     {
         $this->listRenderer = $this->getMockBuilder('Lyra\AdminBundle\Renderer\ListRenderer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->filterRenderer = $this->getMockBuilder('Lyra\AdminBundle\Renderer\FilterRenderer')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -97,27 +153,35 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $rendererFactory->expects($this->once())
+        $rendererFactory->expects($this->any())
             ->method('getListRenderer')
             ->will($this->returnValue($this->listRenderer));
+
+        $rendererFactory->expects($this->any())
+            ->method('getFilterRenderer')
+            ->will($this->returnValue($this->filterRenderer));
 
         $modelManager = $this->getMock('Lyra\AdminBundle\Model\ModelManagerInterface');
         $managerFactory = $this->getMock('Lyra\AdminBundle\Model\ModelManagerFactoryInterface');
 
-        $managerFactory->expects($this->once())
+        $managerFactory->expects($this->any())
             ->method('getModelManager')
             ->will($this->returnValue($modelManager));
 
         $this->session = new Session(new ArraySessionStorage());
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
         $csrfProvider = $this->getMock('Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface');
+        $router = $this->getMockBuilder('Symfony\Component\Routing\Router')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->services = array(
             'session' => $this->session,
             'lyra_admin.renderer_factory' => $rendererFactory,
             'lyra_admin.model_manager_factory' => $managerFactory,
             'templating' => $templating,
-            'form.csrf_provider' => $csrfProvider
+            'form.csrf_provider' => $csrfProvider,
+            'router' => $router
         );
     }
 
