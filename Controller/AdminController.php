@@ -332,11 +332,11 @@ class AdminController extends ContainerAware
     protected function getSort()
     {
         if ($field = $this->getRequest()->get('field')) {
-            $this->getSession()->set($this->getModelName().'.field', $field);
+            $this->getSession()->set($this->getModelName().'.sort.field', $field);
             $this->getSession()->set($this->getModelName().'.sort.order', $this->getRequest()->get('order'));
         }
 
-        $sort = array('field' => $this->getSession()->get($this->getModelName().'.field'), 'order' => $this->getSession()->get($this->getModelName().'.sort.order'));
+        $sort = array('field' => $this->getSession()->get($this->getModelName().'.sort.field'), 'order' => $this->getSession()->get($this->getModelName().'.sort.order'));
 
         return $sort;
     }

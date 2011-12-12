@@ -84,13 +84,13 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $controller->setContainer($this->getMockContainer());
         $controller->indexAction();
 
-        $this->assertEquals('name', $this->session->get('test.field'));
+        $this->assertEquals('name', $this->session->get('test.sort.field'));
         $this->assertEquals('desc', $this->session->get('test.sort.order'));
     }
 
     public function testIndexActionSortFromSession()
     {
-        $this->session->set('test.field', 'name');
+        $this->session->set('test.sort.field', 'name');
         $this->session->set('test.sort.order', 'desc');
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
 
