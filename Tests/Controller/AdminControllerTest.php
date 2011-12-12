@@ -141,17 +141,9 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->listRenderer = $this->getMockBuilder('Lyra\AdminBundle\Renderer\ListRenderer')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->filterRenderer = $this->getMockBuilder('Lyra\AdminBundle\Renderer\FilterRenderer')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $rendererFactory = $this->getMockBuilder('Lyra\AdminBundle\Renderer\RendererFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->listRenderer = $this->getMock('Lyra\AdminBundle\Renderer\ListRendererInterface');
+        $this->filterRenderer = $this->getMock('Lyra\AdminBundle\Renderer\FilterRendererInterface');
+        $rendererFactory = $this->getMock('Lyra\AdminBundle\Renderer\RendererFactoryInterface');
 
         $rendererFactory->expects($this->any())
             ->method('getListRenderer')
@@ -171,9 +163,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->session = new Session(new ArraySessionStorage());
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
         $csrfProvider = $this->getMock('Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface');
-        $router = $this->getMockBuilder('Symfony\Component\Routing\Router')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
         $this->services = array(
             'session' => $this->session,
