@@ -25,7 +25,7 @@ interface FilterRendererInterface
      *
      * @return \Symfony\Component\Form\Form
      */
-    function getForm($data);
+    function getForm($data = null);
 
     /**
      * Gets search form view.

@@ -70,6 +70,13 @@ interface ListRendererInterface extends BaseRendererInterface
     function getActions();
 
     /**
+     * Sets current sort field and sort direction (asc/desc).
+     *
+     * @param array $sort array('field' => $sortField, 'order' => $sortDir)
+     */
+    function setSort(array $sort);
+
+    /**
      * Gets current sort field and sort direction (asc/desc).
      *
      * @return array array('field' => $sortField, 'order' => $sortDir)
@@ -189,4 +196,28 @@ interface ListRendererInterface extends BaseRendererInterface
      * @return string
      */
     function getColFormat($columnName);
+
+    /**
+     * Sets the search filter criteria.
+     *
+     * @param array $criteria
+     */
+    function setFilterCriteria($criteria);
+
+    /**
+     * Gets the search filter criteria.
+     *
+     * @return array
+     */
+    function getFilterCriteria();
+
+    /**
+     * Gets the value of a column configuration option.
+     *
+     * @param string $columnName
+     * @param string $key option key
+     *
+     * @return mixed
+     */
+    function getColOption($colName, $key);
 }

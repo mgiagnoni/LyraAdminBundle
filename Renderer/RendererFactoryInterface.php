@@ -20,7 +20,7 @@ interface RendererFactoryInterface
      *
      * @return ListRendererInterface
      */
-    function getListRenderer($name);
+    function getListRenderer($name = null);
 
     /**
      * Gets an instance of a form renderer.
@@ -29,7 +29,7 @@ interface RendererFactoryInterface
      *
      * @return FormRendererInterface
      */
-    function getFormRenderer($name);
+    function getFormRenderer($name = null);
 
     /**
      * Gets an instance of a dialog renderer
@@ -38,7 +38,7 @@ interface RendererFactoryInterface
      *
      * @return DialogRendererInterface
      */
-    function getDialogRenderer($name);
+    function getDialogRenderer($name = null);
 
     /**
      * Gets an instance of a filter renderer
@@ -47,6 +47,6 @@ interface RendererFactoryInterface
      *
      * @return FilterRendererInterface
      */
-    function getFilterRenderer($name);
+    function getFilterRenderer($name = null);
 }
 
