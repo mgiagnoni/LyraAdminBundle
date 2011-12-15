@@ -10,7 +10,9 @@
  */
 
 namespace Lyra\AdminBundle\Renderer;
+
 use Lyra\AdminBundle\Util\Util;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
  * Base class for all renderer services.
@@ -42,9 +44,16 @@ abstract class BaseRenderer
      */
     protected $metadata = array();
 
+    protected $securityContext;
+
     public function __construct(array $options = array())
     {
         $this->options = $options;
+    }
+
+    public function setSecurityContext(SecurityContextInterface $securityContext)
+    {
+        $this->securityContext = $securityContext;
     }
 
     public function setName($name)
@@ -110,6 +119,22 @@ abstract class BaseRenderer
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    public function isActionAllowed($action)
+    {
+        $roles = array();
+        if (isset($this->options['actions'][$action]['roles'])) {
+            $roles = $this->options['actions'][$action]['roles'];
+        }
+        if (null === $this->securityContext || count($roles) == 0) {
+            return true;
+        }
+        if ($this->securityContext->isGranted($roles)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function setFieldsDefaults()

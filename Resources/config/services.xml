@@ -28,10 +28,17 @@
             <argument type="service" id="service_container" />
         </service>
 
-        <service id="lyra_admin.list_renderer" class="%lyra_admin.list_renderer.class%" />
+        <service id="lyra_admin.list_renderer" class="%lyra_admin.list_renderer.class%">
+            <call method="setSecurityContext">
+                <argument type="service" id="security.context" />
+            </call>
+        </service>
 
         <service id="lyra_admin.form_renderer" class="%lyra_admin.form_renderer.class%">
             <argument type="service" id="lyra_admin.form_factory" />
+            <call method="setSecurityContext">
+                <argument type="service" id="security.context" />
+            </call>
         </service>
 
         <service id="lyra_admin.dialog_renderer" class="%lyra_admin.dialog_renderer.class%">

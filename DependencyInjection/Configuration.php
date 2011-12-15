@@ -77,21 +77,24 @@ class Configuration implements ConfigurationInterface
                     'page' => null,
                     'field' => null,
                     'order' => null
-                )
+                ),
+                'roles' => array()
             ),
             'new' => array(
                 'route_pattern' => 'new',
                 'route_defaults' => array(),
                 'icon' => 'document',
                 'text' => 'list.action.new',
-                'trans_domain' => 'LyraAdminBundle'
+                'trans_domain' => 'LyraAdminBundle',
+                'roles' => array()
             ),
             'edit' => array(
                 'route_pattern' => '{id}/edit',
                 'route_defaults' => array(),
                 'icon' => 'pencil',
                 'text' => 'list.action.edit',
-                'trans_domain' => 'LyraAdminBundle'
+                'trans_domain' => 'LyraAdminBundle',
+                'roles' => array()
             ),
             'delete' => array(
                 'route_pattern' => '{id}/delete',
@@ -99,17 +102,20 @@ class Configuration implements ConfigurationInterface
                 'icon' => 'trash',
                 'text' => 'list.action.delete',
                 'trans_domain' => 'LyraAdminBundle',
-                'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete')
+                'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete'),
+                'roles' => array()
             ),
             'object' => array(
                 'route_pattern' => 'object',
-                'route_defaults' => array()
+                'route_defaults' => array(),
+                'roles' => array()
             ),
             'filter' => array(
                 'route_pattern' => 'filter/{reset}',
                 'route_defaults' => array(
                     'reset' => null
-                )
+                ),
+                'roles' => array()
             )
         );
 
@@ -152,6 +158,10 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('message')->end()
                                 ->end()
                             ->end()
+                            ->arrayNode('roles')
+                                ->prototype('scalar')->end()
+                            ->end()
+
                         ->end()
                     ->end()
                     ->defaultValue($actionDefaults)
@@ -219,6 +229,9 @@ class Configuration implements ConfigurationInterface
                                     ->scalarNode('title')->end()
                                     ->scalarNode('message')->end()
                                 ->end()
+                            ->end()
+                            ->arrayNode('roles')
+                                ->prototype('scalar')->end()
                             ->end()
                         ->end()
                     ->end()

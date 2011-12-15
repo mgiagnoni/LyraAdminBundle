@@ -11,8 +11,17 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
+use Symfony\Component\Security\Core\SecurityContextInterface;
+
 interface BaseRendererInterface
 {
+    /**
+     * Sets the security context.
+     *
+     * @param SecurityContextInterface $securityContext
+     */
+    function setSecurityContext(SecurityContextInterface $securityContext);
+
     /**
      * Sets renderer name.
      *

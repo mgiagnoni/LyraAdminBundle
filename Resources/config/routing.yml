@@ -1,3 +1,6 @@
 lyra_admin:
     resource: .
     type: lyra_admin
+
+lyra_admin_logout:
+    pattern: /logout

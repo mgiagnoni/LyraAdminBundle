@@ -1,0 +1,6 @@
+{% block user %}
+    {% if app.user.username is defined %}
+        <span class="user">{{ app.user.username }}</span> <span class="logout"><a href="{{ path('lyra_admin_logout') }}">logout</a></span>
+    {% endif %}
+
+{% endblock %}

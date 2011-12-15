@@ -87,22 +87,22 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getBatchActions()
     {
-        return $this->options['list']['batch_actions'];
+        return $this->getAllowedActions('batch');
     }
 
     public function hasBatchActions()
     {
-        return (boolean)count($this->options['list']['batch_actions']);
+        return (boolean)count($this->getBatchActions());
     }
 
     public function getObjectActions()
     {
-        return $this->options['list']['object_actions'];
+        return $this->getAllowedActions('object');
     }
 
     public function getListActions()
     {
-        return $this->options['list']['list_actions'];
+        return $this->getAllowedActions('list');
     }
 
     public function getDefaultSort()
@@ -398,5 +398,17 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     protected function formatDate($date)
     {
         return $this->queryBuilder->expr()->literal($date->format('Y-m-d H:i:s'));
+    }
+
+    protected function getAllowedActions($type)
+    {
+        $actions = array();
+        foreach ($this->options['list'][$type.'_actions'] as $action) {
+            if ($this->isActionAllowed($action)) {
+                $actions[] = $action;
+            }
+        }
+
+        return $actions;
     }
 }

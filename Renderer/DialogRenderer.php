@@ -21,11 +21,6 @@ class DialogRenderer extends BaseRenderer
      */
     protected $action;
 
-    public function __construct(array $options = array())
-    {
-        parent::__construct($options);
-    }
-
     public function setAction($action)
     {
         $this->action = $action;

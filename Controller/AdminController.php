@@ -13,6 +13,8 @@ namespace Lyra\AdminBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 
 /**
  * Base controller to manage CRUD actions.
@@ -44,8 +46,10 @@ class AdminController extends ContainerAware
      */
     public function newAction()
     {
+        $renderer = $this->getFormRenderer();
+        $this->checkSecurity($renderer, 'new');
         $object = $this->getModelManager()->create();
-        $form = $this->getFormRenderer()->getForm($object);
+        $form = $renderer->getForm($object);
 
         $request = $this->getRequest();
         if ('POST' == $request->getMethod()) {
@@ -67,8 +71,10 @@ class AdminController extends ContainerAware
      */
     public function editAction($id)
     {
+        $renderer = $this->getFormRenderer();
+        $this->checkSecurity($renderer, 'edit');
         $object = $this->getModelManager()->find($id);
-        $form = $this->getFormRenderer()->getForm($object);
+        $form = $renderer->getForm($object);
 
         $request = $this->getRequest();
         if ('POST' == $request->getMethod()) {
@@ -90,6 +96,7 @@ class AdminController extends ContainerAware
      */
     public function deleteAction($id)
     {
+        $this->checkSecurity($this->getListRenderer(), 'delete');
         $object = $this->getModelManager()->find($id);
         $request = $this->getRequest();
 
@@ -122,7 +129,7 @@ class AdminController extends ContainerAware
     {
         $reqAction = $this->getRequest()->get('action');
         $action = key($reqAction);
-        if(is_array($reqAction[$action])){
+        if(is_array($reqAction[$action])) {
             $id = key($reqAction[$action]);
         }
         $response = $colName = null;
@@ -132,6 +139,7 @@ class AdminController extends ContainerAware
             if (null === $id = $this->getRequest()->get('ids')) {
                 // TODO setflash
             } else if ($action =  $this->getRequest()->get('batch_action')) {
+                $this->checkSecurity($this->getListRenderer(), $action);
                 $action =  'Batch'.$action;
             }
         } else if (false !== strpos($action, '_boolean')) {
@@ -357,5 +365,12 @@ class AdminController extends ContainerAware
         }
 
         return $name;
+    }
+
+    protected function checkSecurity($renderer, $action)
+    {
+        if (!$renderer->isActionAllowed($action)) {
+            throw new AccessDeniedException();
+        }
     }
 }
