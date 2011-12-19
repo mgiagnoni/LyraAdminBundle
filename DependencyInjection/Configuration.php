@@ -182,6 +182,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('route_prefix')->end()
                         ->scalarNode('route_pattern_prefix')->end()
                         ->scalarNode('trans_domain')->defaultValue('LyraAdminBundle')->end()
+                        ->scalarNode('title')->end()
                     ->end();
     }
 

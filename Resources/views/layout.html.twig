@@ -12,7 +12,10 @@
         {% endblock stylesheets %}
     </head>
     <body>
-        <div id="ly-top_bar">{% include 'LyraAdminBundle:Admin:user.html.twig' %}</div>
+        <div id="ly-top-bar">
+            {% include 'LyraAdminBundle:Admin:user.html.twig' %}
+            {% render 'LyraAdminBundle:Admin:navigation' %}
+        </div>
         {% block body %}
             {% block content %}{% endblock %}
         {% endblock %}

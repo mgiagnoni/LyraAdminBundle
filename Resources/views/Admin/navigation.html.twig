@@ -1,0 +1,7 @@
+<ul class="navigation">
+{% for item  in menu %}
+    <li>
+        <a href="{{ path(item.route) }}">{{ item.title|trans({}, item.trans_domain) }}</a>
+    </li>
+{% endfor %}
+</ul>

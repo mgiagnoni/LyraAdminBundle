@@ -37,6 +37,7 @@ class LyraAdminExtension extends Extension
         $container->setParameter('lyra_admin.options', $config);
 
         $routes = array('route_pattern_prefix' => $config['route_pattern_prefix']);
+        $menu = array();
         foreach ($config['models'] as $name => $options)
         {
             foreach ($config['actions'] as $key => $action) {
@@ -68,6 +69,12 @@ class LyraAdminExtension extends Extension
                 $routes['models'][$name]['actions'][$action]['route_pattern'] = $attrs['route_pattern'];
                 $routes['models'][$name]['actions'][$action]['route_defaults'] = $attrs['route_defaults'];
             }
+
+            // Options for menu
+
+            $menu[$name]['route'] = $options['route_prefix'].'_index';
+            $menu[$name]['title'] = isset($options['title']) ? $options['title'] : ucfirst($name);
+            $menu[$name]['trans_domain'] = $options['trans_domain'];
 
             // Default columns options
 
@@ -104,6 +111,8 @@ class LyraAdminExtension extends Extension
             $container->setParameter(sprintf('lyra_admin.%s.class', $name), $options['class']);
         }
         $container->setParameter('lyra_admin.routes', $routes);
+        $container->setParameter('lyra_admin.menu', $menu);
+
         $resources = array();
         if ($container->has('twig.form.resources')) {
             $resources = $container->getParameter('twig.form.resources');

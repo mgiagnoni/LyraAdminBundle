@@ -1,4 +1,10 @@
 jQuery().ready(function() {
+    $('#ly-top-bar')
+        .addClass('ui-widget ui-state-default');
+
+    $('#ly-top-bar .user-info .user')
+        .prepend("<span class='ui-icon ui-icon-person'></span>");
+
     $('#ly-list-wrapper')
        .addClass('ui-widget ui-corner-all');
 

@@ -15,3 +15,30 @@ h3 {
     font-size: 90%;
     font-weight: normal;
 }
+#ly-top-bar {
+    margin: 0 0 .25em;
+    padding: .25em;
+}
+#ly-top-bar ul.navigation {
+    margin: 0;
+    padding: 0;
+} 
+#ly-top-bar ul.navigation li {
+    display: inline;
+    list-style: none;
+    margin-left: 1em;
+}
+#ly-top-bar .user-info {
+    float: right;
+    font-size: 90%;
+    position: relative;
+}
+#ly-top-bar .user-info .ui-icon {
+    position: absolute;
+    top: 50%;
+    margin-top: -8px;
+}
+#ly-top-bar .user-info .user {
+    padding: 0 15px 0 20px;
+    font-weight: normal !important;
+}

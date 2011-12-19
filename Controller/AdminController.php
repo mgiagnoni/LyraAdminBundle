@@ -177,6 +177,16 @@ class AdminController extends ContainerAware
         return $this->getRedirectToListResponse();
     }
 
+    public function navigationAction()
+    {
+        $menu = $this->container->getParameter('lyra_admin.menu');
+
+        return $this->container->get('templating')
+            ->renderResponse('LyraAdminBundle:Admin:navigation.html.twig', array(
+                'menu' => $menu
+            ));
+    }
+
     /**
      * Gets the Request service.
      *
