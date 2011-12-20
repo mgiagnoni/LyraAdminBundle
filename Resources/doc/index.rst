@@ -168,6 +168,8 @@ simple bundle and create an admin area for it. Our example bundle will be named
 **AcmeClassifiedsBundle**: its purpose is managing a simple advertising board
 where users and administrators of the site can post classified ads.
 
+`AcmeClassifiedsBundle source code`_ is available at gitHub.
+
 **SensioGeneratorBundle** (included in Symfony2 *Standard Edition*) is the ideal
 tool to quickly generate the basic structure of the bundle. From your project
 root folder run the following command::
@@ -202,6 +204,8 @@ CRUD operations on the ``Listing`` entity::
 Do not forget to clear cache before proceeding::
 
     app/console cache:clear
+
+.. _AcmeClassifiedsBundle source code: https://github.com/mgiagnoni/AcmeClassifiedsBundle
 
 Access backend area
 -------------------
