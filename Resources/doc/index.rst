@@ -9,10 +9,9 @@ This bundle is being developed to provide a common backend interface to all
 bundles that make part of **Lyra CMS**, however it can also be used independently
 from the CMS as a standalone standard Symfony2 bundle.
 
-This is a work in progress and many essential features are still missing.
-However existing features should work and it should be possible to successfully
-follow the basic (currently incomplete) ``Getting started`` tutorial you will
-find below.
+This is a work in progress and documentation is still incomplete, however many
+features already work and it should be possible to successfully follow the basic
+``Getting started`` tutorial you will find below.
 
 If you test the bundle and find errors please use the GitHub issue tracker
 to report them. Suggestions are also welcome.
@@ -605,8 +604,103 @@ be cleaned up::
         }
     }
 
+Improving the sample bundle
+===========================
+
+It's time to add more features to the sample bundle. Displaying a bunch of
+uncategorized listings is not very useful, so let's see how to manage
+listing **categories**.
+
+Create a ``Category`` entity with the **SensioGeneratorBundle**::
+
+    app/console generate:doctrine:entity --entity=AcmeClassifiedsBundle:Category --fields="name:string(255) description:text" --with-repository --no-interaction
+
+Implement a *__toString()* method in the newly created entity::
+
+    // Acme/ClassifiedsBundle/Entity/Category.php
+
+    // ...
+    class Category
+    {
+        // ...
+        public function __toString()
+        {
+            return $this->name;
+        }
+    }
+
+This step is needed as the value of the ``name`` property will be used to
+build the options of the dropdown list used to select the listing category
+on the listing form.
+
+Edit the ``Listing`` entity to add a **many-to-one** relation with
+``Category``::
+
+    // Acme/ClassifiedsBundle/Entity/Listing.php
+    // ...
+    class Listing
+    {
+        // ...
+
+        /**
+         * @ORM\ManyToOne(targetEntity="Category")
+         */
+        private $category;
+
+        public function setCategory(Category $category)
+        {
+            $this->category = $category;
+        }
+
+        public function getCategory()
+        {
+            return $this->category;
+        }
+    }
+
+Update the database::
+
+    app/console doctrine:schema:update --force
+
+Create a model ``category`` in LyraAdminBundle configuration::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+            category:
+                class: 'Acme\ClassifiedsBundle\Entity\Category'
+                # title displayed in top menu
+                title: Categories
+                list:
+                    title: Listing categories
+                    columns:
+                        name: ~
+                        description: ~
+
+Now you can follow the link ``Categories`` in the top menu to create new
+categories. Then you need only to add the ``category`` property to the
+configuration of the ``Listing`` form::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                form:
+                    groups:
+                    listing:
+                        caption: Listing
+                        fields: [category,ad_title,ad_text]
+
+The form to create / edit a listing now contains a dropdown list to select
+the desired category.
+
 Configuration summary
----------------------
+=====================
 
 Below you will find an example with all the configuration options you have
 seen up to this point::
@@ -621,6 +715,8 @@ seen up to this point::
             listing:
                 class: 'Acme\ClassifiedsBundle\Entity\Listing'
                 controller: 'AcmeClassifiedsBundle:Admin'
+                # title displayed in top menu
+                title: Listings
                 actions:
                     publish:
                         # for batch actions it's the text displayed in drop down list
@@ -671,6 +767,14 @@ seen up to this point::
                 services:
                     # service id of user defined model manager
                     model_manager: classifieds_listing_manager
+            category:
+                class: 'Acme\ClassifiedsBundle\Entity\Category'
+                list:
+                    title: Categories
+                    columns:
+                        name: ~
+                        description: ~
+
 
 
 [to be continued ...]
