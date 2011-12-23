@@ -51,7 +51,8 @@
     padding: 0;
 }
 .ly-form ul.error-list li {
-    margin-left: 122px;
+    font-size: 95%;
+    margin: 0 0 2px 139px;
     padding: 0;
 } 
 .ly-form input[type="text"] {
