@@ -168,7 +168,7 @@ simple bundle and create an admin area for it. Our example bundle will be named
 **AcmeClassifiedsBundle**: its purpose is managing a simple advertising board
 where users and administrators of the site can post classified ads.
 
-`AcmeClassifiedsBundle source code`_ is available at gitHub.
+`AcmeClassifiedsBundle source code`_ is available at GitHub.
 
 **SensioGeneratorBundle** (included in Symfony2 *Standard Edition*) is the ideal
 tool to quickly generate the basic structure of the bundle. From your project
@@ -570,6 +570,10 @@ default functionalities cannot be lost. Define your service in configuration::
             tags:
                 -  { name: lyra_admin.model_manager }
 
+See the file `Resources/config/services.yml`_ in AcmeClassifiedsBundle
+repository for an example of how to define this service in a bundle configuration
+file loaded by the bundle extension.
+
 The tag ``lyra_admin.model_manager`` allows LyraAdminBundle to recognize the
 service as model manager and appropriately configure it. Finally change the
 configuration of the ``Listing`` model to use your custom manager::
@@ -607,6 +611,8 @@ be cleaned up::
                 // No changes from here
         }
     }
+
+.. _Resources/config/services.yml: https://github.com/mgiagnoni/AcmeClassifiedsBundle/blob/master/Resources/config/services.yml
 
 Improving the sample bundle
 ===========================
