@@ -30,7 +30,6 @@ class LyraAdminBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new ConfigureModelManagersPass());
         if ('dev' == $container->getParameter('kernel.environment')) {
             $container->addCompilerPass(new SaveRouteResourcePass());
         }

@@ -24,9 +24,10 @@ class ModelManager extends BaseManager
 
     protected $class;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, $class)
     {
         $this->em = $em;
+        $this->setClass($class);
     }
 
     public function find($id)

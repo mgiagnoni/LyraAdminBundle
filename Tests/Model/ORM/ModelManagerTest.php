@@ -18,6 +18,7 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
 {
     protected $em;
     protected $repository;
+    protected $manager;
 
     public function testFind()
     {
@@ -27,37 +28,30 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->with($objectId);
 
-        $manager = new ModelManager($this->em);
-        $manager->find($objectId);
+        $this->manager->find($objectId);
     }
 
     public function testFindByIds()
     {
         $this->setExpectedQuery('SELECT WHERE a.id IN(1, 2, 3)');
-        $manager = new ModelManager($this->em);
-        $manager->findByIds(array(1,2,3));
+        $this->manager->findByIds(array(1,2,3));
     }
 
     public function testFieldValueByIds()
     {
         $this->setExpectedQuery("UPDATE SET a.field = 'value' WHERE a.id IN(1, 2, 3)");
-        $manager = new ModelManager($this->em);
-        $manager->setFieldvalueByIds('field', 'value', array(1,2,3));
+        $this->manager->setFieldvalueByIds('field', 'value', array(1,2,3));
     }
 
     public function testGetBaseQueryBuilder()
     {
-        $manager = new ModelManager($this->em);
-        $qb = $manager->getBaseListQueryBuilder();
-
+        $qb = $this->manager->getBaseListQueryBuilder();
         $this->assertEquals('SELECT a', $qb->getDQL());
     }
 
     public function testGetRepository()
     {
-        $manager = new ModelManager($this->em);
-
-        $this->assertEquals($this->repository, $manager->getRepository());
+        $this->assertEquals($this->repository, $this->manager->getRepository());
     }
 
     public function testSave()
@@ -68,8 +62,7 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($object);
 
-        $manager = new ModelManager($this->em);
-        $manager->save($object);
+        $this->manager->save($object);
     }
 
     public function testRemove()
@@ -80,8 +73,7 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
             ->method('remove')
             ->with($object);
 
-        $manager = new ModelManager($this->em);
-        $manager->remove($object);
+        $this->manager->remove($object);
     }
 
     public function testRemoveByIds()
@@ -93,7 +85,7 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
         $ids = array(1,2);
 
         $manager = $this->getMockBuilder('Lyra\AdminBundle\Model\ORM\ModelManager')
-            ->setConstructorArgs(array($this->em))
+            ->setConstructorArgs(array($this->em, 'Lyra\AdminBundle\Tests\Fixture\Entity\Dummy'))
             ->setMethods(array('findByIds'))
             ->getMock();
 
@@ -118,6 +110,8 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->manager = new ModelManager($this->em, 'Lyra\AdminBundle\Tests\Fixture\Entity\Dummy');
 
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()

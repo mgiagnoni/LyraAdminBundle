@@ -211,7 +211,7 @@ class AdminController extends ContainerAware
      */
     public function getListRenderer($name = null)
     {
-        $renderer = $this->container->get('lyra_admin.renderer_factory')->getListRenderer($name);
+        $renderer = $this->container->get(sprintf('lyra_admin.%s.list_renderer', $name ?: $this->getModelName()));
         $renderer->setFilterCriteria($this->getFilterCriteria());
         $renderer->setPage($this->getCurrentPage());
         $renderer->setSort($this->getSort());
@@ -229,7 +229,10 @@ class AdminController extends ContainerAware
      */
     public function getFormRenderer($name = null)
     {
-        return $this->container->get('lyra_admin.renderer_factory')->getFormRenderer($name);
+        $renderer = $this->container->get(sprintf('lyra_admin.%s.form_renderer', $name ?: $this->getModelName()));
+        $renderer->setAction($this->getRequest()->get('lyra_admin_action'));
+
+        return $renderer;
     }
 
     /**
@@ -241,7 +244,10 @@ class AdminController extends ContainerAware
      */
     public function getDialogRenderer($name = null)
     {
-        return $this->container->get('lyra_admin.renderer_factory')->getDialogRenderer($name);
+        $renderer = $this->container->get(sprintf('lyra_admin.%s.dialog_renderer', $name ?: $this->getModelName()));
+        $renderer->setAction($this->getRequest()->get('lyra_admin_action'));
+
+        return $renderer;
     }
 
     /**
@@ -253,7 +259,7 @@ class AdminController extends ContainerAware
      */
     public function getFilterRenderer($name = null)
     {
-        return $this->container->get('lyra_admin.renderer_factory')->getFilterRenderer($name);
+        return $this->container->get(sprintf('lyra_admin.%s.filter_renderer', $name ?: $this->getModelName()));
     }
 
     /**
@@ -265,7 +271,7 @@ class AdminController extends ContainerAware
      */
     public function getModelManager($name = null)
     {
-        return $this->container->get('lyra_admin.model_manager_factory')->getModelManager($name);
+        return $this->container->get(sprintf('lyra_admin.%s.model_manager', $name ?: $this->getModelName()));
     }
 
     /**

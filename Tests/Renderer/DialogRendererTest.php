@@ -32,7 +32,6 @@ class DialogRendererTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->renderer = new DialogRenderer($this->getOptions());
-        $this->renderer->setName('test');
     }
 
     private function getOptions()

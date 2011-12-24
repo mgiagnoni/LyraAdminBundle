@@ -389,7 +389,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('services')
                 ->addDefaultsIfNotSet()
                 ->children()
-                    ->scalarNode('model_manager')->defaultValue('lyra_admin.default.model_manager')->end()
+                    ->scalarNode('model_manager')->defaultValue('lyra_admin.model_manager.abstract')->end()
                 ->end()
             ->end();
     }

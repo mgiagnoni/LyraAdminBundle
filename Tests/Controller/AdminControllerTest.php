@@ -143,22 +143,8 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->listRenderer = $this->getMock('Lyra\AdminBundle\Renderer\ListRendererInterface');
         $this->filterRenderer = $this->getMock('Lyra\AdminBundle\Renderer\FilterRendererInterface');
-        $rendererFactory = $this->getMock('Lyra\AdminBundle\Renderer\RendererFactoryInterface');
-
-        $rendererFactory->expects($this->any())
-            ->method('getListRenderer')
-            ->will($this->returnValue($this->listRenderer));
-
-        $rendererFactory->expects($this->any())
-            ->method('getFilterRenderer')
-            ->will($this->returnValue($this->filterRenderer));
 
         $modelManager = $this->getMock('Lyra\AdminBundle\Model\ModelManagerInterface');
-        $managerFactory = $this->getMock('Lyra\AdminBundle\Model\ModelManagerFactoryInterface');
-
-        $managerFactory->expects($this->any())
-            ->method('getModelManager')
-            ->will($this->returnValue($modelManager));
 
         $this->session = new Session(new ArraySessionStorage());
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
@@ -167,8 +153,9 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->services = array(
             'session' => $this->session,
-            'lyra_admin.renderer_factory' => $rendererFactory,
-            'lyra_admin.model_manager_factory' => $managerFactory,
+            'lyra_admin.test.list_renderer' => $this->listRenderer,
+            'lyra_admin.test.filter_renderer' => $this->filterRenderer,
+            'lyra_admin.test.model_manager' => $modelManager,
             'templating' => $templating,
             'form.csrf_provider' => $csrfProvider,
             'router' => $router
