@@ -283,8 +283,9 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     protected function initColumns()
     {
         $sort = $this->getSort();
+        $sorted = $sort['field'];
 
-        if ($sorted = $sort['field']) {
+        if ($sorted && isset($this->columns[$sorted])) {
             $this->columns[$sorted]['sorted'] = true;
             $this->columns[$sorted]['sort'] = $sort['order'];
             $this->columns[$sorted]['th_class'] = str_replace('sortable', 'sorted-'.$sort['order'], $this->columns[$sorted]['th_class']);
