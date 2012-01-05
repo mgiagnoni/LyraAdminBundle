@@ -89,11 +89,13 @@ class LyraAdminExtension extends Extension
 
             // Options for menu
 
-            $menu[$name] = array(
-                'route' => $options['route_prefix'].'_index',
-                'title' => isset($options['title']) ? $options['title'] : ucfirst($name),
-                'trans_domain' => $options['trans_domain']
-            );
+            if (false !== $options['title']) {
+                $menu[$name] = array(
+                    'route' => $options['route_prefix'].'_index',
+                    'title' => null !== $options['title'] ? $options['title'] : ucfirst($name),
+                    'trans_domain' => $options['trans_domain']
+                );
+            }
 
             // Default columns options
 
