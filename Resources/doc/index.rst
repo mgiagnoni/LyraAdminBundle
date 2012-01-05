@@ -567,16 +567,12 @@ default functionalities cannot be lost. Define your service in configuration::
     services:
         classifieds_listing_manager:
             class: Acme\ClassifiedsBundle\Model\ListingManager
-            tags:
-                -  { name: lyra_admin.model_manager }
 
 See the file `Resources/config/services.yml`_ in AcmeClassifiedsBundle
 repository for an example of how to define this service in a bundle configuration
 file loaded by the bundle extension.
 
-The tag ``lyra_admin.model_manager`` allows LyraAdminBundle to recognize the
-service as model manager and appropriately configure it. Finally change the
-configuration of the ``Listing`` model to use your custom manager::
+Change the configuration of the ``Listing`` model to use your custom manager::
 
     # app/config/config.yml
 
