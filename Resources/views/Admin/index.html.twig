@@ -64,22 +64,29 @@
             {% block table_pagination %}
                 <tr>
                     <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">
-                    {% if list.nbPages > 1 %}
                         <span class="pagination">      
-                            <span class="info">{{ 'pagination.info'|trans({'%page%' : list.page, '%count%' : list.nbPages}, 'LyraAdminBundle') }}</span>
-                            {{ page_link(list, 'first', 1) }}
-                            {{ page_link(list, 'prev', list.prevPage) }}
-                            {% for p in list.pageLinks %}
-                                {% if p == list.page %}
-                                    {{ p }}
-                                {% else %}
-                                    {{ page_link(list, 'page', p) }}
-                                {% endif %}
-                            {% endfor %}
-                            {{ page_link(list, 'next', list.nextPage ) }}
-                            {{ page_link(list, 'last', list.nbPages) }}
+                            <span class="info">
+                            {% if list.total > 0 %}
+                                {{ 'pagination.total'|trans({'%count%' : list.total}, 'LyraAdminBundle') }}
+                            {% endif %}
+                            {% if list.nbPages > 1 %}
+                               - {{ 'pagination.info'|trans({'%page%' : list.page, '%count%' : list.nbPages}, 'LyraAdminBundle') }}
+                            {% endif %}
+                            </span>
+                            {% if list.nbPages > 1 %}
+                                {{ page_link(list, 'first', 1) }}
+                                {{ page_link(list, 'prev', list.prevPage) }}
+                                {% for p in list.pageLinks %}
+                                    {% if p == list.page %}
+                                        {{ p }}
+                                    {% else %}
+                                        {{ page_link(list, 'page', p) }}
+                                    {% endif %}
+                                {% endfor %}
+                                {{ page_link(list, 'next', list.nextPage ) }}
+                                {{ page_link(list, 'last', list.nbPages) }}
+                            {% endif %}
                         </span>
-                    {% endif %}
                     </td>
                 </tr>
             {% endblock %}

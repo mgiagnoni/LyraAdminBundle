@@ -74,11 +74,10 @@ table.ly-list td.no-records {
 }
 /* Pagination */
 
-.pagination .info
-{
+.pagination .info {
     display: block;
     float: right;
-    font-size: 90%;
+    font-size: 85%;
 }
 .pagination .ui-button-text {
     padding: .2em .8em !important;

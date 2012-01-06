@@ -110,6 +110,10 @@
                 <source>list.action.search</source>
                 <target>Search</target>
             </trans-unit>
+            <trans-unit id="28">
+                <source>pagination.total</source>
+                <target>Total results: %count%</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
