@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="" >
+        <body>
+            <trans-unit id="1">
+                <source>list.actions</source>
+                <target>Akcije</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>list.action.new</source>
+                <target>Novo</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>list.action.edit</source>
+                <target>Uredi</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>list.action.delete</source>
+                <target>Izbriši</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>list.action.boolean.on</source>
+                <target>Vklopljeno</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>list.action.boolean.off</source>
+                <target>Izklopljeno</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>batch.action.empty</source>
+                <target>Izberi akcijo</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>batch.form.submit</source>
+                <target>Pojdi</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>form.button.submit</source>
+                <target>Shrani</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>form.action.back</source>
+                <target>Nazaj</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>dialog.title.delete</source>
+                <target>Potrditev izbrisa</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>dialog.message.delete</source>
+                <target>{1}Ste prepričani, da želite izbrisati izbrani predmet?|{2} Ste prepričani, da želite izbrisati izbrana predmeta?|[3,Inf]Ste prepričani, da želite izbrisati izbrane predmete?</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>dialog.submit</source>
+                <target>Da, potrdi</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>dialog.cancel</source>
+                <target>Ne, prekliči</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>batch.message.no_selection</source>
+                <target>Izbrati morate predmete</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>batch.message.no_action</source>
+                <target>Izbrati morate akcijo</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>flash.delete.success</source>
+                <target>Predmet je bil uspešno izbrisan</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>flash.batch_delete.success</source>
+                <target>Izbrani predmeti so bili uspešno izbrisani</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>pagination.first</source>
+                <target>Prva</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>pagination.last</source>
+                <target>Zadnja</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>pagination.next</source>
+                <target>Naslednja</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>pagination.prev</source>
+                <target>Prejšnja</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>pagination.info</source>
+                <target>Stran %page% od %count%</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>list.message.no_records</source>
+                <target>Ni rezultatov</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>filter.button.submit</source>
+                <target>Iskanje</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>filter.button.reset</source>
+                <target>Počisti</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>list.action.search</source>
+                <target>Iskanje</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>pagination.total</source>
+                <target>Vseh rezultatov: %count%</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
