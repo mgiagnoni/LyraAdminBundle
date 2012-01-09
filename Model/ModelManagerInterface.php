@@ -93,4 +93,13 @@ interface ModelManagerInterface
      * @return mixed
      */
     function getRepository();
+
+    /**
+     * Returns a query builder to extract an ordered list of records
+     * filtered by given search criteria.
+     *
+     * @param array $criteria
+     * @param array $sort
+     */
+    function buildQuery($criteria, $sort);
 }

@@ -44,18 +44,11 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
      */
     protected $groups;
 
-    public function __construct(FormFactory $factory, array $options = array())
+    public function __construct(FormFactory $factory, $configuration)
     {
-        parent::__construct($options);
+        parent::__construct($configuration);
 
         $this->factory = $factory;
-    }
-
-    public function setOptions(array $options)
-    {
-        parent::setOptions($options);
-        $this->fields = null;
-        $this->groups = null;
     }
 
     public function setAction($action)
@@ -70,7 +63,7 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
 
     public function getTemplate()
     {
-        return $this->options['form']['template'];
+        return $this->getOption('template');
     }
 
     public function getForm($data = null)
@@ -98,10 +91,6 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
 
     public function getGroups()
     {
-        if (count($this->getFields()) == 0) {
-            throw new \LogicException('Can\'t retrieve form groups as no field definitions are set for this form');
-        }
-
         if (null === $this->groups) {
             $this->groups = $this->mergeGroups();
         }
@@ -124,12 +113,24 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
             throw new \LogicException('Can\'t retrieve form title as renderer action is not set');
         }
 
-        return $this->options['form'][$this->action]['title'];
+        $options = $this->getOption($this->action);
+
+        return $options['title'];
+    }
+
+    public function getOption($key)
+    {
+        return $this->configuration->getFormOption($key);
+    }
+
+    public function getFields()
+    {
+        return $this->configuration->getFieldsOptions();
     }
 
     protected function createForm($data = null)
     {
-        $typeClass = $this->options['form']['class'];
+        $typeClass = $this->getOption('class');
         $fields = $this->getFields();
 
         $existing = array();
@@ -148,7 +149,7 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
         $fields = array_intersect_key($fields, $existing);
         $type = new $typeClass($this->getName(), $fields);
 
-        return $this->factory->createForm($type, $this->getName(), $data, array('data_class' => $this->options['class']));
+        return $this->factory->createForm($type, $this->getName(), $data, array('data_class' => $this->configuration->getOption('class')));
     }
 
     protected function mergeGroups()
@@ -157,9 +158,10 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
             throw new \LogicException('Can\'t merge form fields groups as form action is not set');
         }
 
+        $options = $this->configuration->getFormOptions();
         $groups = array_merge(
-            $this->options['form']['groups'],
-            $this->options['form'][$this->action]['groups']
+            $options['groups'],
+            $options[$this->action]['groups']
         );
 
         return $groups;

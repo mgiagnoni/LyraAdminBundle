@@ -12,6 +12,7 @@
 namespace Lyra\AdminBundle\Tests\Model\ORM;
 
 use Lyra\AdminBundle\Model\ORM\ModelManager;
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
 use Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
 
 class ModelManagerTest extends \PHPUnit_Framework_TestCase
@@ -85,7 +86,7 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
         $ids = array(1,2);
 
         $manager = $this->getMockBuilder('Lyra\AdminBundle\Model\ORM\ModelManager')
-            ->setConstructorArgs(array($this->em, 'Lyra\AdminBundle\Tests\Fixture\Entity\Dummy'))
+            ->setConstructorArgs(array($this->em, $this->configuration))
             ->setMethods(array('findByIds'))
             ->getMock();
 
@@ -107,11 +108,17 @@ class ModelManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $options = array(
+            'class' => 'Lyra\AdminBundle\Tests\Fixture\Entity\Dummy'
+        );
+
+        $this->configuration = new AdminConfiguration($options);
+
         $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = new ModelManager($this->em, 'Lyra\AdminBundle\Tests\Fixture\Entity\Dummy');
+        $this->manager = new ModelManager($this->em, $this->configuration);
 
         $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()

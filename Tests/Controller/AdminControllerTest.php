@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\SessionStorage\ArraySessionStorage;
 use Symfony\Component\HttpFoundation\Session;
 use Lyra\AdminBundle\Controller\AdminController;
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
 
 class AdminControllerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,17 +28,13 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
 
-        $this->listRenderer->expects($this->once())
+        $this->pager->expects($this->once())
             ->method('setPage')
             ->with(1);
 
         $this->listRenderer->expects($this->once())
             ->method('setSort')
-            ->with(array('column' => null, 'order' => null));
-
-        $this->listRenderer->expects($this->once())
-            ->method('setFilterCriteria')
-            ->with(array());
+            ->with(array('column' => null, 'field' => null, 'order' => null));
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
@@ -48,7 +45,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->services['request'] = Request::create('/', 'GET', array('page' => 2, 'lyra_admin_model' => 'test'));
 
-        $this->listRenderer->expects($this->once())
+        $this->pager->expects($this->once())
             ->method('setPage')
             ->with(2);
 
@@ -64,7 +61,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->session->set('test.page', 3);
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
 
-        $this->listRenderer->expects($this->once())
+        $this->pager->expects($this->once())
             ->method('setPage')
             ->with(3);
 
@@ -78,7 +75,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->services['request'] = Request::create('/', 'GET', array('column' => 'name', 'order' => 'desc', 'lyra_admin_model' => 'test'));
         $this->listRenderer->expects($this->once())
             ->method('setSort')
-            ->with(array('column' => 'name', 'order' => 'desc'));
+            ->with(array('column' => 'name', 'field' => 'name', 'order' => 'desc'));
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
@@ -96,7 +93,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->listRenderer->expects($this->once())
             ->method('setSort')
-            ->with(array('column' => 'name', 'order' => 'desc'));
+            ->with(array('column' => 'name', 'field' => 'name','order' => 'desc'));
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
@@ -141,10 +138,20 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $options = array(
+            'list' => array(
+                'default_sort' => array('column' => null, 'field' => null, 'order' => null),
+                'max_page_rows' => 5,
+                'columns' => array('name' => array('field' => 'name'))
+            )
+        );
+
+        $configuration = New AdminConfiguration($options);
         $this->listRenderer = $this->getMock('Lyra\AdminBundle\Renderer\ListRendererInterface');
         $this->filterRenderer = $this->getMock('Lyra\AdminBundle\Renderer\FilterRendererInterface');
 
         $modelManager = $this->getMock('Lyra\AdminBundle\Model\ModelManagerInterface');
+        $this->pager = $this->getMock('Lyra\AdminBundle\Pager\PagerInterface');
 
         $this->session = new Session(new ArraySessionStorage());
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
@@ -153,9 +160,11 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
         $this->services = array(
             'session' => $this->session,
+            'lyra_admin.test.configuration' => $configuration,
             'lyra_admin.test.list_renderer' => $this->listRenderer,
             'lyra_admin.test.filter_renderer' => $this->filterRenderer,
             'lyra_admin.test.model_manager' => $modelManager,
+            'lyra_admin.pager' => $this->pager,
             'templating' => $templating,
             'form.csrf_provider' => $csrfProvider,
             'router' => $router

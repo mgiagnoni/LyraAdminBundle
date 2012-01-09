@@ -58,23 +58,26 @@ class LyraAdminExtension extends Extension
             $this->setRouteDefaults($model);
             $this->setColumnsDefaults($model);
 
+            $container->setDefinition(sprintf('lyra_admin.%s.configuration', $model), new DefinitionDecorator('lyra_admin.configuration.abstract'))
+                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.options', $model))));
+
             $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
-                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Parameter(sprintf('lyra_admin.%s.class', $model))));
+                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
 
             $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
-                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.list.options', $model))))
+                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
                 ->addMethodCall('setName', array($model));
 
             $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
-                ->replaceArgument(1, new Parameter(sprintf('lyra_admin.%s.form.options', $model)))
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
                 ->addMethodCall('setName', array($model));
 
             $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
-                ->replaceArgument(1, new Parameter(sprintf('lyra_admin.%s.filter.options', $model)))
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
                 ->addMethodCall('setName', array($model));
 
              $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
-                 ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.actions.options', $model))))
+                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
                  ->addMethodCall('setName', array($model));;
         }
 

@@ -11,7 +11,7 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
-use Lyra\AdminBundle\Util\Util;
+use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 /**
@@ -27,18 +27,21 @@ abstract class BaseRenderer
     /**
      * @var array
      */
-    protected $options;
-
-    /**
-     * @var array
-     */
     protected $routeParams = array();
 
+    /**
+     * @var \Symfony\Component\Security\Core\SecurityContextInterface
+     */
     protected $securityContext;
 
-    public function __construct(array $options = array())
+    /**
+     * @var \Lyra\AdminBundle\Configuration\AdminConfigurationInterface
+     */
+    protected $configuration;
+
+    public function __construct(AdminConfigurationInterface $configuration)
     {
-        $this->options = $options;
+        $this->configuration = $configuration;
     }
 
     public function setSecurityContext(SecurityContextInterface $securityContext)
@@ -56,29 +59,19 @@ abstract class BaseRenderer
         return $this->name;
     }
 
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-    }
-
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
     public function getTransDomain()
     {
-        return $this->options['trans_domain'];
+        return $this->configuration->getOption('trans_domain');
     }
 
     public function getRoutePrefix()
     {
-        return $this->options['route_prefix'];
+        return $this->configuration->getOption('route_prefix');
     }
 
     public function getTheme()
     {
-        return $this->options['theme'];
+        return $this->configuration->getOption('theme');
     }
 
     public function setRouteParams(array $routeParams)
@@ -89,11 +82,6 @@ abstract class BaseRenderer
     public function getRouteParams()
     {
         return $this->routeParams;
-    }
-
-    public function getFields()
-    {
-        return $this->options['fields'];
     }
 
     public function isActionAllowed($action)
@@ -110,42 +98,5 @@ abstract class BaseRenderer
         }
 
         return false;
-    }
-
-    public function getFieldOptions($fieldName)
-    {
-        $fields = $this->getFields();
-
-        if (!array_key_exists($fieldName, $fields)) {
-            throw new \InvalidArgumentException(sprintf('Field %s does not exist', $fieldName));
-        }
-
-        return $fields[$fieldName];
-    }
-
-    public function getFieldOption($fieldName, $key)
-    {
-        $options = $this->getFieldOptions($fieldName);
-
-        if (!array_key_exists($key, $options)) {
-            throw new \InvalidArgumentException(sprintf('Field option %s does not exist', $key));
-        }
-
-        return  $options[$key];
-    }
-
-    public function getAssocFieldOption($assocModel, $fieldName, $key)
-    {
-        $options = $this->getFieldOptions($assocModel);
-
-        if (!isset($options['assoc']['fields'][$fieldName])) {
-            throw new \InvalidArgumentException(sprintf('Field %s.%s does not exist', $assocModel, $fieldName));
-        }
-
-        if (!array_key_exists($key, $options['assoc']['fields'][$fieldName])) {
-            throw new \InvalidArgumentException(sprintf('Field option %s does not exist', $key));
-        }
-
-        return $options['assoc']['fields'][$fieldName][$key];
     }
 }

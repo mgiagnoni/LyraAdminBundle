@@ -3,13 +3,13 @@
 namespace Lyra\AdminBundle\Tests\Renderer;
 
 use Lyra\AdminBundle\Renderer\FormRenderer;
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
 
 class FormRendererTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetGroups()
     {
         $factory = $this->getMockFormFactory();
-        $renderer = new FormRenderer($factory);
 
         $options = array(
             'fields' => array(
@@ -23,8 +23,8 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
                 'new' => array('groups' => array())
             )
         );
-
-        $renderer->setOptions($options);
+        $configuration = new AdminConfiguration($options);
+        $renderer = new FormRenderer($factory, $configuration);
         $renderer->setAction('new');
 
         $this->assertEquals(array(
@@ -39,7 +39,6 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
     public function testMergeGroups()
     {
         $factory = $this->getMockFormFactory();
-        $renderer = new FormRenderer($factory);
 
         $options = array(
             'fields' => array(
@@ -61,7 +60,8 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $renderer->setOptions($options);
+        $configuration = new AdminConfiguration($options);
+        $renderer = new FormRenderer($factory, $configuration);
         $renderer->setAction('new');
 
         $this->assertEquals(array(
@@ -74,7 +74,9 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
             'fields' => array('test-1')
             ));
 
-        $renderer->setOptions($options);
+        $configuration = new AdminConfiguration($options);
+        $renderer = new FormRenderer($factory, $configuration);
+        $renderer->setAction('new');
 
         $this->assertEquals(array(
             'main' => array(
@@ -82,7 +84,8 @@ class FormRendererTest extends \PHPUnit_Framework_TestCase
             )
         ), $renderer->getGroups());
 
-        $renderer->setOptions($options);
+        $configuration = new AdminConfiguration($options);
+        $renderer = new FormRenderer($factory, $configuration);
         $renderer->setAction('edit');
 
         $this->assertEquals(array(

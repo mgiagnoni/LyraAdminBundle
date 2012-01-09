@@ -6,16 +6,20 @@
 
     <parameters>
         <parameter key="lyra_admin.form_factory.class">Lyra\AdminBundle\FormFactory\AdminFormFactory</parameter>
+        <parameter key="lyra_admin.configuration.class">Lyra\AdminBundle\Configuration\AdminConfiguration</parameter>
         <parameter key="lyra_admin.list_renderer.class">Lyra\AdminBundle\Renderer\ListRenderer</parameter>
         <parameter key="lyra_admin.form_renderer.class">Lyra\AdminBundle\Renderer\FormRenderer</parameter>
         <parameter key="lyra_admin.dialog_renderer.class">Lyra\AdminBundle\Renderer\DialogRenderer</parameter>
         <parameter key="lyra_admin.filter_renderer.class">Lyra\AdminBundle\Renderer\FilterRenderer</parameter>
+        <parameter key="lyra_admin.pager.class">Lyra\AdminBundle\Pager\Pager</parameter>
     </parameters>
 
     <services>
         <service id="lyra_admin.form_factory" class="%lyra_admin.form_factory.class%">
             <argument type="service" id="form.factory" />
         </service>
+
+        <service id="lyra_admin.configuration.abstract" class="%lyra_admin.configuration.class%" abstract="true" />
 
         <service id="lyra_admin.list_renderer.abstract" class="%lyra_admin.list_renderer.class%" abstract="true">
             <call method="setSecurityContext">
@@ -25,7 +29,7 @@
 
         <service id="lyra_admin.form_renderer.abstract" class="%lyra_admin.form_renderer.class%" abstract="true">
             <argument type="service" id="lyra_admin.form_factory" />
-            <argument /> <!-- Options -->
+            <argument /> <!-- Configuration -->
             <call method="setSecurityContext">
                 <argument type="service" id="security.context" />
             </call>
@@ -35,8 +39,10 @@
 
         <service id="lyra_admin.filter_renderer.abstract" class="%lyra_admin.filter_renderer.class%" abstract="true">
             <argument type="service" id="lyra_admin.form_factory" />
-            <argument /> <!-- Options -->
+            <argument /> <!-- Configuration -->
         </service>
+
+        <service id="lyra_admin.pager" class="%lyra_admin.pager.class%" />
     </services>
 
 </container>

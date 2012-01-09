@@ -84,62 +84,6 @@ interface ListRendererInterface extends BaseRendererInterface
     function getSort();
 
     /**
-     * Sets the base query builder used to retrieve list rows.
-     *
-     * @param mixed $queryBuilder
-     */
-    function setBaseQueryBuilder($queryBuilder);
-
-    /**
-     * Gets the total number of list rows.
-     *
-     * @return integer
-     */
-    function getTotal();
-
-    /**
-     * Gets list rows (for the current page)
-     *
-     * @return array query results are hydrated as array
-     */
-    function getResults();
-
-    /**
-     * Gets the total number of list pages.
-     *
-     * @return integer
-     */
-    function getNbPages();
-
-    /**
-     * Sets the current page number.
-     *
-     * @param integer $page
-     */
-    function setPage($page);
-
-    /**
-     * Gets the current page number.
-     *
-     * @return integer
-     */
-    function getPage();
-
-    /**
-     * Gets the previous page number.
-     *
-     * @return integer
-     */
-    function getPrevPage();
-
-    /**
-     * Gets the next page number.
-     *
-     * @return integer
-     */
-    function getNextPage();
-
-    /**
      * Gets a column value.
      *
      * @param string $columName
@@ -196,20 +140,6 @@ interface ListRendererInterface extends BaseRendererInterface
      * @return string
      */
     function getColFormat($columnName);
-
-    /**
-     * Sets the search filter criteria.
-     *
-     * @param array $criteria
-     */
-    function setFilterCriteria($criteria);
-
-    /**
-     * Gets the search filter criteria.
-     *
-     * @return array
-     */
-    function getFilterCriteria();
 
     /**
      * Gets the value of a column configuration option.

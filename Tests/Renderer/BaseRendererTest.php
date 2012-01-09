@@ -11,65 +11,40 @@
 
 namespace Lyra\AdminBundle\Tests\Renderer;
 
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
+use Lyra\AdminBundle\Renderer\BaseRenderer;
+
 class BaseRendererTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetFields()
-    {
-        $renderer = $this->getClassMock();
-
-        $this->assertEquals(array(
-            'test-1' => array(
-                'name' => 'test-1',
-                'type' => 'string',
-                'length' => 255,
-                'label' => 'test',
-                'options' => array(),
-            ),
-            'test-2' => array(
-                'name' => 'test-2',
-                'type' => 'string',
-                'options' => array(),
-            )
-        ), $renderer->getFields());
-    }
+    private $renderer;
 
     public function testGetTransDomain()
     {
-        $renderer = $this->getClassMock();
-
-        $this->assertEquals('LyraAdminBundle', $renderer->getTransDomain());
+        $this->assertEquals('LyraAdminBundle', $this->renderer->getTransDomain());
     }
 
     public function testGetRoutePrefix()
     {
-        $renderer = $this->getClassMock();
-
-        $this->assertEquals('test_prefix', $renderer->getRoutePrefix());
+        $this->assertEquals('test_prefix', $this->renderer->getRoutePrefix());
     }
 
     public function testGetTheme()
     {
-        $renderer = $this->getClassMock();
-
-        $this->assertEquals('test_theme', $renderer->getTheme());
+        $this->assertEquals('test_theme', $this->renderer->getTheme());
     }
 
-    private function getClassMock()
+    protected function setup()
     {
-        $mock = $this->getMockForAbstractClass('Lyra\AdminBundle\Renderer\BaseRenderer');
-
         $options = array(
             'trans_domain' => 'LyraAdminBundle',
             'route_prefix' => 'test_prefix',
             'theme' => 'test_theme',
-            'fields' => array(
-                'test-1' => array('name' => 'test-1', 'type' => 'string', 'length' => 255, 'label' => 'test', 'options' => array()),
-                'test-2' => array('name' => 'test-2', 'type' => 'datetime', 'type' => 'string', 'options' => array())
-            )
         );
-        $mock->setOptions($options);
 
-        return $mock;
+        $configuration = new AdminConfiguration($options);
+        $this->renderer = new TestRenderer($configuration);
     }
 
 }
+
+class TestRenderer extends BaseRenderer {}

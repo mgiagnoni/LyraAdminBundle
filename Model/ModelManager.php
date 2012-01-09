@@ -16,6 +16,8 @@ namespace Lyra\AdminBundle\Model;
  */
 abstract class ModelManager implements ModelManagerInterface
 {
+    protected $configuration;
+
     public function setClass($class)
     {
         $this->class = $class;

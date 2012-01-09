@@ -67,18 +67,18 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getTemplate()
     {
-        return $this->options['list']['template'];
+        return $this->getOption('template');
     }
 
     public function getTitle()
     {
-        return $this->options['list']['title'];
+        return $this->getOption('title');
     }
 
     public function getColumns()
     {
         if (null === $this->columns) {
-            $this->columns = $this->options['list']['columns'];
+            $this->columns = $this->getOption('columns');
             $this->initColumns();
         }
 
@@ -107,22 +107,16 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getDefaultSort()
     {
-        return $this->options['list']['default_sort'];
+        return $this->configuration->getListOption('default_sort');
     }
 
     public function getActions()
     {
-        return $this->options['actions'];
+        return $this->configuration->getOption('actions');
     }
 
     public function setSort(array $sort)
     {
-        if (!$sort['column']) {
-            $default = $this->getDefaultSort();
-            $sort['column'] = $default['column'];
-            $sort['order'] = $default['order'];
-        }
-
         $this->sort = $sort;
     }
 
@@ -131,97 +125,18 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->sort;
     }
 
-    public function setBaseQueryBuilder($qb)
-    {
-        $this->total = null;
-        $this->baseQueryBuilder = $qb;
-    }
-
-    public function getQueryBuilder()
-    {
-        if (null === $this->queryBuilder) {
-            $this->initQueryBuilder();
-        }
-
-        return $this->queryBuilder;
-    }
-
-    public function getTotal()
-    {
-        if (null === $this->total) {
-            $qb = $this->getQueryBuilder();
-            $alias = $qb->getRootAlias();
-
-            $this->total = $qb
-                ->select('COUNT('.$alias.')')
-                ->setFirstResult(null)
-                ->getQuery()->getSingleScalarResult();
-            }
-
-        return $this->total;
-    }
-
-    public function getResults()
-    {
-        $maxRows = $this->options['list']['max_page_rows'];
-        $qb = $this->getQueryBuilder();
-        $alias = $qb->getRootAlias();
-        $page = min($this->getPage(), max(1, $this->getNbPages()));
-
-        return $qb
-            ->select($alias)
-            ->setFirstResult(($page - 1) * $maxRows)
-            ->setMaxResults($maxRows)
-            ->getQuery()->getResult();
-    }
-
-    public function getNbPages()
-    {
-        return ceil($this->getTotal() / $this->options['list']['max_page_rows']);
-    }
-
-    public function setPage($page)
-    {
-        $this->page = $page;
-    }
-
-    public function getPage()
-    {
-        return $this->page;
-    }
-
-    public function getPrevPage()
-    {
-        return max(1, $this->getPage() - 1);
-    }
-
-    public function getNextPage()
-    {
-        return min($this->getNbPages(), $this->getPage() + 1);
-    }
-
-    public function getPageLinks()
-    {
-        $page = $this->getPage();
-        $start = max(1, $page - floor($this->maxPageLinks / 2));
-        $end = min($this->getNbPages(), $page + $this->maxPageLinks - ($page - $start + 1));
-        $start = max(1, $start - ($this->maxPageLinks - ($end - $start + 1)));
-
-        return range($start, $end);
-    }
-
     public function getColValue($colName, $object)
     {
         $field = $this->getColOption($colName, 'field');
 
         if (false !== strpos($field, '.')) {
             list($model, $field) = explode('.', $field);
-            $method = $this->getFieldOption($model, 'get_method');
+            $method = $this->configuration->getFieldOption($model, 'get_method');
             $object = $object->$method();
-            $method = $this->getAssocFieldOption($model, $field, 'get_method');
+            $method = $this->configuration->getAssocFieldOption($model, $field, 'get_method');
             $value = $object->$method();
         } else {
-            $method = $this->getFieldOption($field, 'get_method');
+            $method = $this->configuration->getFieldOption($field, 'get_method');
             $value = $object->$method();
         }
 
@@ -290,6 +205,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $columns[$colName][$key];
     }
 
+    public function getOption($key)
+    {
+        return $this->configuration->getListOption($key);
+    }
+
     protected function initColumns()
     {
         $sort = $this->getSort();
@@ -302,96 +222,16 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         }
     }
 
-    protected function initQueryBuilder()
-    {
-        $this->queryBuilder = $this->baseQueryBuilder;
-        $this->addFilterCriteria();
-        $this->addSort();
-    }
-
-    protected function addFilterCriteria()
-    {
-        $fields = $this->getFields();
-        $criteria = $this->getFilterCriteria();
-        $alias = $this->queryBuilder->getRootAlias();
-
-        foreach ($criteria as $field => $value) {
-            if(null === $value || '' == $value) {
-                continue;
-            }
-
-            if (isset($fields[$field])) {
-                switch ($fields[$field]['type']) {
-                    case 'string':
-                    case 'text':
-                        $this->queryBuilder->andWhere(
-                            $this->queryBuilder->expr()->like($alias.'.'.$field, $this->queryBuilder->expr()->literal($value.'%'))
-                        );
-                        break;
-                    case 'date':
-                    case 'datetime':
-                        if (null !== $value['from']) {
-                            $this->queryBuilder->andWhere(
-                                $this->queryBuilder->expr()->gte($alias.'.'.$field, $this->formatDate($value['from']))
-                            );
-                        }
-                        if (null !== $value['to']) {
-                            $this->queryBuilder->andWhere(
-                                $this->queryBuilder->expr()->lte($alias.'.'.$field, $this->formatDate($value['to']))
-                            );
-                        }
-                        break;
-
-                    case 'boolean':
-                         $this->queryBuilder->andWhere(
-                                $this->queryBuilder->expr()->eq($alias.'.'.$field, $value)
-                            );
-
-                        break;
-                }
-            }
-        }
-    }
-
-    protected function addSort()
-    {
-        $sort = $this->getSort();
-
-        if (isset($sort['column'])) {
-            $field = $this->getColOption($sort['column'], 'field');
-            if (false !== strpos($field, '.')) {
-                list($model, $field) = explode('.', $field);
-                $sortField = $this->getAssocFieldOption($model, $field, 'name');
-                $options = $this->getFieldOption($model, 'assoc');
-                $sortField = $options['model'].'.'.$sortField;
-            } else {
-                $sortField = $this->getFieldOption($field, 'name');
-                $sortField = $this->queryBuilder->getRootAlias().'.'.$sortField;
-            }
-        } else {
-            $default = $this->getDefaultSort();
-            $sortField = $default['field'];
-        }
-
-        if (null !== $sortField) {
-            $this->queryBuilder->orderBy($sortField, $sort['order']);
-        }
-    }
-
-    protected function formatDate($date)
-    {
-        return $this->queryBuilder->expr()->literal($date->format('Y-m-d H:i:s'));
-    }
-
     protected function getAllowedActions($type)
     {
-        $actions = array();
-        foreach ($this->options['list'][$type.'_actions'] as $action) {
+        $allowed = array();
+        $actions = $this->getOption($type.'_actions');
+        foreach ($actions as $action) {
             if ($this->isActionAllowed($action)) {
-                $actions[] = $action;
+                $allowed[] = $action;
             }
         }
 
-        return $actions;
+        return $allowed;
     }
 }

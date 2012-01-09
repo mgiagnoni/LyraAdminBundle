@@ -28,13 +28,27 @@ class AdminController extends ContainerAware
      */
     public function indexAction()
     {
-        $filterRenderer = $this->getFilterRenderer();
+        $config = $this->getConfiguration();
+
         $listRenderer = $this->getListRenderer();
+        $sort = $this->getSort();
+        $listRenderer->setSort($sort);
+
+        $pager = $this->getPager();
+        $pager->setMaxRows($config->getListOption('max_page_rows'));
+        $pager->setPage($this->getCurrentPage());
+        $pager->setQueryBuilder(
+            $this->getModelManager()->buildQuery(
+                $this->getFilterCriteria(),
+                $sort
+            )
+        );
 
         return $this->container->get('templating')
             ->renderResponse($listRenderer->getTemplate(), array(
                 'renderer' => $listRenderer,
-                'filter' => $filterRenderer,
+                'filter' => $this->getFilterRenderer(),
+                'pager' => $pager,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list')
             ));
     }
@@ -202,6 +216,16 @@ class AdminController extends ContainerAware
         return $this->container->get('session');
     }
 
+    public function getPager()
+    {
+        return $this->container->get('lyra_admin.pager');
+    }
+
+    public function getConfiguration($name = null)
+    {
+        return $this->container->get(sprintf('lyra_admin.%s.configuration', $name ?: $this->getModelName()));
+    }
+
     /**
      * Gets a list renderer service.
      *
@@ -211,13 +235,7 @@ class AdminController extends ContainerAware
      */
     public function getListRenderer($name = null)
     {
-        $renderer = $this->container->get(sprintf('lyra_admin.%s.list_renderer', $name ?: $this->getModelName()));
-        $renderer->setFilterCriteria($this->getFilterCriteria());
-        $renderer->setPage($this->getCurrentPage());
-        $renderer->setSort($this->getSort());
-        $renderer->setBaseQueryBuilder($this->getModelManager()->getBaseListQueryBuilder());
-
-        return $renderer;
+        return $this->container->get(sprintf('lyra_admin.%s.list_renderer', $name ?: $this->getModelName()));
     }
 
     /**
@@ -355,12 +373,21 @@ class AdminController extends ContainerAware
 
     protected function getSort()
     {
+        $config = $this->getConfiguration();
+        $default = $config->getListOption('default_sort');
+
         if ($column = $this->getRequest()->get('column')) {
             $this->getSession()->set($this->getModelName().'.sort.column', $column);
             $this->getSession()->set($this->getModelName().'.sort.order', $this->getRequest()->get('order'));
         }
 
-        $sort = array('column' => $this->getSession()->get($this->getModelName().'.sort.column'), 'order' => $this->getSession()->get($this->getModelName().'.sort.order'));
+        $sort = array('column' => $this->getSession()->get($this->getModelName().'.sort.column', $default['column']), 'order' => $this->getSession()->get($this->getModelName().'.sort.order', $default['order']));
+
+        if (null !== $sort['column']) {
+            $sort['field'] = $config->getListColumnOption($sort['column'], 'field');
+        } else {
+            $sort['field'] = $default['field'];
+        }
 
         return $sort;
     }

@@ -33,11 +33,20 @@ class DialogRenderer extends BaseRenderer
 
     public function getTitle()
     {
-        return $this->options['actions'][$this->action]['dialog']['title'];
+        $options = $this->getDialogOptions();
+
+        return $options['title'];
     }
 
     public function getMessage()
     {
-        return $this->options['actions'][$this->action]['dialog']['message'];
+        $options = $this->getDialogOptions();
+
+        return $options['message'];
+    }
+
+    public function getDialogOptions()
+    {
+        return $this->configuration->getActionOption($this->action, 'dialog');
     }
 }

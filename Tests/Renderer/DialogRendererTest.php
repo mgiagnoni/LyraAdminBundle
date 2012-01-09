@@ -12,6 +12,7 @@
 namespace Lyra\AdminBundle\Tests\Renderer;
 
 use Lyra\AdminBundle\Renderer\DialogRenderer;
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
 
 class DialogRendererTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,17 +32,19 @@ class DialogRendererTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->renderer = new DialogRenderer($this->getOptions());
+        $this->renderer = new DialogRenderer($this->getConfiguration());
     }
 
-    private function getOptions()
+    private function getConfiguration()
     {
-        return array(
+        $options = array(
             'actions' => array(
                 'delete' => array(
                     'dialog' => array('title' => 'test_title', 'message' => 'test_message')
                 ),
             )
         );
+
+        return new AdminConfiguration($options);
     }
 }

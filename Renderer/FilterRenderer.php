@@ -20,16 +20,16 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected $formView;
 
-    public function __construct(FormFactory $factory, array $options = array())
+    public function __construct(FormFactory $factory, $configuration)
     {
-        parent::__construct($options);
+        parent::__construct($configuration);
 
         $this->factory = $factory;
     }
 
     public function getTitle()
     {
-        return $this->options['filter']['title'];
+        return $this->getOption('title');
     }
 
     public function getForm($data = null)
@@ -52,12 +52,17 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     public function getFilterFields()
     {
-        return $this->options['filter']['fields'];
+        return $this->getOption('fields');
     }
 
     public function hasFields()
     {
-        return (boolean)count($this->options['filter']['fields']);
+        return (boolean)count($this->getFilterFields());
+    }
+
+    public function getOption($key)
+    {
+        return $this->configuration->getFilterOption($key);
     }
 
     protected function createForm($data = null)

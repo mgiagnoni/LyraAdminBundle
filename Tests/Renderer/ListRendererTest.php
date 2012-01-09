@@ -12,6 +12,7 @@
 namespace Lyra\AdminBundle\Tests\Renderer;
 
 use Lyra\AdminBundle\Renderer\ListRenderer;
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
 
 class ListRendererTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,11 +60,8 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testGetColumnsWithSort()
     {
-        $renderer = new ListRenderer($this->getOptions());
-        $renderer->setSort(array('column' => 'test-1', 'order' => 'desc'));
-        $renderer->setName('test');
-
-        $cols = $renderer->getColumns();
+        $this->renderer->setSort(array('column' => 'test-1', 'order' => 'desc'));
+        $cols = $this->renderer->getColumns();
 
         $this->assertTrue($cols['test-1']['sorted']);
         $this->assertNull($cols['test-2']['sorted']);
@@ -93,17 +91,19 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testGetColValue()
     {
-        $options = $this->renderer->getOptions();
+        $options = $this->getOptions();
         $options['fields']['test-1']['get_method'] = 'getField1';
         $options['fields']['test-1']['options'] = array();
-        $this->renderer->setOptions($options);
+        $configuration = new AdminConfiguration($options);
+        $renderer = new ListRenderer($configuration);
         $object = new \Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
         $object->setField1('val-1');
-        $this->assertEquals('val-1', $this->renderer->getColValue('test-1', $object));
+        $this->assertEquals('val-1', $renderer->getColValue('test-1', $object));
     }
+
     protected function setUp()
     {
-        $this->renderer = new ListRenderer($this->getOptions());
+        $this->renderer = new ListRenderer($this->getConfiguration());
         $this->renderer->setName('test');
         $this->renderer->setSort(array('column' => null, 'order' => null));
     }
@@ -150,5 +150,10 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         );
 
         return $options;
+    }
+
+    private function getConfiguration()
+    {
+        return new AdminConfiguration($this->getOptions());
     }
 }

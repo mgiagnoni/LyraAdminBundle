@@ -12,15 +12,17 @@
 namespace Lyra\AdminBundle\Tests\Renderer;
 
 use Lyra\AdminBundle\Renderer\FilterRenderer;
+use Lyra\AdminBundle\Configuration\AdminConfiguration;
 
 class FilterRendererTest extends \PHPUnit_Framework_TestCase
 {
-    protected $factory;
-    protected $options;
+    private $factory;
+    private $options;
+    private $configuration;
 
     public function testGetTitle()
     {
-        $renderer = new FilterRenderer($this->factory, $this->options);
+        $renderer = new FilterRenderer($this->factory, $this->configuration);
         $this->assertEquals('test', $renderer->getTitle());
     }
 
@@ -29,7 +31,7 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->once())
             ->method('createForm');
 
-        $renderer = new FilterRenderer($this->factory, $this->options);
+        $renderer = new FilterRenderer($this->factory, $this->configuration);
         $renderer->getForm();
     }
 
@@ -46,13 +48,13 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
             ->method('createForm')
             ->will($this->returnValue($form));
 
-        $renderer = new FilterRenderer($this->factory, $this->options);
+        $renderer = new FilterRenderer($this->factory, $this->configuration);
         $renderer->getView();
     }
 
     public function testGetFilterFields()
     {
-        $renderer = new FilterRenderer($this->factory, $this->options);
+        $renderer = new FilterRenderer($this->factory, $this->configuration);
 
         $this->assertEquals(array(
             'field1' => array('type' => 'text'),
@@ -62,11 +64,12 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testHasFields()
     {
-        $renderer = new FilterRenderer($this->factory, $this->options);
+        $renderer = new FilterRenderer($this->factory, $this->configuration);
         $this->assertTrue($renderer->hasFields());
 
         $this->options['filter']['fields'] = array();
-        $renderer = new FilterRenderer($this->factory, $this->options);
+        $configuration = new AdminConfiguration($this->options);
+        $renderer = new FilterRenderer($this->factory, $configuration);
         $this->assertFalse($renderer->hasFields());
     }
 
@@ -83,5 +86,7 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
                 'field2' => array('type' => 'boolean'),
             )
         ));
+
+        $this->configuration = new AdminConfiguration($this->options);
     }
 }

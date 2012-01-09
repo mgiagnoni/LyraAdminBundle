@@ -37,20 +37,6 @@ interface BaseRendererInterface
     function getName();
 
     /**
-     * Sets configuration options.
-     *
-     * @param array $options
-     */
-    function setOptions(array $options);
-
-    /**
-     * Gets configuration options.
-     *
-     * @return array
-     */
-    function getOptions();
-
-    /**
      * Gets translation domain.
      *
      * @return string
@@ -86,13 +72,6 @@ interface BaseRendererInterface
     function getRouteParams();
 
     /**
-     * Gets all fields configuration options.
-     *
-     * @return array
-     */
-    function getFields();
-
-    /**
      * Checks if an action is allowed.
      *
      * @param string $action action name
@@ -100,35 +79,4 @@ interface BaseRendererInterface
      * @return Boolean
      */
     function isActionAllowed($action);
-
-    /**
-     * Gets all the configuration options of a given field.
-     *
-     * @param string $fieldName
-     *
-     * @return array
-     */
-    function getFieldOptions($fieldName);
-
-    /**
-     * Gets a configuration option of a given field.
-     *
-     * @param string $fieldName
-     * @param string $key option key
-     *
-     * @return mixed
-     */
-    function getFieldOption($fieldName, $key);
-
-    /**
-     * Gets a configuration option of a field of an associated model.
-     *
-     * @param string $assocModel
-     * @param string $fieldName
-     * @param string $key option key
-     *
-     * @return mixed
-     */
-    function getAssocFieldOption($assocModel, $fieldName, $key);
 }
-
