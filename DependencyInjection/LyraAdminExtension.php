@@ -33,6 +33,7 @@ use Lyra\AdminBundle\Util\Util;
  */
 class LyraAdminExtension extends Extension
 {
+    private $config;
     private $modelNames;
 
     public function load(array $configs, ContainerBuilder $container)
@@ -48,103 +49,38 @@ class LyraAdminExtension extends Extension
         }
 
         $container->setParameter('lyra_admin.options', $config);
+        $this->config = $config;
         $this->modelNames = array_keys($config['models']);
-        $routes = array('route_pattern_prefix' => $config['route_pattern_prefix']);
-        $menu = array();
 
-        foreach ($config['models'] as $name => $options)
+        foreach ($config['models'] as $model => $options)
         {
-            foreach ($config['actions'] as $key => $action) {
-                if (isset($options['actions'][$key])) {
-                    $options['actions'][$key] = array_merge($action, $options['actions'][$key]);
-                } else {
-                    $options['actions'][$key] = $action;
-                }
-            }
+            $this->setActionsDefaults($model);
+            $this->setRouteDefaults($model);
+            $this->setColumnsDefaults($model);
 
-            if (!isset($options['route_prefix'])) {
-                $options['route_prefix'] = 'lyra_admin_'.$name;
-            }
+            $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
+                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Parameter(sprintf('lyra_admin.%s.class', $model))));
 
-            if (!isset($options['route_pattern_prefix'])) {
-                $options['route_pattern_prefix'] = $name;
-            }
+            $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
+                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.list.options', $model))))
+                ->addMethodCall('setName', array($model));
 
-            // Options for route loader
+            $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
+                ->setArguments(array(new Reference('lyra_admin.form_factory'), new Parameter(sprintf('lyra_admin.%s.form.options', $model))))
+                ->addMethodCall('setName', array($model));
 
-            $routes['models'][$name] = array(
-                'controller' => $options['controller'],
-                'route_pattern_prefix' => $options['route_pattern_prefix'],
-                'route_prefix' => $options['route_prefix']
-            );
+            $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
+                ->setArguments(array(new Reference('lyra_admin.form_factory'), new Parameter(sprintf('lyra_admin.%s.filter.options', $model))))
+                ->addMethodCall('setName', array($model));
 
-            foreach ($options['actions'] as $action => $attrs) {
-                if (isset($attrs['route_pattern'])) {
-                    $routes['models'][$name]['actions'][$action] = array(
-                        'route_pattern' => $attrs['route_pattern'],
-                        'route_defaults' => $attrs['route_defaults']
-                    );
-                }
-            }
-
-            // Options for menu
-
-            if (false !== $options['title']) {
-                $menu[$name] = array(
-                    'route' => $options['route_prefix'].'_index',
-                    'title' => null !== $options['title'] ? $options['title'] : ucfirst($name),
-                    'trans_domain' => $options['trans_domain']
-                );
-            }
-
-            // Default columns options
-
-            $columns = &$options['list']['columns'];
-
-            foreach ($columns as $col => $attrs) {
-                $columns[$col]['sorted'] = false;
-                $columns[$col]['name'] = $col;
-
-                if (!isset($attrs['label'])) {
-                    $columns[$col]['label'] = $options['list']['auto_labels'] ? Util::humanize($col) : $name.'.list.'.$col;
-                }
-
-                if (!isset($attrs['property_name'])) {
-                    $columns[$col]['property_name'] = $col;
-                }
-
-                if (isset($attrs['template'])) {
-                    $columns[$col]['type'] = 'template';
-                }
-            }
-
-            $options['theme'] = $config['theme'];
-            $container->setParameter(sprintf('lyra_admin.%s.options', $name), $options);
-            $container->setParameter(sprintf('lyra_admin.%s.class', $name), $options['class']);
-
-            // Services
-
-            $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $name), new DefinitionDecorator($options['services']['model_manager']))
-                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Parameter(sprintf('lyra_admin.%s.class', $name))));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $name), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
-                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.list.options', $name))))
-                ->addMethodCall('setName', array($name));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $name), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
-                ->setArguments(array(new Reference('lyra_admin.form_factory'), new Parameter(sprintf('lyra_admin.%s.form.options', $name))))
-                ->addMethodCall('setName', array($name));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $name), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
-                ->setArguments(array(new Reference('lyra_admin.form_factory'), new Parameter(sprintf('lyra_admin.%s.filter.options', $name))))
-                ->addMethodCall('setName', array($name));
-
-             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $name), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
-                 ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.actions.options', $name))))
-                 ->addMethodCall('setName', array($name));;
+             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
+                 ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.actions.options', $model))))
+                 ->addMethodCall('setName', array($model));;
         }
-        $container->setParameter('lyra_admin.routes', $routes);
-        $container->setParameter('lyra_admin.menu', $menu);
+
+        $this->setRouteLoaderOptions($container);
+        $this->setMenuOptions($container);
+
         $resources = array();
 
         if ($container->has('twig.form.resources')) {
@@ -157,22 +93,71 @@ class LyraAdminExtension extends Extension
     public function configureFromMetadata(ContainerBuilder $container)
     {
         $this->setFieldsDefaults($container);
-        $this->updateColumnsDefaults($container);
+        $this->setAssocFieldsOptions();
+        $this->updateColumnsDefaults();
         $this->setModelOptions($container);
+    }
+
+    private function setActionsDefaults($model)
+    {
+        $options =& $this->config['models'][$model]['actions'];
+
+        foreach ($this->config['actions'] as $action => $attrs) {
+            if (isset($options[$action])) {
+                $options[$action] = array_merge($attrs, $options[$action]);
+            } else {
+                $options[$action] = $attrs;
+            }
+        }
+    }
+
+    private function setRouteDefaults($model)
+    {
+        $options =& $this->config['models'][$model];
+
+        if (!isset($options['route_prefix'])) {
+            $options['route_prefix'] = 'lyra_admin_'.$model;
+        }
+
+        if (!isset($options['route_pattern_prefix'])) {
+            $options['route_pattern_prefix'] = $model;
+        }
+    }
+
+    private function setColumnsDefaults($model)
+    {
+        $options =& $this->config['models'][$model]['list'];
+        $columns =& $options['columns'];
+
+        foreach ($columns as $col => $attrs) {
+            $columns[$col]['sorted'] = false;
+            $columns[$col]['name'] = $col;
+
+            if (!isset($attrs['label'])) {
+                $columns[$col]['label'] = $options['auto_labels'] ? Util::humanize($col) : $model.'.list.'.$col;
+            }
+
+            if (!isset($attrs['property_name'])) {
+                $columns[$col]['property_name'] = $col;
+            }
+
+            if (isset($attrs['template'])) {
+                $columns[$col]['type'] = 'template';
+            }
+        }
     }
 
     private function setFieldsDefaults(ContainerBuilder $container)
     {
         $models = array();
-        $config = $container->getParameter('lyra_admin.options');
 
-        foreach ($config['models'] as $name => $options) {
-            $models[$name]['class'] = $options['class'];
+        foreach ($this->config['models'] as $model => $options) {
+            $models[$model]['class'] = $options['class'];
             $refl = new \ReflectionClass($options['class']);
-            $models[$name]['nspace'] = $refl->getNamespaceName();
+            $models[$model]['nspace'] = $refl->getNamespaceName();
         }
 
-        $managers = $container->getParameter('doctrine.entity_managers');
+        $managers = $container->hasParameter('doctrine.entity_managers') ? $container->getParameter('doctrine.entity_managers') : array();
 
         foreach (array_keys($managers) as $manager) {
             $definition = $container->getDefinition(sprintf('doctrine.orm.%s_entity_manager', $manager));
@@ -220,31 +205,33 @@ class LyraAdminExtension extends Extension
             $config->setMetadataDriverImpl($driverChain);
             $em = EntityManager::create($connectionOptions, $config);
 
-            foreach ($models as $name => $model) {
-                $metadata = $em->getClassMetadata($model['class']);
-                $this->setFieldsDefaultsFromMetadata($container, $name, $metadata);
+            foreach ($models as $model => $options) {
+                $metadata = $em->getClassMetadata($options['class']);
+                $this->setFieldsDefaultsFromMetadata($model, $metadata);
+                $this->setFilterFieldsDefaultsFromMetadata($model, $metadata);
             }
         }
     }
 
     private function setModelOptions(ContainerBuilder $container)
     {
-        foreach ($this->modelNames as $name) {
-            $options = $container->getParameter(sprintf('lyra_admin.%s.options', $name));
-            $container->setParameter(sprintf('lyra_admin.%s.actions.options', $name), array_diff_key($options, array('form' => null,'list'=>null)));
-            $container->setParameter(sprintf('lyra_admin.%s.list.options', $name), array_diff_key($options, array('form' => null)));
-            $container->setParameter(sprintf('lyra_admin.%s.form.options', $name), array_diff_key($options, array('list' => null)));
-            $container->setParameter(sprintf('lyra_admin.%s.filter.options', $name), array_diff_key($options, array('form' => null,'list' => null)));
-
+        foreach ($this->modelNames as $model) {
+            $options = $this->config['models'][$model];
+            $options['theme'] = $this->config['theme'];
+            $container->setParameter(sprintf('lyra_admin.%s.options', $model), $options);
+            $container->setParameter(sprintf('lyra_admin.%s.actions.options', $model), array_diff_key($options, array('form' => null,'list'=>null)));
+            $container->setParameter(sprintf('lyra_admin.%s.list.options', $model), array_diff_key($options, array('form' => null)));
+            $container->setParameter(sprintf('lyra_admin.%s.form.options', $model), array_diff_key($options, array('list' => null)));
+            $container->setParameter(sprintf('lyra_admin.%s.filter.options', $model), array_diff_key($options, array('form' => null,'list' => null)));
+            $container->setParameter(sprintf('lyra_admin.%s.class', $model), $options['class']);
         }
     }
 
-    private function updateColumnsDefaults(ContainerBuilder $container)
+    private function updateColumnsDefaults()
     {
-        foreach ($this->modelNames as $name) {
-            $options = $container->getParameter(sprintf('lyra_admin.%s.options', $name));
-            $fields = $options['fields'];
-            $columns = $options['list']['columns'];
+        foreach ($this->modelNames as $model) {
+            $fields = $this->config['models'][$model]['fields'];
+            $columns =& $this->config['models'][$model]['list']['columns'];
 
             foreach ($columns as $key => $attrs) {
                 $type = $attrs['type'];
@@ -263,9 +250,6 @@ class LyraAdminExtension extends Extension
                 $class .= ' col-'.$key.' '.$type;
                 $columns[$key]['th_class'] = 'class="'.trim($class).'"';
             }
-
-            $options['list']['columns'] = $columns;
-            $container->setParameter(sprintf('lyra_admin.%s.options', $name), $options);
         }
     }
 
@@ -309,10 +293,9 @@ class LyraAdminExtension extends Extension
         return $driver;
     }
 
-    private function setFieldsDefaultsFromMetadata(ContainerBuilder $container, $model, $metadata)
+    private function setFieldsDefaultsFromMetadata($model, $metadata)
     {
-        $modelOptions = $container->getParameter(sprintf('lyra_admin.%s.options', $model));
-        $fields = $modelOptions['fields'];
+        $fields =& $this->config['models'][$model]['fields'];
 
         foreach ($metadata->fieldMappings as $name => $attrs) {
             if (isset($attrs['id']) && $attrs['id'] === true) {
@@ -357,17 +340,80 @@ class LyraAdminExtension extends Extension
             }
             $fields[$field]['tag'] = Util::underscore($field);
         }
+    }
 
-        $modelOptions['fields'] = $fields;
-        $fields = $modelOptions['filter']['fields'];
+    private function setFilterFieldsDefaultsFromMetadata($model, $metadata)
+    {
+        $fields =& $this->config['models'][$model]['filter']['fields'];
         $mappings = $metadata->fieldMappings;
 
         foreach ($fields as $field => $attrs) {
             $fields[$field]['type'] = $mappings[$field]['type'];
         }
+    }
 
-        $modelOptions['filter']['fields'] = $fields;
-        $container->setParameter(sprintf('lyra_admin.%s.options', $model) ,$modelOptions);
+    private function setAssocFieldsOptions()
+    {
+        $classes = array();
+        foreach ($this->modelNames as $model) {
+            $options = $this->config['models'][$model];
+            $classes[$options['class']] = array('model' => $model, 'fields' => $options['fields']);
+        }
+
+        foreach ($this->modelNames as $model) {
+            $fields =& $this->config['models'][$model]['fields'];
+            foreach ($fields as $name => $attrs) {
+                if ('entity' == $attrs['type']) {
+                    $class = $attrs['options']['class'];
+                    if (isset($classes[$class])) {
+                        $fields[$name]['assoc'] = $classes[$class];
+                    }
+                }
+            }
+        }
+    }
+
+    private function setRouteLoaderOptions(ContainerBuilder $container)
+    {
+        $routes = array('route_pattern_prefix' => $this->config['route_pattern_prefix']);
+
+        foreach ($this->modelNames as $model) {
+            $options = $this->config['models'][$model];
+            $routes['models'][$model] = array(
+                'controller' => $options['controller'],
+                'route_pattern_prefix' => $options['route_pattern_prefix'],
+                'route_prefix' => $options['route_prefix']
+            );
+
+            foreach ($options['actions'] as $action => $attrs) {
+                if (isset($attrs['route_pattern'])) {
+                    $routes['models'][$model]['actions'][$action] = array(
+                        'route_pattern' => $attrs['route_pattern'],
+                        'route_defaults' => $attrs['route_defaults']
+                    );
+                }
+            }
+        }
+
+        $container->setParameter('lyra_admin.routes', $routes);
+    }
+
+    private function setMenuOptions(ContainerBuilder $container)
+    {
+        $menu = array();
+        foreach ($this->modelNames as $model) {
+            $options = $this->config['models'][$model];
+
+            if (false !== $options['title']) {
+                $menu[$model] = array(
+                    'route' => $options['route_prefix'].'_index',
+                    'title' => null !== $options['title'] ? $options['title'] : ucfirst($model),
+                    'trans_domain' => $options['trans_domain']
+                );
+            }
+        }
+
+        $container->setParameter('lyra_admin.menu', $menu);
     }
 
     private function checkNamespace($models, $nspace)

@@ -33,7 +33,7 @@ EOF;
     public function testClassParameter()
     {
         $config = $this->getConfiguration();
-        $this->assertEquals('Acme\MyBundle\Entity\MyEntity', $config->getParameter('lyra_admin.test.class'));
+        $this->assertEquals('Lyra\AdminBundle\Tests\Fixture\Entity\Dummy', $config->getParameter('lyra_admin.test.class'));
     }
 
     public function testDefaultActions()
@@ -59,12 +59,12 @@ EOF;
         $this->assertEquals($options['actions'], $defaults);
     }
 
-    public function testOverrideBuilderAction()
+    public function testOverrideModelAction()
     {
         $yaml = <<<EOF
 models:
     test:
-        class: Acme\MyBundle\Entity\MyEntity
+        class: Lyra\AdminBundle\Tests\Fixture\Entity\Dummy
         controller: AcmeMyBundle:Test
         actions:
             new:
@@ -161,7 +161,7 @@ EOF;
         $yaml = <<<EOF
 models:
     test:
-        class: Acme\MyBundle\Entity\MyEntity
+        class: Lyra\AdminBundle\Tests\Fixture\Entity\Dummy
         controller: AcmeMyBundle:Test
 EOF;
         }
@@ -170,6 +170,7 @@ EOF;
         $loader = new LyraAdminExtension();
         $configuration = new ContainerBuilder();
         $loader->load(array($parsed), $configuration);
+        $loader->configureFromMetadata($configuration);
 
         return $configuration;
     }
