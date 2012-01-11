@@ -53,13 +53,6 @@ interface FormRendererInterface extends BaseRendererInterface
     function getView($field);
 
     /**
-     * Gets the form fields configuration options.
-     *
-     * @return array
-     */
-    function getFields();
-
-    /**
      * Sets fields groups (fieldsets).
      *
      * @param array $groups

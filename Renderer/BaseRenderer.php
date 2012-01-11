@@ -93,7 +93,7 @@ abstract class BaseRenderer
 
     public function getFields()
     {
-        return $this->fields = $this->options['fields'];
+        return $this->options['fields'];
     }
 
     public function isActionAllowed($action)
@@ -110,5 +110,42 @@ abstract class BaseRenderer
         }
 
         return false;
+    }
+
+    public function getFieldOptions($fieldName)
+    {
+        $fields = $this->getFields();
+
+        if (!array_key_exists($fieldName, $fields)) {
+            throw new \InvalidArgumentException(sprintf('Field %s does not exist', $fieldName));
+        }
+
+        return $fields[$fieldName];
+    }
+
+    public function getFieldOption($fieldName, $key)
+    {
+        $options = $this->getFieldOptions($fieldName);
+
+        if (!array_key_exists($key, $options)) {
+            throw new \InvalidArgumentException(sprintf('Field option %s does not exist', $key));
+        }
+
+        return  $options[$key];
+    }
+
+    public function getAssocFieldOption($assocModel, $fieldName, $key)
+    {
+        $options = $this->getFieldOptions($assocModel);
+
+        if (!isset($options['assoc']['fields'][$fieldName])) {
+            throw new \InvalidArgumentException(sprintf('Field %s.%s does not exist', $assocModel, $fieldName));
+        }
+
+        if (!array_key_exists($key, $options['assoc']['fields'][$fieldName])) {
+            throw new \InvalidArgumentException(sprintf('Field option %s does not exist', $key));
+        }
+
+        return $options['assoc']['fields'][$fieldName][$key];
     }
 }

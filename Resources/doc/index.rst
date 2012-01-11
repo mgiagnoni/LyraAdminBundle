@@ -705,6 +705,24 @@ configuration of the ``Listing`` form::
 The form to create / edit a listing now contains a dropdown list to select
 the desired category.
 
+Category fields can be also diplayed in a list column::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                list:
+                    columns:
+                        category.name:
+                            label: Category
+                            sortable: false
+                        # ... #
+
+Note that currently the ``sortable`` option of a column displaying a field of
+a related model must be set to false.
+
 Configuration summary
 =====================
 
@@ -744,6 +762,9 @@ seen up to this point::
                 list:
                     title: Listings
                     columns:
+                        category.name:
+                            label: Category
+                            sortable: false
                         ad_title: ~
                         published:
                             sortable: false

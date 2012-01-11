@@ -213,8 +213,18 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function getColValue($colName, $object)
     {
         $fields = $this->getFields();
-        $method = $fields[$colName]['get_method'];
-        $value = $object->$method();
+
+        if (false !== strpos($colName, '.')) {
+            list($model, $field) = explode('.', $colName);
+            $method = $this->getFieldOption($model, 'get_method');
+            $object = $object->$method();
+            $method = $this->getAssocFieldOption($model, $field, 'get_method');
+            $value = $object->$method();
+        } else {
+            $method = $this->getFieldOption($colName, 'get_method');
+            $value = $object->$method();
+        }
+
         $function = $this->getColOption($colName, 'format_function');
         $format = $this->getColOption($colName, 'format');
         $type = $this->getColOption($colName, 'type');
