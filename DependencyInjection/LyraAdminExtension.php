@@ -66,11 +66,11 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setName', array($model));
 
             $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
-                ->setArguments(array(new Reference('lyra_admin.form_factory'), new Parameter(sprintf('lyra_admin.%s.form.options', $model))))
+                ->replaceArgument(1, new Parameter(sprintf('lyra_admin.%s.form.options', $model)))
                 ->addMethodCall('setName', array($model));
 
             $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
-                ->setArguments(array(new Reference('lyra_admin.form_factory'), new Parameter(sprintf('lyra_admin.%s.filter.options', $model))))
+                ->replaceArgument(1, new Parameter(sprintf('lyra_admin.%s.filter.options', $model)))
                 ->addMethodCall('setName', array($model));
 
              $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))

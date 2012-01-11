@@ -24,6 +24,8 @@
         </service>
 
         <service id="lyra_admin.form_renderer.abstract" class="%lyra_admin.form_renderer.class%" abstract="true">
+            <argument type="service" id="lyra_admin.form_factory" />
+            <argument /> <!-- Options -->
             <call method="setSecurityContext">
                 <argument type="service" id="security.context" />
             </call>
@@ -31,7 +33,10 @@
 
         <service id="lyra_admin.dialog_renderer.abstract" class="%lyra_admin.dialog_renderer.class%" abstract="true" />
 
-        <service id="lyra_admin.filter_renderer.abstract" class="%lyra_admin.filter_renderer.class%" abstract="true" />
+        <service id="lyra_admin.filter_renderer.abstract" class="%lyra_admin.filter_renderer.class%" abstract="true">
+            <argument type="service" id="lyra_admin.form_factory" />
+            <argument /> <!-- Options -->
+        </service>
     </services>
 
 </container>
