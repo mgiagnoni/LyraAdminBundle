@@ -137,8 +137,8 @@ class LyraAdminExtension extends Extension
                 $columns[$col]['label'] = $options['auto_labels'] ? Util::humanize($col) : $model.'.list.'.$col;
             }
 
-            if (!isset($attrs['property_name'])) {
-                $columns[$col]['property_name'] = $col;
+            if (!isset($attrs['field'])) {
+                $columns[$col]['field'] = $col;
             }
 
             if (isset($attrs['template'])) {

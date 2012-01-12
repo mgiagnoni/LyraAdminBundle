@@ -31,6 +31,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(array(
             'test-1' => array(
+                'field' => 'test-1',
                 'type' => 'string',
                 'name' => 'test-1',
                 'label' => 'Test 1',
@@ -42,6 +43,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                 'format_function' => null
             ),
             'test-2' => array(
+                'field' => 'test-2',
                 'type' => 'datetime',
                 'name' => 'test-2',
                 'label' => 'Test 2',
@@ -113,9 +115,10 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
             'list' => array(
                 'title' => 'test_title',
                 'template' => 'test_template',
-                'default_sort' => array('field' => null, 'order' => 'asc'),
+                'default_sort' => array('column' => null, 'field' => null, 'order' => 'asc'),
                 'columns' => array(
                     'test-1' => array(
+                        'field' => 'test-1',
                         'type' => 'string',
                         'name' => 'test-1',
                         'label' => 'Test 1',
@@ -127,6 +130,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
                         'th_class' => 'sortable'
                     ),
                     'test-2' => array(
+                        'field' => 'test-2',
                         'type' => 'datetime',
                         'name' => 'test-2',
                         'label' => 'Test 2',

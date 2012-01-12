@@ -119,7 +119,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     {
         if (!$sort['field']) {
             $default = $this->getDefaultSort();
-            $sort['field'] = $default['field'];
+            $sort['field'] = $default['column'];
             $sort['order'] = $default['order'];
         }
 
@@ -212,16 +212,16 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColValue($colName, $object)
     {
-        $fields = $this->getFields();
+        $field = $this->getColOption($colName, 'field');
 
-        if (false !== strpos($colName, '.')) {
-            list($model, $field) = explode('.', $colName);
+        if (false !== strpos($field, '.')) {
+            list($model, $field) = explode('.', $field);
             $method = $this->getFieldOption($model, 'get_method');
             $object = $object->$method();
             $method = $this->getAssocFieldOption($model, $field, 'get_method');
             $value = $object->$method();
         } else {
-            $method = $this->getFieldOption($colName, 'get_method');
+            $method = $this->getFieldOption($field, 'get_method');
             $value = $object->$method();
         }
 
@@ -358,14 +358,23 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         $sort = $this->getSort();
 
         if (isset($sort['field'])) {
-            $columns = $this->getColumns();
-            if (isset($columns[$sort['field']])) {
-                $field = $columns[$sort['field']]['property_name'];
+            $field = $this->getColOption($sort['field'], 'field');
+            if (false !== strpos($field, '.')) {
+                list($model, $field) = explode('.', $field);
+                $sortField = $this->getAssocFieldOption($model, $field, 'name');
+                $options = $this->getFieldOption($model, 'assoc');
+                $sortField = $options['model'].'.'.$sortField;
             } else {
-                $field = $sort['field'];
+                $sortField = $this->getFieldOption($field, 'name');
+                $sortField = $this->queryBuilder->getRootAlias().'.'.$sortField;
             }
+        } else {
+            $default = $this->getDefaultSort();
+            $sortField = $default['field'];
+        }
 
-            $this->queryBuilder->orderBy($this->queryBuilder->getRootAlias().'.'.$field, $sort['order']);
+        if (null !== $sortField) {
+            $this->queryBuilder->orderBy($sortField, $sort['order']);
         }
     }
 
