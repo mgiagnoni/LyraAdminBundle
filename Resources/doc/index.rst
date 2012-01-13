@@ -720,8 +720,52 @@ Category fields can be also diplayed in a list column::
                             sortable: false
                         # ... #
 
-Note that currently the ``sortable`` option of a column displaying a field of
-a related model must be set to false.
+Note that when a column displays fields of a related model the column name
+in configuration has the format [model name].[field name]. If you don't like
+it, you can explicitly set the ``field`` option and change the column name as
+you like. The following is exactly the same than the configuration above::
+
+                    # ... #
+                    columns:
+                        category:
+                            field: category.name
+                            # now label could be omitted as the default
+                            # value is the 'humanized' column name
+                            label: Category
+                            sortable: false
+
+If you are not interested to sort list results by category, you are done, provided
+that you set ``sortable`` to *false* everything works.
+
+But if you want to make the category colum sortable you will need to make a
+small change to the custom Listing model manager you have previously created::
+
+    // Acme/ClassifiedsBundle/Model/ListingManager.php
+
+    namespace Acme\ClassifiedsBundle\Model;
+
+    use Lyra\AdminBundle\Model\ORM\ModelManager as BaseManager;
+
+    class ListingManager extends BaseManager
+    {
+        // ...
+        public function getBaseListQueryBuilder()
+        {
+            $qb = parent::getBaseListQueryBuilder();
+            $qb->select('a');
+            $qb->leftJoin('a.category', 'category');
+
+            return $qb;
+        }
+    }
+
+The model manager method **getBaseListQueryBuilder()** returns the query builder
+of the query used to retrieve list results. With this change you add a join
+between the Listing and Category models, needed for the sorting to work.
+
+Then you can set the ``sortable`` option of the category column to *true*
+(or remove it from configuration as *true* is the option default value).
+
 
 Configuration summary
 =====================
@@ -765,6 +809,10 @@ seen up to this point::
                         category.name:
                             label: Category
                             sortable: false
+                     # or alternatively
+                     #  category:
+                     #      field: category.name
+                     #      sortable: false
                         ad_title: ~
                         published:
                             sortable: false
