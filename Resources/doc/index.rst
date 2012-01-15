@@ -67,7 +67,25 @@ the symfony *Admin Generator*.
 Installation
 ============
 
-From your project root folder run::
+You can install LyraAdminBundle with standard vendor script or as git submodule.
+
+Vendor script
+-------------
+
+Add the following lines to your ``deps`` file::
+
+    [LyraAdminBundle]
+        git=http://github.com/mgiagnoni/LyraAdminBundle.git
+        target=/bundles/Lyra/AdminBundle
+
+Run the vendors script::
+
+    php bin/vendors install
+
+Git submodule
+-------------
+
+Alternatively from your project root folder run::
 
     git submodule add git://github.com/mgiagnoni/LyraAdminBundle.git vendor/bundles/Lyra/AdminBundle
 
