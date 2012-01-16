@@ -60,7 +60,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
     public function testGetColumnsWithSort()
     {
         $renderer = new ListRenderer($this->getOptions());
-        $renderer->setSort(array('field' => 'test-1', 'order' => 'desc'));
+        $renderer->setSort(array('column' => 'test-1', 'order' => 'desc'));
         $renderer->setName('test');
 
         $cols = $renderer->getColumns();
@@ -105,7 +105,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
     {
         $this->renderer = new ListRenderer($this->getOptions());
         $this->renderer->setName('test');
-        $this->renderer->setSort(array('field' => null, 'order' => null));
+        $this->renderer->setSort(array('column' => null, 'order' => null));
     }
 
     private function getOptions()

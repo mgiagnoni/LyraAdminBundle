@@ -117,9 +117,9 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function setSort(array $sort)
     {
-        if (!$sort['field']) {
+        if (!$sort['column']) {
             $default = $this->getDefaultSort();
-            $sort['field'] = $default['column'];
+            $sort['column'] = $default['column'];
             $sort['order'] = $default['order'];
         }
 
@@ -293,7 +293,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     protected function initColumns()
     {
         $sort = $this->getSort();
-        $sorted = $sort['field'];
+        $sorted = $sort['column'];
 
         if ($sorted && isset($this->columns[$sorted])) {
             $this->columns[$sorted]['sorted'] = true;
@@ -357,8 +357,8 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     {
         $sort = $this->getSort();
 
-        if (isset($sort['field'])) {
-            $field = $this->getColOption($sort['field'], 'field');
+        if (isset($sort['column'])) {
+            $field = $this->getColOption($sort['column'], 'field');
             if (false !== strpos($field, '.')) {
                 list($model, $field) = explode('.', $field);
                 $sortField = $this->getAssocFieldOption($model, $field, 'name');

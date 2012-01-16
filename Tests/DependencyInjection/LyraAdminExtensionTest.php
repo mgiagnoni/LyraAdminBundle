@@ -106,10 +106,10 @@ EOF;
     {
         return array(
             'index' => array(
-                'route_pattern' => 'list/{page}/{field}/{order}',
+                'route_pattern' => 'list/{page}/{column}/{order}',
                 'route_defaults' => array(
                     'page' => null,
-                    'field' => null,
+                    'column' => null,
                     'order' => null
                 ),
                 'roles' => array()

@@ -43,7 +43,7 @@
                         <th {{ col.th_class|raw }}>
                             {% block table_head_sort %}
                                 {% if col.sortable %}
-                                    <a href="{{ path(list.routePrefix~'_index', list.routeParams|merge({'page': 1, 'field': col.name, 'order': col.sorted ? (list.sort.order == 'asc' ? 'desc' : 'asc') : 'asc' })) }}">
+                                    <a href="{{ path(list.routePrefix~'_index', list.routeParams|merge({'page': 1, 'column': col.name, 'order': col.sorted ? (list.sort.order == 'asc' ? 'desc' : 'asc') : 'asc' })) }}">
                                     {{ col.label|trans({}, list.transDomain) }}
                                     </a>
                                 {% else %}
