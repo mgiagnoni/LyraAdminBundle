@@ -9,11 +9,11 @@ from the CMS as a standalone standard Symfony2 bundle.
 LyraAdminBundle is under development. Installation instructions and a basic
 tutorial to get started are at:
 
-    Resources/doc/index.rst
-    
+[`Resources/doc/index.rst`](https://github.com/mgiagnoni/LyraAdminBundle/blob/master/Resources/doc/index.rst)
+
 MIT license
 
-    Resources/meta/LICENSE
+[`Resources/meta/LICENSE`](https://github.com/mgiagnoni/LyraAdminBundle/blob/master/Resources/meta/LICENSE)
 
 ![List](http://i1180.photobucket.com/albums/x402/mgiagnoni/lyra_admin_small.png)
 
