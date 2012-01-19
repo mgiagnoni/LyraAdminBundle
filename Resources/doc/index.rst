@@ -635,6 +635,9 @@ It's time to add more features to the sample bundle. Displaying a bunch of
 uncategorized listings is not very useful, so let's see how to manage
 listing **categories**.
 
+Adding an associated model
+--------------------------
+
 Create a ``Category`` entity with the **SensioGeneratorBundle**::
 
     app/console generate:doctrine:entity --entity=AcmeClassifiedsBundle:Category --fields="name:string(255) description:text" --with-repository --no-interaction
@@ -705,8 +708,13 @@ Create a model ``category`` in LyraAdminBundle configuration::
                         description: ~
 
 Now you can follow the link ``Categories`` in the top menu to create new
-categories. Then you need only to add the ``category`` property to the
-configuration of the ``Listing`` form::
+categories.
+
+Selecting an associated model in form
+-------------------------------------
+
+To set the associated ``Category`` when you create or edit a ``Listing`` object,
+add the ``category`` property to the configuration of the ``Listing`` form::
 
     # app/config/config.yml
 
@@ -723,7 +731,10 @@ configuration of the ``Listing`` form::
 The form to create / edit a listing now contains a dropdown list to select
 the desired category.
 
-Category fields can be also diplayed in a list column::
+Displaying associated model fields in list columns
+--------------------------------------------------
+
+``Category`` fields can be also diplayed in a list column::
 
     # app/config/config.yml
 
