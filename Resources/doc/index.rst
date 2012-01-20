@@ -628,6 +628,43 @@ be cleaned up::
 
 .. _Resources/config/services.yml: https://github.com/mgiagnoni/AcmeClassifiedsBundle/blob/master/Resources/config/services.yml
 
+Customizing routes
+------------------
+
+By default all backend routes have the following pattern::
+
+    [global prefix (default: admin)]/[model prefix (default:model name)]/[action pattern (default: action name + parameters)]
+
+Configuration options are available to customize route patterns. If, for
+example, you want that all your backend URLs begin with *backend* in place
+of *admin*, use the following configuration::
+
+     # app/config/config.yml
+
+     lyra_admin:
+        route_pattern_prefix: backend
+        # ... #
+
+To also change the prefix of all the routes of the ``Listing`` model and the
+pattern of the index action route::
+
+    # app/config/config.yml
+
+     lyra_admin:
+        route_pattern_prefix: backend
+        # ... #
+        models:
+            listing:
+                route_pattern_prefix: ads
+                # ... #
+                actions:
+                    index:
+                        route_pattern: index/{page}/{column}/{order}
+
+With this configuration the URL to display the list of listings becomes::
+
+    http://.../backend/ads/index
+
 Improving the sample bundle
 ===========================
 
