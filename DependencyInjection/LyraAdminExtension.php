@@ -107,6 +107,9 @@ class LyraAdminExtension extends Extension
 
         foreach ($this->config['actions'] as $action => $attrs) {
             if (isset($options[$action])) {
+                if (count($options[$action]['route_defaults']) == 0) {
+                    unset($options[$action]['route_defaults']);
+                }
                 $options[$action] = array_merge($attrs, $options[$action]);
             } else {
                 $options[$action] = $attrs;
