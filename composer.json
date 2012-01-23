@@ -1,0 +1,30 @@
+{
+    "name": "lyra/admin-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony2 bundle to create a backend area based on jQuery, jQuery UI",
+    "keywords": ["admin", "backend", "jquery", "jquery-ui"],
+    "homepage": "https://github.com/mgiagnoni/LyraAdminBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Massimo Giagnoni",
+            "email": "gimassimo@gmail.com"
+        },
+        {
+            "name": "contributors",
+            "homepage": "https://github.com/mgiagnoni/LyraAdminBundle/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/framework-bundle": "2.*",
+        "symfony/security-bundle": "2.*"
+    },
+    "suggest": {
+        "symfony/doctrine-bundle": "*"
+    },
+    "autoload": {
+        "psr-0": { "Lyra\\AdminBundle": "" }
+    },
+    "target-dir": "Lyra/AdminBundle"
+}
