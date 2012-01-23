@@ -832,6 +832,22 @@ between the Listing and Category models, needed for the sorting to work.
 Then you can set the ``sortable`` option of the category column to *true*
 (or remove it from configuration as *true* is the option default value).
 
+Filtering by an associated model
+--------------------------------
+
+To give backend users the opportunity to filter list results and display
+only listings of a given category, you can update filters configuration::
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                filter:
+                    fields:
+                        category: ~
+                        ad_title: ~
+                        posted_at: ~
+                        published: ~
 
 Configuration summary
 =====================
