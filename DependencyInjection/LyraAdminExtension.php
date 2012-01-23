@@ -350,11 +350,12 @@ class LyraAdminExtension extends Extension
 
     private function setFilterFieldsDefaultsFromMetadata($model, $metadata)
     {
-        $fields =& $this->config['models'][$model]['filter']['fields'];
-        $mappings = $metadata->fieldMappings;
+        $fields = $this->config['models'][$model]['fields'];
+        $filters =& $this->config['models'][$model]['filter']['fields'];
 
-        foreach ($fields as $field => $attrs) {
-            $fields[$field]['type'] = $mappings[$field]['type'];
+        foreach ($filters as $field => $attrs) {
+            $filters[$field]['type'] = $fields[$field]['type'];
+            $filters[$field]['options'] = $fields[$field]['options'];
         }
     }
 

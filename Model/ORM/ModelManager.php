@@ -134,12 +134,16 @@ class ModelManager extends BaseManager
                             );
                         }
                         break;
-
                     case 'boolean':
-                         $qb->andWhere(
-                                $qb->expr()->eq($alias.'.'.$field, $value)
-                            );
+                        $qb->andWhere(
+                            $qb->expr()->eq($alias.'.'.$field, $value)
+                        );
 
+                         break;
+                    case 'entity':
+                        $qb->andWhere(
+                            $qb->expr()->eq($field.'.id', $value->getId())
+                        );
                         break;
                 }
             }
