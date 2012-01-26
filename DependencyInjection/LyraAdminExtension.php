@@ -35,6 +35,7 @@ class LyraAdminExtension extends Extension
 {
     private $config;
     private $modelNames;
+    private $metadata;
 
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -52,35 +53,14 @@ class LyraAdminExtension extends Extension
         $this->config = $config;
         $this->modelNames = array_keys($config['models']);
 
-        foreach ($config['models'] as $model => $options)
+        foreach ($this->modelNames as $model)
         {
             $this->setActionsDefaults($model);
             $this->setRouteDefaults($model);
             $this->setColumnsDefaults($model);
-
-            $container->setDefinition(sprintf('lyra_admin.%s.configuration', $model), new DefinitionDecorator('lyra_admin.configuration.abstract'))
-                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.options', $model))));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
-                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
-                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                ->addMethodCall('setName', array($model));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-                ->addMethodCall('setName', array($model));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-                ->addMethodCall('setName', array($model));
-
-             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
-                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                 ->addMethodCall('setName', array($model));;
         }
 
+        $this->createServiceDefinitions($container);
         $this->setRouteLoaderOptions($container);
         $this->setMenuOptions($container);
 
@@ -95,11 +75,14 @@ class LyraAdminExtension extends Extension
 
     public function configureFromMetadata(ContainerBuilder $container)
     {
-        $this->setFieldsDefaults($container);
+        $this->readMetadata($container);
+        $this->setFieldsDefaultsFromMetadata();
+        $this->setFilterFieldsDefaults();
         $this->setAssocFieldsOptions();
         $this->updateColumnsDefaults();
         $this->setModelOptions($container);
     }
+
 
     private function setActionsDefaults($model)
     {
@@ -153,72 +136,6 @@ class LyraAdminExtension extends Extension
         }
     }
 
-    private function setFieldsDefaults(ContainerBuilder $container)
-    {
-        $models = array();
-
-        foreach ($this->config['models'] as $model => $options) {
-            $models[$model]['class'] = $options['class'];
-            $refl = new \ReflectionClass($options['class']);
-            $models[$model]['nspace'] = $refl->getNamespaceName();
-        }
-
-        $managers = $container->hasParameter('doctrine.entity_managers') ? $container->getParameter('doctrine.entity_managers') : array();
-
-        foreach (array_keys($managers) as $manager) {
-            $definition = $container->getDefinition(sprintf('doctrine.orm.%s_entity_manager', $manager));
-            // Connection
-            $definition = $container->getDefinition($definition->getArgument(0));
-            $connectionOptions = $definition->getArgument(0);
-
-            $config = new ORMConfig();
-            $cache = new ArrayCache();
-            $config->setMetadataCacheImpl($cache);
-            $config->setQueryCacheImpl($cache);
-
-            $definition = $container->getDefinition(sprintf('doctrine.orm.%s_configuration', $manager));
-            $methods = $definition->getMethodCalls();
-            foreach ($methods as $method) {
-                switch ($method[0]) {
-                    case 'setProxyDir':
-                        $config->setProxyDir($method[1][0]);
-                        break;
-                    case 'setProxyNamespace':
-                        $config->setProxyNamespace($method[1][0]);
-                        break;
-                }
-            }
-
-            // Configure driver chain
-            $definition = $container->getDefinition(sprintf('doctrine.orm.%s_metadata_driver', $manager));
-            $class = $definition->getClass();
-            $methods = $definition->getMethodCalls();
-            $driverChain = new $class;
-
-            foreach ($methods as $method) {
-                switch ($method[0]) {
-                    case 'addDriver':
-                        $ref = $method[1][0];
-                        $nspace = $method[1][1];
-                        if ($this->checkNamespace($models, $nspace)) {
-                            $driver = $this->createDriver($container, $ref);
-                            $driverChain->addDriver($driver, $nspace);
-                        }
-                        break;
-                }
-            }
-
-            $config->setMetadataDriverImpl($driverChain);
-            $em = EntityManager::create($connectionOptions, $config);
-
-            foreach ($models as $model => $options) {
-                $metadata = $em->getClassMetadata($options['class']);
-                $this->setFieldsDefaultsFromMetadata($model, $metadata);
-                $this->setFilterFieldsDefaultsFromMetadata($model, $metadata);
-            }
-        }
-    }
-
     private function setModelOptions(ContainerBuilder $container)
     {
         foreach ($this->modelNames as $model) {
@@ -259,103 +176,72 @@ class LyraAdminExtension extends Extension
         }
     }
 
-    private function createDriver(ContainerBuilder $container, $reference)
+    private function setFieldsDefaultsFromMetadata()
     {
-        $definition = $container->getDefinition($reference);
+        foreach ($this->modelNames as $model) {
 
-        if (false !== strpos($reference, 'annotation_metadata_driver')) {
-            return $this->createAnnotationDriver($definition);
-        }
-
-        return $this->createFileDriver($definition);
-    }
-
-    private function createFileDriver(Definition $definition)
-    {
-        $class = $definition->getClass();
-        $driver = new $class($definition->getArgument(0));
-        $methods = $definition->getMethodCalls();
-
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'setNamespacePrefixes':
-                    $driver->setNamespacePrefixes($method[1][0]);
-                    break;
-                case 'setGlobalBasename':
-                    $driver->setGlobalBasename($method[1][0]);
-                    break;
-            }
-        }
-
-        return $driver;
-    }
-
-    private function createAnnotationDriver(Definition $definition)
-    {
-        $driverClass = $definition->getClass();
-        $reader = new AnnotationReader();
-        $driver = new $driverClass($reader, $definition->getArgument(1));
-
-        return $driver;
-    }
-
-    private function setFieldsDefaultsFromMetadata($model, $metadata)
-    {
-        $fields =& $this->config['models'][$model]['fields'];
-
-        foreach ($metadata->fieldMappings as $name => $attrs) {
-            if (isset($attrs['id']) && $attrs['id'] === true) {
+            if (!isset($this->metadata[$model])) {
                 continue;
             }
-            $defaults = array('name' => $name, 'options' => array());
-            if (!isset($fields[$name])) {
-                $fields[$name] = $defaults;
+
+            $fields =& $this->config['models'][$model]['fields'];
+
+            foreach ($this->metadata[$model]->fieldMappings as $name => $attrs) {
+                if (isset($attrs['id']) && $attrs['id'] === true) {
+                    continue;
+                }
+                $defaults = array('name' => $name, 'options' => array());
+                if (!isset($fields[$name])) {
+                    $fields[$name] = $defaults;
+                }
+
+                $fields[$name]['type'] = $attrs['type'];
+
+                if (isset($attrs['length'])) {
+                    $fields[$name]['length'] = $attrs['length'];
+                }
+
+                if (isset($attrs['options'])) {
+                    $options = $attrs['options'];
+                } else {
+                    $options = array();
+                }
+
+                $options = array_merge($options, $fields[$name]['options']);
+                unset($fields[$name]['options']);
+                $fields[$name] = array_merge($attrs, $defaults, $fields[$name]);
+                $fields[$name]['options'] = $options;
             }
 
-            $fields[$name]['type'] = $attrs['type'];
-
-            if (isset($attrs['length'])) {
-                $fields[$name]['length'] = $attrs['length'];
+            foreach ($this->metadata[$model]->associationMappings as $name => $attrs) {
+                if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type'] || ClassMetadataInfo::MANY_TO_MANY == $attrs['type']) {
+                    $fields[$name]['type'] = 'entity';
+                    $fields[$name]['options'] = array(
+                        'class' => $attrs['targetEntity'],
+                        'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
+                    );
+                }
             }
 
-            if (isset($attrs['options'])) {
-                $options = $attrs['options'];
-            } else {
-                $options = array();
+            foreach ($fields as $field => $attrs) {
+                if (!isset($attrs['get_method'])) {
+                    $fields[$field]['get_method'] = 'get'.Util::camelize($field);
+                }
+                $fields[$field]['tag'] = Util::underscore($field);
             }
-
-            $options = array_merge($options, $fields[$name]['options']);
-            unset($fields[$name]['options']);
-            $fields[$name] = array_merge($attrs, $defaults, $fields[$name]);
-            $fields[$name]['options'] = $options;
-        }
-
-        foreach ($metadata->associationMappings as $name => $attrs) {
-            if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type'] || ClassMetadataInfo::MANY_TO_MANY == $attrs['type']) {
-                $fields[$name]['type'] = 'entity';
-                $fields[$name]['options'] = array(
-                    'class' => $attrs['targetEntity'],
-                    'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
-                );
-            }
-        }
-
-        foreach ($fields as $field => $attrs) {
-            if (!isset($attrs['get_method'])) {
-                $fields[$field]['get_method'] = 'get'.Util::camelize($field);
-            }
-            $fields[$field]['tag'] = Util::underscore($field);
         }
     }
 
-    private function setFilterFieldsDefaultsFromMetadata($model, $metadata)
+    private function setFilterFieldsDefaults()
     {
-        $fields = $this->config['models'][$model]['fields'];
-        $filters =& $this->config['models'][$model]['filter']['fields'];
+        foreach ($this->modelNames as $model) {
+            $fields = $this->config['models'][$model]['fields'];
+            $filters =& $this->config['models'][$model]['filter']['fields'];
 
-        foreach ($filters as $field => $attrs) {
-            $filters[$field]['type'] = $fields[$field]['type'];
-            $filters[$field]['options'] = $fields[$field]['options'];
+            foreach ($filters as $field => $attrs) {
+                $filters[$field]['type'] = $fields[$field]['type'];
+                $filters[$field]['options'] = $fields[$field]['options'];
+            }
         }
     }
 
@@ -377,6 +263,34 @@ class LyraAdminExtension extends Extension
                     }
                 }
             }
+        }
+    }
+
+    private function createServiceDefinitions(ContainerBuilder $container)
+    {
+        foreach ($this->config['models'] as $model => $options) {
+
+            $container->setDefinition(sprintf('lyra_admin.%s.configuration', $model), new DefinitionDecorator('lyra_admin.configuration.abstract'))
+                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.options', $model))));
+
+            $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
+                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
+
+            $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
+                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+                ->addMethodCall('setName', array($model));
+
+            $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+                ->addMethodCall('setName', array($model));
+
+            $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+                ->addMethodCall('setName', array($model));
+
+            $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
+                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+                ->addMethodCall('setName', array($model));
         }
     }
 
@@ -423,14 +337,104 @@ class LyraAdminExtension extends Extension
         $container->setParameter('lyra_admin.menu', $menu);
     }
 
-    private function checkNamespace($models, $nspace)
+    private function readMetadata(ContainerBuilder $container)
     {
-        foreach ($models as $model) {
-            if ($model['nspace'] == $nspace) {
-                return true;
+        foreach ($this->config['models'] as $model => $options) {
+            if ($em = $this->createEntitymanager($container)) {
+                $this->metadata[$model] = $em->getClassMetadata($options['class']);
+            }
+        }
+    }
+
+    private function createEntityManager(ContainerBuilder $container, $manager = 'default')
+    {
+        $id = sprintf('doctrine.orm.%s_entity_manager', $manager);
+        if (!$container->hasDefinition($id)) {
+            return false;
+        }
+
+        $definition = $container->getDefinition($id);
+        // Connection
+        $definition = $container->getDefinition($definition->getArgument(0));
+        $connectionOptions = $definition->getArgument(0);
+
+        $config = new ORMConfig();
+        $cache = new ArrayCache();
+        $config->setMetadataCacheImpl($cache);
+        $config->setQueryCacheImpl($cache);
+
+        $definition = $container->getDefinition(sprintf('doctrine.orm.%s_configuration', $manager));
+        $methods = $definition->getMethodCalls();
+        foreach ($methods as $method) {
+            switch ($method[0]) {
+                case 'setProxyDir':
+                    $config->setProxyDir($method[1][0]);
+                    break;
+                case 'setProxyNamespace':
+                    $config->setProxyNamespace($method[1][0]);
+                    break;
             }
         }
 
-        return false;
+        // Configure driver chain
+        $definition = $container->getDefinition(sprintf('doctrine.orm.%s_metadata_driver', $manager));
+        $class = $definition->getClass();
+        $methods = $definition->getMethodCalls();
+        $driverChain = new $class;
+
+        foreach ($methods as $method) {
+            switch ($method[0]) {
+                case 'addDriver':
+                    $ref = $method[1][0];
+                    $nspace = $method[1][1];
+                    $driver = $this->createDriver($container, $ref);
+                    $driverChain->addDriver($driver, $nspace);
+                    break;
+            }
+        }
+
+        $config->setMetadataDriverImpl($driverChain);
+
+        return EntityManager::create($connectionOptions, $config);
+    }
+
+    private function createDriver(ContainerBuilder $container, $reference)
+    {
+        $definition = $container->getDefinition($reference);
+
+        if (false !== strpos($reference, 'annotation_metadata_driver')) {
+            return $this->createAnnotationDriver($definition);
+        }
+
+        return $this->createFileDriver($definition);
+    }
+
+    private function createFileDriver(Definition $definition)
+    {
+        $class = $definition->getClass();
+        $driver = new $class($definition->getArgument(0));
+        $methods = $definition->getMethodCalls();
+
+        foreach ($methods as $method) {
+            switch ($method[0]) {
+                case 'setNamespacePrefixes':
+                    $driver->setNamespacePrefixes($method[1][0]);
+                    break;
+                case 'setGlobalBasename':
+                    $driver->setGlobalBasename($method[1][0]);
+                    break;
+            }
+        }
+
+        return $driver;
+    }
+
+    private function createAnnotationDriver(Definition $definition)
+    {
+        $driverClass = $definition->getClass();
+        $reader = new AnnotationReader();
+        $driver = new $driverClass($reader, $definition->getArgument(1));
+
+        return $driver;
     }
 }
