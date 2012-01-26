@@ -139,6 +139,14 @@ EOF;
                 'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete'),
                 'roles' => array()
             ),
+            'show' => array(
+                'route_pattern' => '{id}/show',
+                'route_defaults' => array(),
+                'icon' => 'document',
+                'text' => 'list.action.show',
+                'trans_domain' => 'LyraAdminBundle',
+                'roles' => array()
+            ),
             'object' => array(
                 'route_pattern' => 'object',
                 'route_defaults' => array(),

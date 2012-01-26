@@ -153,4 +153,42 @@ class AdminConfiguration implements AdminConfigurationInterface
 
         return $options[$key];
     }
+
+    public function getShowOption($key)
+    {
+        $options = $this->options['show'];
+
+        if (!array_key_exists($key, $options)) {
+            throw new \InvalidArgumentException(sprintf('Show option %s does not exist', $key));
+        }
+
+        return $options[$key];
+    }
+
+    public function getShowFieldsOptions()
+    {
+        return $this->options['show']['fields'];
+    }
+
+    public function getShowFieldOptions($fieldName)
+    {
+        $options = $this->getShowFieldsOptions();
+
+        if (!array_key_exists($fieldName, $options)) {
+            throw new \InvalidArgumentException(sprintf('Field %s does not exist', $fieldName));
+        }
+
+        return $options[$fieldName];
+    }
+
+    public function getShowFieldOption($fieldName, $key)
+    {
+        $options = $this->getShowFieldOptions($fieldName);
+
+        if (!array_key_exists($key, $options)) {
+            throw new \InvalidArgumentException(sprintf('Field option %s does not exist', $key));
+        }
+
+        return  $options[$key];
+    }
 }

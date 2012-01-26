@@ -79,6 +79,7 @@ class LyraAdminExtension extends Extension
         $this->setFieldsDefaultsFromMetadata();
         $this->setFilterFieldsDefaults();
         $this->setAssocFieldsOptions();
+        $this->setShowFieldsDefaults();
         $this->updateColumnsDefaults();
         $this->setModelOptions($container);
     }
@@ -245,6 +246,34 @@ class LyraAdminExtension extends Extension
         }
     }
 
+    private function setShowFieldsDefaults()
+    {
+        foreach ($this->modelNames as $model) {
+            $fields = $this->config['models'][$model]['fields'];
+            $options =& $this->config['models'][$model]['show'];
+            $showFields =& $options['fields'];
+
+            if (count($showFields) == 0) {
+                $keys = array_keys($fields);
+                $showFields = array_fill_keys($keys, null);
+            }
+
+            foreach ($showFields as $field => $attrs) {
+                $showFields[$field]['name'] = $field;
+                $type = $fields[$field]['type'];
+                $showFields[$field]['type'] = $type;
+
+                if (!isset($attrs['label'])) {
+                    $showFields[$field]['label'] = $options['auto_labels'] ? Util::humanize($field) : $model.'.field.'.$field;
+                }
+
+                if ('date' == $type || 'datetime' == $type && !isset($attrs['format'])) {
+                    $showFields[$field]['format'] = 'j/M/Y';
+                }
+            }
+        }
+    }
+
     private function setAssocFieldsOptions()
     {
         $classes = array();
@@ -289,6 +318,10 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setName', array($model));
 
             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
+                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+                ->addMethodCall('setName', array($model));
+
+            $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
                 ->addMethodCall('setName', array($model));
         }

@@ -114,6 +114,26 @@
                 <source>pagination.total</source>
                 <target>Total results: %count%</target>
             </trans-unit>
+            <trans-unit id="29">
+                <source>list.action.show</source>
+                <target>Show</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>show.button.close</source>
+                <target>Close</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>show.title</source>
+                <target>Show %model%</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>show.boolean.true</source>
+                <target>Yes</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>show.boolean.false</source>
+                <target>No</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

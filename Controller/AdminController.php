@@ -102,6 +102,26 @@ class AdminController extends ContainerAware
     }
 
     /**
+     * Shows an object.
+     *
+     * @param mixed $id object primary key
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function showAction($id)
+    {
+        $renderer = $this->getShowRenderer();
+        $object = $this->getModelManager()->find($id);
+        $renderer->setObject($object);
+
+        return $this->container->get('templating')
+            ->renderResponse('LyraAdminBundle:Admin:show.html.twig', array(
+                'renderer' => $renderer,
+                'object' => $object
+            ));
+    }
+
+    /**
      * Deletes an object.
      *
      * @param mixed $id object primary key
@@ -236,6 +256,18 @@ class AdminController extends ContainerAware
     public function getListRenderer($name = null)
     {
         return $this->container->get(sprintf('lyra_admin.%s.list_renderer', $name ?: $this->getModelName()));
+    }
+
+    /**
+     * Gets a show renderer service.
+     *
+     * @param string $name model name
+     *
+     * @return \Lyra\AdminBundle\Renderer\ShowRenderer
+     */
+    public function getShowRenderer($name = null)
+    {
+        return $this->container->get(sprintf('lyra_admin.%s.show_renderer', $name ?: $this->getModelName()));
     }
 
     /**

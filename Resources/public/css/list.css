@@ -175,3 +175,28 @@ table.ly-list td.no-records {
 .ly-form-filter input[type="text"] {
     width: 325px;
 }
+
+/* Show record dialog */
+#ly-show-wrapper ol {
+    margin: 0;
+    padding: 0;
+}
+#ly-show-wrapper li {
+    list-style: none;
+    margin: 0;
+    padding: 5px 0 5px;
+    border-width: 0 0 1px;
+    border-style: solid;
+    background-image: none !important;
+    clear: both;
+}
+#ly-show-wrapper li:last-child {
+    border-style: none;
+}
+#ly-show-wrapper .label {
+    float: left;
+    width: 30%;
+}
+#ly-show-wrapper .content {
+    margin-left: 30%;
+}

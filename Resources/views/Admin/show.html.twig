@@ -1,0 +1,22 @@
+{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle::layout_ajax.html.twig' : 'LyraAdminBundle::layout.html.twig' %}
+{% block content %}
+<div id="ly-show-wrapper">
+    <h1>{{ renderer.title|trans({'%model%' : renderer.name}, 'LyraAdminBundle') }}</h1>
+    <ol>
+    {% for fld in renderer.fields %}
+        <li>
+            <div class="label">{{ fld.label }}</div>
+            <div class="content">
+            {% if fld.type == 'boolean' %}
+                {{ (renderer.fieldValue(fld.name) ? 'show.boolean.true' : 'show.boolean.false')|trans({}, 'LyraAdminBundle') }}
+            {% else %}
+                {{ renderer.fieldValue(fld.name) }}
+            {% endif %}
+            </div>
+
+        </li>
+    {% endfor %}
+    </ol>
+    <a class="close" href="{{ path(renderer.routePrefix~'_index') }}">{{ 'show.button.close'|trans({}, 'LyraAdminBundle') }}</a>
+</div>
+{% endblock %}

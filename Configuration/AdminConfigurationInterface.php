@@ -130,4 +130,39 @@ interface AdminConfigurationInterface
      * @return mixed
      */
     function getActionOption($action, $key);
+
+    /**
+     * Gets a show configuration option.
+     *
+     * @param string $key option key
+     *
+     * @return mixed
+     */
+    function getShowOption($key);
+
+    /**
+     * Gets all the configuration options of show fields.
+     *
+     * @return array
+     */
+    function getShowFieldsOptions();
+
+    /**
+     * Gets all the configurations options of a given show field.
+     *
+     * @param string $field
+     *
+     * @return array
+     */
+    function getShowFieldOptions($field);
+
+    /**
+     * Gets a configuration option of a show field.
+     *
+     * @param string $field
+     * @param string $key option key
+     *
+     * @return mixed
+     */
+    function getShowFieldOption($field, $key);
 }

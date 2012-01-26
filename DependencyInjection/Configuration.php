@@ -52,6 +52,7 @@ class Configuration implements ConfigurationInterface
         $models = $this->addModelsSection($rootNode);
         $this->addModelFieldsSection($models);
         $this->addModelActionsSection($models);
+        $this->addModelShowSection($models);
 
         $list = $this->addModelListSection($models);
         $this->addModelListColumnsSection($list);
@@ -103,6 +104,14 @@ class Configuration implements ConfigurationInterface
                 'text' => 'list.action.delete',
                 'trans_domain' => 'LyraAdminBundle',
                 'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete'),
+                'roles' => array()
+            ),
+            'show' => array(
+                'route_pattern' => '{id}/show',
+                'route_defaults' => array(),
+                'icon' => 'document',
+                'text' => 'list.action.show',
+                'trans_domain' => 'LyraAdminBundle',
                 'roles' => array()
             ),
             'object' => array(
@@ -240,6 +249,28 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
+    private function addModelShowSection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->arrayNode('show')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('title')->defaultValue('show.title')->end()
+                    ->scalarNode('auto_labels')->defaultTrue()->end()
+                    ->arrayNode('fields')
+                        ->useAttributeAskey('name')
+                        ->prototype('array')
+                            ->children()
+                                ->scalarNode('label')->end()
+                                ->scalarNode('format')->defaultNull()->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
     private function addModelListSection(ArrayNodeDefinition $node)
     {
         return $node
@@ -292,7 +323,7 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                 ->arrayNode('object_actions')
-                    ->defaultValue(array('edit','delete'))
+                    ->defaultValue(array('show','edit','delete'))
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('batch_actions')
