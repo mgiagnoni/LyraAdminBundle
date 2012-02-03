@@ -32,7 +32,7 @@ pagination. From the list view you can perform different *actions*.
 *   **List actions**: ``new`` is the default list action.
 
 *   **Object actions**: these actions always affects a single record displayed
-    in a grid row. Default object actions are ``edit`` and ``delete``.
+    in a grid row. Default object actions are ``show``, ``edit`` and ``delete``.
 
 *   **Batch actions**: these actions affects multiple records selected with
     the grid *check boxes*. Default batch actions is ``delete``.
@@ -306,8 +306,32 @@ available icons on the `Theme roller`_  home page.
 
 .. _Theme roller: http://jqueryui.com/themeroller/
 
-You can customize all the other default actions (``edit``, ``delete``) in the
+You can customize all the other default actions (``show``, ``edit``, ``delete``) in the
 same way.
+
+Action show configuration
+-------------------------
+
+The ``show`` button (the first of the **object actions** unless you have changed
+the default order), displays a record in a dialog window. By default all fields
+are displayed, but you can choose which fields will be included in the dialog
+and in what order::
+
+    # app/config/config.yml
+
+        # ... #
+            show:
+                # show dialog title
+                title: Listing
+                fields:
+                    category: ~
+                    ad_title: ~
+                    posted_at: ~
+                    published: ~
+            list:
+                columns:
+                    # ... #
+
 
 Filter configuration
 --------------------
@@ -885,6 +909,14 @@ seen up to this point::
                         dialog:
                             title: 'Confirm delete expired'
                             message: 'Do you really want to delete all expired listings?'
+                show:
+                    # show dialog title
+                    title: Listing
+                    fields:
+                        category: ~
+                        ad_title: ~
+                        posted_at: ~
+                        published: ~
                 list:
                     title: Listings
                     columns:
