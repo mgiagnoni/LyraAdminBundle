@@ -1,0 +1,22 @@
+<tr>
+    {% if list.hasBatchActions %}
+        <th class="batch-select-all"><input type="checkbox" /></th>
+    {% endif %}
+    {% for col in list.columns %}
+        <th {{ col.th_class|raw }}>
+            {% block table_head_sort %}
+                {% if col.sortable %}
+                    <a href="{{ path(list.routePrefix~'_index', list.routeParams|merge({'page': 1, 'column': col.name, 'order': col.sorted ? (list.sort.order == 'asc' ? 'desc' : 'asc') : 'asc' })) }}">
+                    {{ col.label|trans({}, list.transDomain) }}
+                    </a>
+                {% else %}
+                    {{ col.label|trans({}, list.transDomain) }}
+                {% endif %}
+            {% endblock %}
+        </th>
+    {% endfor %}
+    {# Object actions header #}
+    <th class="object-actions">
+        {{ 'list.actions'|trans({}, 'LyraAdminBundle') }}
+    </th>
+</tr>

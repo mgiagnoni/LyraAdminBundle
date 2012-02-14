@@ -1,0 +1,30 @@
+{% from 'LyraAdminBundle:Admin:macros.html.twig' import page_link %}
+<tr>
+    <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">
+        <span class="pagination">      
+            <span class="info">
+            {% if pager.total > 0 %}
+                {{ 'pagination.total'|trans({'%count%' : pager.total}, 'LyraAdminBundle') }}
+            {% endif %}
+            {% if pager.nbPages > 1 %}
+               - {{ 'pagination.info'|trans({'%page%' : pager.page, '%count%' : pager.nbPages}, 'LyraAdminBundle') }}
+            {% endif %}
+            </span>
+            {% if pager.nbPages > 1 %}
+                {% set route = list.routePrefix~'_index'  %}
+                {% set params = list.routeParams %}
+                {{ page_link(pager, 'first', 1, route, params) }}
+                {{ page_link(pager, 'prev', pager.prevPage, route, params) }}
+                {% for p in pager.pageLinks %}
+                    {% if p == pager.page %}
+                        {{ p }}
+                    {% else %}
+                        {{ page_link(pager, 'page', p, route, params) }}
+                    {% endif %}
+                {% endfor %}
+                {{ page_link(pager, 'next', pager.nextPage, route, params) }}
+                {{ page_link(pager, 'last', pager.nbPages, route, params) }}
+            {% endif %}
+        </span>
+    </td>
+</tr>

@@ -1,0 +1,16 @@
+{% block search_actions %}
+    {% if filter.hasFields %}
+    <div class="search-actions">
+        <a href="#filter" class="button ui-icon-search">{{ 'list.action.search'|trans({}, 'LyraAdminBundle') }}</a>
+        <a href="{{ path(filter.routePrefix~'_filter', {'reset' : 'reset'}) }}" class="button ui-icon-arrowrefresh-1-e">{{ 'filter.button.reset'|trans({}, 'LyraAdminBundle') }}</a>
+    </div>
+    {% endif %}
+{% endblock %}
+{% block list_actions %}
+    <div class="list-actions">
+    {% for action in list.listActions %}
+        {% set act = list.actions[action] %}
+        <a href="{{ path(list.routePrefix~'_'~action) }}" class="button action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}{{ act.dialog is defined ? ' dialog' : ''}}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+    {% endfor %}
+    </div>
+{% endblock %}

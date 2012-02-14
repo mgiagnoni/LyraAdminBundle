@@ -1,0 +1,37 @@
+{% for object in pager.results %}
+    <tr>
+        {% if list.hasBatchActions %}
+            <td>
+                {% block table_data_batch %}
+                    <input class="batch-select" type="checkbox" name="ids[]" value="{{ object.id }}" />
+                {% endblock %}
+            </td>
+        {% endif %}
+        {% for col in list.columns %}
+            <td {{ col.class|raw }}>
+                {% block table_data_field %}
+                    {% if col.type == 'boolean' %}
+                        <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[{{ list.booleanAction(col.name, object) }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
+                    {% elseif col.type == 'template' %}
+                        {% include col.template %}
+                    {% else %}
+                        {{ list.colValue(col.name, object) }}
+                    {% endif %}
+                {% endblock %}
+            </td>
+        {% endfor %}
+        {# Object actions #}
+        <td>
+            {% block table_object_actions %}
+                {% for action in list.objectActions %}
+                    {% set act = list.actions[action] %}
+                    <a href="{{ path(list.routePrefix~'_'~action, { 'id' : object.id }) }}" class="button icon-only action-{{ action }}{{ act.dialog is defined ? ' dialog' : ''}}{{ act.icon ? ' ui-icon-'~act.icon : '' }}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+                {% endfor %}
+            {% endblock %}
+        </td>
+    </tr>
+{% else %}
+    <tr>
+        <td class="no-records" colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">{{ 'list.message.no_records'|trans({}, 'LyraAdminBundle') }}</td>
+    </tr>
+{% endfor %}

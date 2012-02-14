@@ -278,7 +278,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('list')
                 ->addDefaultsIfNotSet()
                 ->children()
-                    ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Admin:index.html.twig')->end()
+                    ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:List:index.html.twig')->end()
                     ->scalarNode('max_page_rows')->defaultValue(20)->end()
                     ->scalarNode('title')->defaultNull()->end()
                     ->scalarNode('auto_labels')->defaultTrue()->end()

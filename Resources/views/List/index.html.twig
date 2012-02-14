@@ -1,0 +1,40 @@
+{% extends "LyraAdminBundle::layout.html.twig" %}
+{% set list = renderer %}
+{% block content %}
+<div id="ly-list-wrapper">
+    {% block list_title %}
+        <h1>{{ list.title|trans({}, list.transDomain) }}</h1>
+    {% endblock %}
+    {% include 'LyraAdminBundle:List:list_actions.html.twig' %}
+        <form action="{{ path(list.routePrefix~'_object', list.routeParams) }}" method="post">
+        {% include 'LyraAdminBundle:List:flash_messages.html.twig' %}
+        <table class="ly-list {{ list.name }}">
+            <thead>
+                {% include 'LyraAdminBundle:List:header.html.twig' %}
+            </thead>
+            <tfoot>
+                {% include 'LyraAdminBundle:List:footer.html.twig' %}
+            </tfoot>
+            <tbody>
+                {% include 'LyraAdminBundle:List:body.html.twig' %}
+            </tbody>
+        </table>
+        {% include 'LyraAdminBundle:List:batch_actions.html.twig' %}
+        <input type="hidden" name="_token" value="{{ csrf }}" />
+    </form>
+    {% block filter %}
+        {% include 'LyraAdminBundle:List:filter_form.html.twig' %}
+    {% endblock %}
+</div>
+{% include 'LyraAdminBundle:List:batch_messages.html.twig' %}
+{% endblock content %}
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/list.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/lyra_select.css') }}" />
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/list.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_select.js') }}"></script>
+{% endblock %}

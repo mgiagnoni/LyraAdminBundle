@@ -1,0 +1,12 @@
+{% if list.hasBatchActions %}
+    <div class="batch-actions">
+        <select name="batch_action">
+            <option value="">{{ 'batch.action.empty'|trans({}, 'LyraAdminBundle') }}</option>
+            {% for action in list.batchActions %}
+                {% set act = list.actions[action] %}
+                <option value="{{ action }}">{{ (act.text|default(list.name~'.batch.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" name="action[batch]" value="{{ 'batch.form.submit'|trans({}, 'LyraAdminBundle') }}" />
+    </div>
+{% endif %}
