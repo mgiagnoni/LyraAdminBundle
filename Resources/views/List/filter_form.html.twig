@@ -1,6 +1,6 @@
 {% if filter.hasFields %}
 {% set view = filter.view() %}
-{% form_theme view 'LyraAdminBundle:Admin:form_theme.html.twig' %}
+{% form_theme view 'LyraAdminBundle:Form:form_theme.html.twig' %}
 <div id="ly-filter-wrapper">
     <h2>{{ filter.title|trans({}, filter.transDomain)}}</h2>
     <form class="ly-form-filter" action="{{ path(filter.routePrefix~'_filter') }}" method="post">

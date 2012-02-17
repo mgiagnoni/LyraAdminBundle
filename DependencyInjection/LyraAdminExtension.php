@@ -69,7 +69,7 @@ class LyraAdminExtension extends Extension
         if ($container->has('twig.form.resources')) {
             $resources = $container->getParameter('twig.form.resources');
         }
-        $resources[] = 'LyraAdminBundle:Admin:fields.html.twig';
+        $resources[] = 'LyraAdminBundle:Form:fields.html.twig';
         $container->setParameter('twig.form.resources', $resources);
     }
 
