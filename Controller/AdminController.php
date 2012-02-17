@@ -147,7 +147,7 @@ class AdminController extends ContainerAware
         $renderer->setRouteParams(array('id' => $object->getId()));
 
         return $this->container->get('templating')
-            ->renderResponse('LyraAdminBundle:Admin:delete.html.twig', array(
+            ->renderResponse('LyraAdminBundle:Dialog:delete.html.twig', array(
                 'object' => $object,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('delete'),
                 'renderer' => $renderer
@@ -379,7 +379,7 @@ class AdminController extends ContainerAware
         $renderer->setAction('delete');
 
         return $this->container->get('templating')
-            ->renderResponse('LyraAdminBundle:Admin:batch_dialog.html.twig', array(
+            ->renderResponse('LyraAdminBundle:Dialog:batch_dialog.html.twig', array(
                 'ids' => $ids,
                 'renderer' => $renderer,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('batch_delete'),
