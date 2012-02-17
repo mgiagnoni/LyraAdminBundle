@@ -474,7 +474,7 @@ goes in the controller class you have already created for custom batch actions::
             $renderer = $this->getDialogRenderer();
 
             return $this->container->get('templating')
-                ->renderResponse('LyraAdminBundle:Admin:dialog.html.twig', array(
+                ->renderResponse('LyraAdminBundle:Form:dialog.html.twig', array(
                     'renderer' => $renderer
             ));
         }
