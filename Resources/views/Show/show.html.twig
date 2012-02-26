@@ -1,4 +1,4 @@
-{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle::layout_ajax.html.twig' : 'LyraAdminBundle::layout.html.twig' %}
+{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Show:show_ajax.html.twig' : 'LyraAdminBundle::layout.html.twig' %}
 {% block content %}
 <div id="ly-show-wrapper">
     <h1>{{ renderer.title|trans({'%model%' : renderer.name}, 'LyraAdminBundle') }}</h1>

@@ -115,7 +115,7 @@ class AdminController extends ContainerAware
         $renderer->setObject($object);
 
         return $this->container->get('templating')
-            ->renderResponse('LyraAdminBundle:Admin:show.html.twig', array(
+            ->renderResponse('LyraAdminBundle:Show:show.html.twig', array(
                 'renderer' => $renderer,
                 'object' => $object
             ));
