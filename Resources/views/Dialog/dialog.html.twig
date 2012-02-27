@@ -1,9 +1,8 @@
-{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Form:form_ajax.html.twig' : 'LyraAdminBundle:Form:form.html.twig' %}
+{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Dialog:ajax.html.twig' : 'LyraAdminBundle:Dialog:base.html.twig' %}
 {% set dialog = renderer %}
-{% block form_title %}
+{% block dialog_title %}
 <h1>{{ dialog.title|trans({}, dialog.transDomain) }}</h1>
 {% endblock %}
-{% block button_bar %}{% endblock %}
 {% block form %}
     <p>{{ dialog.message|trans({}, dialog.transDomain) }}</p>
     <form id="ly-form" action="{{ path(dialog.routePrefix~'_'~dialog.action, dialog.routeParams) }}" method="post">
