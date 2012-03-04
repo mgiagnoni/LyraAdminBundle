@@ -191,27 +191,17 @@ class LyraAdminExtension extends Extension
                 if (isset($attrs['id']) && $attrs['id'] === true) {
                     continue;
                 }
-                $defaults = array('name' => $name, 'options' => array());
-                if (!isset($fields[$name])) {
-                    $fields[$name] = $defaults;
-                }
 
+                $fields[$name]['name'] = $name;
                 $fields[$name]['type'] = $attrs['type'];
 
                 if (isset($attrs['length'])) {
                     $fields[$name]['length'] = $attrs['length'];
                 }
 
-                if (isset($attrs['options'])) {
-                    $options = $attrs['options'];
-                } else {
-                    $options = array();
+                if (!isset($fields[$name]['options']['required'])) {
+                    $fields[$name]['options']['required'] = !isset($attrs['nullable']) || false === $attrs['nullable'];
                 }
-
-                $options = array_merge($options, $fields[$name]['options']);
-                unset($fields[$name]['options']);
-                $fields[$name] = array_merge($attrs, $defaults, $fields[$name]);
-                $fields[$name]['options'] = $options;
             }
 
             foreach ($this->metadata[$model]->associationMappings as $name => $attrs) {
