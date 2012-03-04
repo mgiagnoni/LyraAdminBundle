@@ -38,6 +38,7 @@ class AdminFormType extends AbstractType
                     break;
                 case 'boolean':
                     $type = 'checkbox';
+                    $attrs['options']['required'] = false;
                     break;
                 case 'datetime':
                     $type = 'datetime';
