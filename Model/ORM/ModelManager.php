@@ -93,6 +93,13 @@ class ModelManager extends BaseManager
         $this->em->flush();
     }
 
+    public function removeAll()
+    {
+        $qb = $this->getRepository()->createQueryBuilder('a')->delete();
+
+        return $qb->getQuery()->execute();
+    }
+
     public function buildQuery($criteria, $sort)
     {
         $qb = $this->getBaseListQueryBuilder();

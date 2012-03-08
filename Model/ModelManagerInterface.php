@@ -56,6 +56,11 @@ interface ModelManagerInterface
     function removeByIds(array $ids);
 
     /**
+     * Removes all objects from the repository.
+     */
+    function removeAll();
+
+    /**
      * Finds a model object by primary key.
      *
      * @param mixed $id;
