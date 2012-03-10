@@ -18,6 +18,8 @@ class Pager implements PagerInterface
 {
     protected $queryBuilder;
 
+    protected $countQueryBuilder;
+
     protected $page;
 
     protected $maxRows;
@@ -29,6 +31,8 @@ class Pager implements PagerInterface
     public function setQueryBuilder($qb)
     {
         $this->queryBuilder = $qb;
+        $this->countQueryBuilder = clone $qb;
+        $this->countQueryBuilder->resetDQLPart('orderBy');
     }
 
     public function getQueryBuilder()
@@ -59,10 +63,9 @@ class Pager implements PagerInterface
     public function getTotal()
     {
         if (null === $this->total) {
-            $qb = $this->getQueryBuilder();
-            $alias = $qb->getRootAlias();
+            $alias = $this->countQueryBuilder->getRootAlias();
 
-            $this->total = $qb
+            $this->total = $this->countQueryBuilder
                 ->select('COUNT('.$alias.')')
                 ->setFirstResult(null)
                 ->getQuery()->getSingleScalarResult();
