@@ -2,6 +2,7 @@
 <phpunit bootstrap="./Tests/bootstrap.php" color="true">
   <php>
     <!-- <server name="SYMFONY" value="/path/to/symfony" /> -->
+    <server name="KERNEL_DIR" value="Tests/Functional/App" />
   </php>
   <testsuites>
     <testsuite name="LyraAdminBundle Test Suite">

@@ -1,0 +1,2 @@
+LyraAdminBundle:
+    resource: "@LyraAdminBundle/Resources/config/routing.yml"

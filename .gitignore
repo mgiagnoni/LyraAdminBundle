@@ -4,3 +4,6 @@ vendor/doctrine
 vendor/doctrine-common
 vendor/doctrine-dbal
 vendor/symfony
+Tests/autoload.php
+Tests/Functional/App/cache
+Tests/Functional/App/logs
