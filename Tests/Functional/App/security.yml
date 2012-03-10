@@ -1,0 +1,13 @@
+security:
+    firewalls:
+        test:
+            pattern: ^/
+            anonymous: ~
+            http_basic:
+                realm: "Secured Area"
+    providers:
+        in_memory:
+            users:
+                admin: { password: admin, roles: 'ROLE_ADMIN' }
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext

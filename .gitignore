@@ -2,3 +2,6 @@ phpunit.xml
 vendor
 composer.phar
 composer.lock
+Tests/autoload.php
+Tests/Functional/App/cache
+Tests/Functional/App/logs

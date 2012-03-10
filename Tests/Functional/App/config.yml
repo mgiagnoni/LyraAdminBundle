@@ -1,0 +1,47 @@
+imports:
+    - { resource: security.yml }
+
+framework:
+    secret:          secret
+    charset:         UTF-8
+    test: ~
+    router:          { resource: "%kernel.root_dir%/routing.yml" }
+    form:            true
+    csrf_protection: true
+    validation:      { enable_annotations: true }
+    templating:      { engines: ['twig'] }
+    session:
+        auto_start:     false
+        storage_id: session.storage.filesystem
+
+doctrine:
+    dbal:
+        driver:   pdo_mysql
+        host:     localhost
+        dbname:   lyra_test
+        user:     lyra_test
+        password: lyra
+        charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: %kernel.debug%
+        #auto_mapping: true
+        entity_managers:
+            default:
+                mappings:
+                    ProductBundle: {type: annotation}
+
+lyra_admin:
+    models:
+        product:
+            class: Lyra\AdminBundle\Tests\Fixture\Bundle\Product\Entity\Product
+            list:
+                default_sort:
+                    column: name
+                columns:
+                    name: ~
+                    description:
+                        sortable: false
+                    price:
+                        format: '%.2f'
+
