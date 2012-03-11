@@ -55,7 +55,7 @@ class AdminFormType extends AbstractType
                 $options = $attrs['options'];
             }
 
-            $builder->add($field, $type, $options);
+            $builder->add($attrs['tag'], $type, $options);
         }
     }
 
