@@ -170,7 +170,7 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('roles')
                                 ->prototype('scalar')->end()
                             ->end()
-
+                            ->scalarNode('template')->end()
                         ->end()
                     ->end()
                     ->defaultValue($actionDefaults)
@@ -243,6 +243,7 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('roles')
                                 ->prototype('scalar')->end()
                             ->end()
+                            ->scalarNode('template')->end()
                         ->end()
                     ->end()
                 ->end()

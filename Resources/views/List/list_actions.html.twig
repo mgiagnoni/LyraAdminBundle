@@ -9,8 +9,8 @@
 {% block list_actions %}
     <div class="list-actions">
     {% for action in list.listActions %}
-        {% set act = list.actions[action] %}
-        <a href="{{ path(list.routePrefix~'_'~action) }}" class="button action-{{ action }}{{ act.icon ? ' ui-icon-'~act.icon : '' }}{{ act.dialog is defined ? ' dialog' : ''}}">{{ (act.text|default(list.name~'.list.action.'~action))|trans({}, act.trans_domain|default(list.transDomain)) }}</a>
+        {% set attrs = list.actions[action] %}
+        {% include attrs.template|default('LyraAdminBundle:List:action.html.twig') %}
     {% endfor %}
     </div>
 {% endblock %}

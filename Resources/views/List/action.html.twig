@@ -1,0 +1,2 @@
+{% set params = object is defined ? { 'id' : object.id } : {} %}
+<a href="{{ path(list.routePrefix~'_'~action, params) }}" class="button action-{{ action }}{{ attrs.icon ? ' ui-icon-'~attrs.icon : '' }}{{ attrs.dialog is defined ? ' dialog' : ''}}">{{ (attrs.text|default(list.name~'.list.action.'~action))|trans({}, attrs.trans_domain|default(list.transDomain)) }}</a>
