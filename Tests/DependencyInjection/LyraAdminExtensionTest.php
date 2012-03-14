@@ -127,6 +127,7 @@ EOF;
                 'route_defaults' => array(),
                 'icon' => 'pencil',
                 'text' => 'list.action.edit',
+                'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'roles' => array()
             ),
@@ -135,6 +136,7 @@ EOF;
                 'route_defaults' => array(),
                 'icon' => 'trash',
                 'text' => 'list.action.delete',
+                'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete'),
                 'roles' => array()
@@ -144,6 +146,7 @@ EOF;
                 'route_defaults' => array(),
                 'icon' => 'document',
                 'text' => 'list.action.show',
+                'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'roles' => array()
             ),

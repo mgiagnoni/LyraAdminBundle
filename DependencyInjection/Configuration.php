@@ -94,6 +94,7 @@ class Configuration implements ConfigurationInterface
                 'route_defaults' => array(),
                 'icon' => 'pencil',
                 'text' => 'list.action.edit',
+                'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'roles' => array()
             ),
@@ -102,6 +103,7 @@ class Configuration implements ConfigurationInterface
                 'route_defaults' => array(),
                 'icon' => 'trash',
                 'text' => 'list.action.delete',
+                'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete'),
                 'roles' => array()
@@ -111,6 +113,7 @@ class Configuration implements ConfigurationInterface
                 'route_defaults' => array(),
                 'icon' => 'document',
                 'text' => 'list.action.show',
+                'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'roles' => array()
             ),
@@ -171,6 +174,7 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->scalarNode('template')->end()
+                            ->scalarNode('style')->end()
                         ->end()
                     ->end()
                     ->defaultValue($actionDefaults)
@@ -244,6 +248,7 @@ class Configuration implements ConfigurationInterface
                                 ->prototype('scalar')->end()
                             ->end()
                             ->scalarNode('template')->end()
+                            ->scalarNode('style')->end()
                         ->end()
                     ->end()
                 ->end()
