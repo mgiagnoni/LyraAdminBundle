@@ -15,6 +15,7 @@
         <form class="ly-form" action="{{ path(form.routePrefix~'_'~form.action, form.routeParams) }}" method="post">
             <div id="column-1">
             {% for group in form.groups %}
+                {% block form_group %}
                 <fieldset>
                 {% if group.caption %}
                     <legend>{{ group.caption|trans({}, form.transDomain) }}</legend>
@@ -24,6 +25,7 @@
                     {% set fld = not group.embed is defined ? form.fields[field] : '' %}
                     {% set name = fld is empty ? field : fld.tag %}
                     {% set view = form.view(group.embed|default(null)) %}
+                    {% block form_field %}
                     <li>
                     {{ form_errors(view[name]) }}
                     {% if not (fld.label is defined and fld.label is empty) %}
@@ -31,9 +33,11 @@
                     {% endif %}
                     {{ form_widget(view[name]) }}
                     </li>
+                    {% endblock form_field %}
                 {% endfor %}
                 </ol>
                 </fieldset>
+                {% endblock form_group %}
                 {% if group.break_after %}
                     </div>
                     <div id="column-2">
