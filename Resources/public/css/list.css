@@ -56,6 +56,9 @@ table.ly-list th.object-actions {
 table.ly-list td.boolean {
     text-align: center;
 }
+table.ly-list td.date, table.ly-list td.datetime, table.ly-list td.float {
+    text-align: right;
+}
 td.boolean .ui-button-icon-only .ui-button-text {
     padding:0 !important;
     width: 15px;
