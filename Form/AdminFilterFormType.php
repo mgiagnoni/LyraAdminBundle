@@ -30,10 +30,7 @@ class AdminFilterFormType extends AbstractType
     {
         foreach ($this->fields as $field => $attrs) {
             $options = isset($attrs['options']) ? $attrs['options'] : array();
-            $defaultOpts = array(
-                'required' => false
-            );
-            $options = array_merge($defaultOpts, $options);
+            $options = array_replace($options, array('required' => false));
 
             switch($attrs['type']) {
                 case 'text':
