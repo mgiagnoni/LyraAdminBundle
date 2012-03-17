@@ -49,7 +49,8 @@ class AdminController extends ContainerAware
                 'renderer' => $listRenderer,
                 'filter' => $this->getFilterRenderer(),
                 'pager' => $pager,
-                'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list')
+                'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
+                'filtered' => count($this->getFilterCriteria())
             ));
     }
 

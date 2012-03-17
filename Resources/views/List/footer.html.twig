@@ -5,6 +5,9 @@
             <span class="info">
             {% if pager.total > 0 %}
                 {{ 'pagination.total'|trans({'%count%' : pager.total}, 'LyraAdminBundle') }}
+                {% if filtered %}
+                     ({{ 'pagination.filtered'|trans({}, 'LyraAdminBundle') }})
+                {% endif %}
             {% endif %}
             {% if pager.nbPages > 1 %}
                - {{ 'pagination.info'|trans({'%page%' : pager.page, '%count%' : pager.nbPages}, 'LyraAdminBundle') }}

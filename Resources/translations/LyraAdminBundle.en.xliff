@@ -134,6 +134,10 @@
                 <source>show.boolean.false</source>
                 <target>No</target>
             </trans-unit>
+            <trans-unit id="34">
+                <source>pagination.filtered</source>
+                <target>filtered</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
