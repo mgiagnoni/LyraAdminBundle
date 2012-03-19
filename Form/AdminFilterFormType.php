@@ -29,8 +29,7 @@ class AdminFilterFormType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         foreach ($this->fields as $field => $attrs) {
-            $options = isset($attrs['options']) ? $attrs['options'] : array();
-            $options = array_replace($options, array('required' => false));
+            $options = array_replace($attrs['options'], array('required' => false));
 
             switch($attrs['type']) {
                 case 'text':
