@@ -138,6 +138,30 @@
                 <source>pagination.filtered</source>
                 <target>filtered</target>
             </trans-unit>
+            <trans-unit id="35">
+                <source>pagination.button.filters</source>
+                <target>Show filters</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>filter.date.from</source>
+                <target>From</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>filter.date.to</source>
+                <target>To</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>filter.date.upto</source>
+                <target>Up to</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>filter.button.close</source>
+                <target>Close</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>filter.dialog.title</source>
+                <target>Active filters</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

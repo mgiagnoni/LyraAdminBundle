@@ -123,9 +123,9 @@ class Configuration implements ConfigurationInterface
                 'roles' => array()
             ),
             'filter' => array(
-                'route_pattern' => 'filter/{reset}',
+                'route_pattern' => 'filter/{action}',
                 'route_defaults' => array(
-                    'reset' => null
+                    'action' => null
                 ),
                 'roles' => array()
             )

@@ -1,0 +1,31 @@
+{% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle::layout_ajax.html.twig' : 'LyraAdminBundle::layout.html.twig' %}
+{% block content %}
+<div id="ly-show-wrapper">
+    <h1>{{ 'filter.dialog.title'|trans({}, 'LyraAdminBundle') }}</h1>
+    <ol>
+        {% for field in renderer.filterFields %}
+            {% if criteria[field.name] is defined %}
+                <li>
+                    <div class="label">{{ field.label }}</div>
+                    <div class="content">
+                    {% if field.type == 'date' or field.type == 'datetime' %}
+                        {% set date = criteria[field.name] %}
+                        {% if not date.from is empty %}
+                           {{ 'filter.date.from'|trans({}, 'LyraAdminBundle')}} {{ date.from|date('j/M/Y') }}
+                        {% endif %}
+                        {% if not date.to is empty %}
+                            {{ (date.from is empty ? 'filter.date.upto' : 'filter.date.to')|trans({}, 'LyraAdminBundle')}} {{ date.to|date('j/M/Y') }}
+                        {% endif %}
+                    {% elseif field.type == 'boolean' %}
+                        {{ (criteria[field.name] ? 'show.boolean.true' : 'show.boolean.false')|trans({}, 'LyraAdminBundle') }}
+                    {% else %}
+                        {{ criteria[field.name] }}
+                    {% endif %}
+                    </div>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+    <a class="close" href="{{ path(renderer.routePrefix~'_index') }}">{{ 'filter.button.close'|trans({}, 'LyraAdminBundle') }}</a>
+</div>
+{% endblock %}

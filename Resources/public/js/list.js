@@ -84,6 +84,15 @@ jQuery().ready(function() {
                 .load(this.href, showRecord);
         });
 
+    $('.show-filter')
+        .click(function(e) {
+            e.preventDefault();
+
+            $('<div></div>')
+                .appendTo('body')
+                .load(this.href, showFilter);
+        });
+
     $(".dialog")
         .click(function(e) {
             e.preventDefault();
@@ -205,13 +214,12 @@ jQuery().ready(function() {
     // Show record dialog
     var showRecord = function() {
         $('li', this).addClass('ui-widget-content');
-        var title = $('h1', this).hide().text()
         $(this).dialog({
             modal: true,
             autoOpen: true,
             resizable: false,
             width: 550,
-            title: title,
+            title: $('h1', this).hide().text(),
             close: function() { $(this).remove() },
             buttons: [
                 {
@@ -220,5 +228,25 @@ jQuery().ready(function() {
                 }
             ]
         });
+    };
+
+    // Show filter criteria dialog
+    var showFilter = function() {
+        $('li', this).addClass('ui-widget-content');
+        $(this).dialog({
+            modal: true,
+            autoOpen: true,
+            resizable: false,
+            width: 550,
+            title: $('h1', this).hide().text(),
+            close: function() { $(this).remove() },
+            buttons: [
+                {
+                    'text': $('.close', this).hide().text(),
+                    'click': function() {$(this).dialog("close");}
+                }
+            ]
+        });
+
     };
 });

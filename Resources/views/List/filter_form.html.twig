@@ -3,7 +3,7 @@
 {% form_theme view 'LyraAdminBundle:Form:form_theme.html.twig' %}
 <div id="ly-filter-wrapper">
     <h2>{{ filter.title|trans({}, filter.transDomain)}}</h2>
-    <form class="ly-form-filter" action="{{ path(filter.routePrefix~'_filter') }}" method="post">
+    <form class="ly-form-filter" action="{{ path(filter.routePrefix~'_filter', {'action' : 'save'}) }}" method="post">
     <ol>
     {% for field, attrs in filter.filterFields %}
         <li>

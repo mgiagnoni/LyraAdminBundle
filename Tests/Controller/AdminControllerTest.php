@@ -126,7 +126,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
-        $controller->filterAction(null);
+        $controller->filterAction('save');
 
         $this->assertEquals(array('field' => 'value'), $this->session->get('test.criteria'));
 

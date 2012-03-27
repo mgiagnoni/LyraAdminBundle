@@ -198,18 +198,24 @@ class AdminController extends ContainerAware
         return $this->getRedirectToListResponse();
     }
 
-    public function filterAction($reset)
+    public function filterAction($action)
     {
-        $request = $this->getRequest();
-        if ($reset)  {
-            $this->container->get('session')->set($this->getModelName().'.criteria', array());
-        } else if ('POST' == $request->getMethod()) {
-            $form = $this->getFilterRenderer()->getForm();
-            $form->bindRequest($request);
-            $this->container->get('session')->set($this->getModelName().'.criteria', $form->getData());
+        $response = null;
+        switch ($action) {
+            case 'save':
+                if ('POST' == $this->getRequest()->getMethod()) {
+                    $response = $this->saveFilterCriteria();
+                }
+                break;
+            case 'reset':
+                $response = $this->resetFilterCriteria();
+                break;
+            case 'criteria':
+                $response = $this->showFilterCriteria();
+                break;
         }
 
-        return $this->getRedirectToListResponse();
+        return null !== $response ? $response : $this->getRedirectToListResponse();
     }
 
     public function navigationAction()
@@ -448,5 +454,49 @@ class AdminController extends ContainerAware
         if (!$renderer->isActionAllowed($action)) {
             throw new AccessDeniedException();
         }
+    }
+
+    protected function saveFilterCriteria()
+    {
+        $form = $this->getFilterRenderer()->getForm();
+        $form->bindRequest($this->getRequest());
+        $this->container->get('session')->set($this->getModelName().'.criteria', $form->getData());
+    }
+
+    protected function resetFilterCriteria()
+    {
+        $this->container->get('session')->set($this->getModelName().'.criteria', array());
+    }
+
+    protected function showFilterCriteria()
+    {
+        //Only filters that are actually set are shown
+        $criteria = $this->getFilterCriteria();
+        $renderer = $this->getFilterRenderer();
+        foreach ($renderer->getFilterFields() as $name => $attrs) {
+            switch($attrs['type']) {
+            case 'date':
+            case 'datetime':
+                if (null === $criteria[$name]['from'] && null === $criteria[$name]['to']) {
+                    unset($criteria[$name]);
+                }
+                break;
+            case 'boolean':
+                if ('' == $criteria[$name]) {
+                    unset($criteria[$name]);
+                }
+                break;
+            default:
+                if (empty($criteria[$name])) {
+                    unset($criteria[$name]);
+                }
+            }
+        }
+
+        return $this->container->get('templating')
+            ->renderResponse('LyraAdminBundle:Filter:dialog.html.twig', array(
+                'renderer' => $renderer,
+                'criteria' => $criteria,
+            ));
     }
 }

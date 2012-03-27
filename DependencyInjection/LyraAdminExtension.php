@@ -206,6 +206,7 @@ class LyraAdminExtension extends Extension
 
             foreach ($this->metadata[$model]->associationMappings as $name => $attrs) {
                 if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type'] || ClassMetadataInfo::MANY_TO_MANY == $attrs['type']) {
+                    $fields[$name]['name'] = $name;
                     $fields[$name]['type'] = 'entity';
                     $fields[$name]['options'] = array(
                         'class' => $attrs['targetEntity'],
@@ -230,8 +231,12 @@ class LyraAdminExtension extends Extension
             $filters =& $this->config['models'][$model]['filter']['fields'];
 
             foreach ($filters as $field => $attrs) {
+                $filters[$field]['name'] = $fields[$field]['name'];
                 $filters[$field]['type'] = $fields[$field]['type'];
                 $filters[$field]['options'] = $fields[$field]['options'];
+                if (!isset($attrs['label'])) {
+                    $filters[$field]['label'] = Util::humanize($field);
+                }
             }
         }
     }
