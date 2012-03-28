@@ -130,6 +130,10 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
             ->method('getForm')
             ->will($this->returnValue($form));
 
+        $this->filterRenderer->expects($this->once())
+            ->method('getFilterFields')
+            ->will($this->returnValue(array()));
+
         $this->services['router']->expects($this->exactly(2))
             ->method('generate')
             ->will($this->returnValue('/'));

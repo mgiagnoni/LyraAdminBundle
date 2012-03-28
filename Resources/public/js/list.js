@@ -195,6 +195,7 @@ jQuery().ready(function() {
     var showSearch = function() {
         var title = $('#ly-filter-wrapper h2').hide().text();
         var buttonOk = $('#ly-filter-wrapper input[type="submit"]').hide();
+        var buttonReset = $('#ly-filter-wrapper input[type="reset"]').hide();
         $('#ly-filter-wrapper').dialog({
             modal: true,
             autoOpen: true,
@@ -206,6 +207,13 @@ jQuery().ready(function() {
                 {
                  'text': buttonOk.val(),
                  'click': function() { buttonOk.click(); }
+                },
+                {
+                 'text': buttonReset.val(),
+                 'click': function() {
+                    $('input:text, select', this).val('');
+                    $('input:radio').removeAttr('checked').removeAttr('selected');
+                 }
                 }
             ]
         });

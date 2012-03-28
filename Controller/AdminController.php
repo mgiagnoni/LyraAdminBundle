@@ -465,20 +465,9 @@ class AdminController extends ContainerAware
     {
         $form = $this->getFilterRenderer()->getForm();
         $form->bindRequest($this->getRequest());
-        $this->container->get('session')->set($this->getModelName().'.criteria', $form->getData());
-    }
-
-    protected function resetFilterCriteria()
-    {
-        $this->container->get('session')->set($this->getModelName().'.criteria', array());
-    }
-
-    protected function showFilterCriteria()
-    {
-        //Only filters that are actually set are shown
-        $criteria = $this->getFilterCriteria();
-        $renderer = $this->getFilterRenderer();
-        foreach ($renderer->getFilterFields() as $name => $attrs) {
+        $criteria = $form->getData();
+        //Only filters that are actually set are saved
+        foreach ($this->getFilterRenderer()->getFilterFields() as $name => $attrs) {
             switch($attrs['type']) {
             case 'date':
             case 'datetime':
@@ -497,6 +486,19 @@ class AdminController extends ContainerAware
                 }
             }
         }
+
+        $this->container->get('session')->set($this->getModelName().'.criteria', $criteria);
+    }
+
+    protected function resetFilterCriteria()
+    {
+        $this->container->get('session')->set($this->getModelName().'.criteria', array());
+    }
+
+    protected function showFilterCriteria()
+    {
+        $criteria = $this->getFilterCriteria();
+        $renderer = $this->getFilterRenderer();
 
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Filter:dialog.html.twig', array(
