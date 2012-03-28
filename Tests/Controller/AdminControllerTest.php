@@ -36,6 +36,8 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
             ->method('setSort')
             ->with(array('column' => null, 'field' => null, 'order' => null));
 
+        $this->setIndexExpects();
+
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
         $controller->indexAction();
@@ -48,6 +50,8 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->pager->expects($this->once())
             ->method('setPage')
             ->with(2);
+
+        $this->setIndexExpects();
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
@@ -65,6 +69,8 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
             ->method('setPage')
             ->with(3);
 
+        $this->setIndexExpects();
+
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
         $controller->indexAction();
@@ -76,6 +82,8 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->listRenderer->expects($this->once())
             ->method('setSort')
             ->with(array('column' => 'name', 'field' => 'name', 'order' => 'desc'));
+
+        $this->setIndexExpects();
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
@@ -94,6 +102,8 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->listRenderer->expects($this->once())
             ->method('setSort')
             ->with(array('column' => 'name', 'field' => 'name','order' => 'desc'));
+
+        $this->setIndexExpects();
 
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
@@ -185,5 +195,19 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
             }));
 
         return $container;
+    }
+
+    protected function setIndexExpects()
+    {
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form->expects($this->once())
+            ->method('createView');
+
+        $this->filterRenderer->expects($this->once())
+            ->method('getForm')
+            ->will($this->returnValue($form));
     }
 }

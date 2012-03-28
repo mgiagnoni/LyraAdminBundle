@@ -107,4 +107,14 @@ interface ModelManagerInterface
      * @param array $sort
      */
     function buildQuery($criteria, $sort);
+
+    /**
+     * Assures that filter criteria stored as objects are managed by the
+     * entity manager.
+     *
+     * @param array $criteria
+     *
+     * @return array
+     */
+    function mergeFilterCriteriaObjects($criteria);
 }

@@ -82,6 +82,11 @@ class ModelManager extends BaseManager
         $this->em->flush();
     }
 
+    public function merge ($object)
+    {
+        return $this->em->merge($object);
+    }
+
     public function removeByIds(array $ids)
     {
         $objects = $this->findByIds($ids);
@@ -110,6 +115,17 @@ class ModelManager extends BaseManager
         return $qb;
     }
 
+    public function mergeFilterCriteriaObjects($criteria)
+    {
+        $fields = $this->configuration->getOption('fields');
+        foreach ($criteria as $field => $value) {
+            if ('entity' == $fields[$field]['type'] && null !== $criteria[$field]) {
+                $criteria[$field] = $this->merge($criteria[$field]);
+            }
+        }
+
+        return $criteria;
+    }
     protected function addFilterCriteria($qb, $criteria)
     {
         $fields = $this->configuration->getOption('fields');
