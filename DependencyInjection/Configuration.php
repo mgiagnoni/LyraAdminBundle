@@ -211,6 +211,7 @@ class Configuration implements ConfigurationInterface
                             ->scalarNode('label')->end()
                             ->scalarNode('type')->end()
                             ->scalarNode('get_method')->end()
+                            ->scalarNode('widget')->end()
                             ->arrayNode('options')
                                 ->useAttributeAsKey('name')
                                 ->prototype('variable')->end()

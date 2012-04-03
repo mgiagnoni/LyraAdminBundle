@@ -32,22 +32,17 @@ class AdminFormType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         foreach ($this->fields as $field => $attrs) {
-            switch($attrs['type']) {
-                case 'text':
-                    $type = 'textarea';
-                    break;
-                case 'boolean':
-                    $type = 'checkbox';
+
+            $widget = $attrs['widget'];
+            switch($widget) {
+                case 'checkbox':
                     $attrs['options']['required'] = false;
                     break;
-                case 'datetime':
-                    $type = 'datetime';
+                case 'date_picker':
+                    $widget = 'datetime';
+                    $attrs['options']['attr']['class'] = 'date-picker';
+                    $attrs['options']['widget'] = 'single_text';
                     break;
-                case 'entity':
-                    $type = 'entity';
-                    break;
-                default:
-                    $type = 'text';
             }
 
             $options = array();
@@ -55,7 +50,7 @@ class AdminFormType extends AbstractType
                 $options = $attrs['options'];
             }
 
-            $builder->add($attrs['tag'], $type, $options);
+            $builder->add($attrs['tag'], $widget, $options);
         }
     }
 

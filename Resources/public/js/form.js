@@ -54,4 +54,8 @@ jQuery().ready(function() {
     });
 
     $('ul.error-list li').addClass('ui-state-error');
+
+    $('.date-picker').datepicker({
+        dateFormat : 'yy-mm-dd'
+    });
 });

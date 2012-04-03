@@ -195,6 +195,24 @@ class LyraAdminExtension extends Extension
                 $fields[$name]['name'] = $name;
                 $fields[$name]['type'] = $attrs['type'];
 
+                if (!isset($fields[$name]['widget'])) {
+                    switch($attrs['type']) {
+                        case 'text':
+                            $widget = 'textarea';
+                            break;
+                        case 'boolean':
+                            $widget ='checkbox';
+                            break;
+                        case 'datetime':
+                            $widget = 'datetime';
+                            break;
+                        default:
+                            $widget = 'text';
+                    }
+
+                    $fields[$name]['widget'] = $widget;
+                }
+
                 if (isset($attrs['length'])) {
                     $fields[$name]['length'] = $attrs['length'];
                 }
@@ -208,6 +226,7 @@ class LyraAdminExtension extends Extension
                 if (ClassMetadataInfo::MANY_TO_ONE == $attrs['type'] || ClassMetadataInfo::MANY_TO_MANY == $attrs['type']) {
                     $fields[$name]['name'] = $name;
                     $fields[$name]['type'] = 'entity';
+                    $fields[$name]['widget'] = 'entity';
                     $fields[$name]['options'] = array(
                         'class' => $attrs['targetEntity'],
                         'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
@@ -233,6 +252,7 @@ class LyraAdminExtension extends Extension
             foreach ($filters as $field => $attrs) {
                 $filters[$field]['name'] = $fields[$field]['name'];
                 $filters[$field]['type'] = $fields[$field]['type'];
+                $filters[$field]['widget'] = $fields[$field]['widget'];
                 $filters[$field]['options'] = $fields[$field]['options'];
                 if (!isset($attrs['label'])) {
                     $filters[$field]['label'] = Util::humanize($field);

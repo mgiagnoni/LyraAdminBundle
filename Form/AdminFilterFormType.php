@@ -30,27 +30,19 @@ class AdminFilterFormType extends AbstractType
     {
         foreach ($this->fields as $field => $attrs) {
             $options = array_replace($attrs['options'], array('required' => false));
+            $widget = $attrs['widget'];
 
-            switch($attrs['type']) {
-                case 'text':
-                    $type = 'textarea';
-                    break;
+            switch ($attrs['type']) {
                 case 'boolean':
-                    $type = 'choice';
+                    $widget = 'choice';
                     $options['choices'] = array(1 => 'Yes', 0 => 'No', null => 'Both');
                     $options['expanded'] = true;
                     break;
                 case 'datetime':
-                    $type = 'daterange';
-                    break;
-                case 'entity':
-                    $type = 'entity';
-                    break;
-                default:
-                    $type = 'text';
+                    $widget = 'daterange';
             }
 
-            $builder->add($field, $type, $options);
+            $builder->add($field, $widget, $options);
         }
     }
 
