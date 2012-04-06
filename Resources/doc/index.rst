@@ -282,6 +282,18 @@ any other column you can use all format placeholders allowed by PHP functions
                         label: Date
                         format: 'j/M/Y'
 
+Use the ``max_page_rows`` option to limit the number of rows that will be
+displayed on a list page. Pagination links will appear at the bottom of the
+list when needed::
+
+    # app/config/config.yml
+
+        # ... #
+            list:
+                max_page_rows: 15
+                columns:
+                    # ... #
+
 Action buttons configuration
 ----------------------------
 
@@ -918,6 +930,8 @@ seen up to this point::
                         posted_at: ~
                         published: ~
                 list:
+                    # Activate pagination: max 15 rows will be displayed on a list page
+                    max_page_rows: 15
                     title: Listings
                     columns:
                         category.name:
