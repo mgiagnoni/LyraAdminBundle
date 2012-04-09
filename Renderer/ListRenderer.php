@@ -146,7 +146,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
         if ($function) {
             $value = call_user_func($function, $value, $format, $object);
-        } else if($format) {
+        } else if(null !== $value && $format) {
             if ('date' == $type || 'datetime' == $type) {
                 $value = $value->format($format);
             } else {
