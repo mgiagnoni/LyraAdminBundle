@@ -266,6 +266,18 @@ by the value of the *Published* column::
                         sortable: false
                     posted_at: ~ 
 
+It's possible to set a default sort column, for example::
+
+    # app/config/config.yml
+
+        # ... #
+            list:
+                default_sort:
+                    column: posted_at
+                    order: desc
+                columns:
+                    # ... #
+
 Use the ``format`` option to format a column content. For columns displaying
 dates you can use all format strings allowed by the PHP function ``date``,for
 any other column you can use all format placeholders allowed by PHP functions
@@ -932,6 +944,10 @@ seen up to this point::
                 list:
                     # Activate pagination: max 15 rows will be displayed on a list page
                     max_page_rows: 15
+                    # default sort column
+                    default_sort:
+                        column: posted_at
+                        order: desc
                     title: Listings
                     columns:
                         category.name:
