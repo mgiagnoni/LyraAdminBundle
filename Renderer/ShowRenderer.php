@@ -46,7 +46,7 @@ class ShowRenderer extends BaseRenderer
         $type = $this->configuration->getFieldOption($field, 'type');
         $value = $this->object->$method();
 
-        if ('date' == $type || 'datetime' == $type) {
+        if (null !== $value && ('date' == $type || 'datetime' == $type)) {
             $value = $value->format($format = $this->configuration->getShowFieldOption($field, 'format'));
         }
 
