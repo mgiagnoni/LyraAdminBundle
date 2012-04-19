@@ -809,9 +809,9 @@ add the ``category`` property to the configuration of the ``Listing`` form::
                 # ... #
                 form:
                     groups:
-                    listing:
-                        caption: Listing
-                        fields: [category,ad_title,ad_text]
+                        listing:
+                            caption: Listing
+                            fields: [category,ad_title,ad_text]
 
 The form to create / edit a listing now contains a dropdown list to select
 the desired category.
