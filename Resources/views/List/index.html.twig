@@ -31,10 +31,14 @@
 {% block stylesheets %}
 {{ parent() }}
 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/list.css') }}" />
-<link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/lyra_select.css') }}" />
+{% if list.hasBatchActions %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/lyra_select.css') }}" />
+{% endif %}
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/list.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_select.js') }}"></script>
+{% if list.hasBatchActions %}
+    <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_select.js') }}"></script>
+{% endif %}
 {% endblock %}

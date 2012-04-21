@@ -103,7 +103,10 @@ jQuery().ready(function() {
         });
 
     // Batch actions
-    $('.batch-actions select').lyraselect();
+    $('.batch-actions select').each(function() {
+        $(this).lyraselect();
+    });
+
 
     // 'Go' buttom
     $('.batch-actions input[type="submit"]')
