@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="it" datatype="plaintext" original="" >
+        <body>
+            <trans-unit id="1">
+                <source>list.actions</source>
+                <target>Azioni</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>list.action.new</source>
+                <target>Nuovo</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>list.action.edit</source>
+                <target>Modifica</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>list.action.delete</source>
+                <target>Cancella</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>list.action.boolean.on</source>
+                <target>Attiva</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>list.action.boolean.off</source>
+                <target>Disattiva</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>batch.action.empty</source>
+                <target>Scegli un'azione</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>batch.form.submit</source>
+                <target>Esegui</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>form.button.submit</source>
+                <target>Salva</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>form.action.back</source>
+                <target>Indietro</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>dialog.title.delete</source>
+                <target>Conferma cancellazione</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>dialog.message.delete</source>
+                <target>{1}Confermi di voler cancellare questo oggetto?|[2,Inf]Confermi di voler cancellare gli oggetti selezionati?</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>dialog.submit</source>
+                <target>Sì, confermo</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>dialog.cancel</source>
+                <target>No, annulla</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>batch.message.no_selection</source>
+                <target>Devi selezionare almeno un oggetto</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>batch.message.no_action</source>
+                <target>Devi scegliere un'azione</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>flash.delete.success</source>
+                <target>L'oggetto è stato cancellato con successo</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>flash.batch_delete.success</source>
+                <target>Gli oggetti selezionati sono stati cancellati con successo</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>pagination.first</source>
+                <target>Primo</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>pagination.last</source>
+                <target>Ultimo</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>pagination.next</source>
+                <target>Prossimo</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>pagination.prev</source>
+                <target>Precedente</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>pagination.info</source>
+                <target>Pagina %page% di %count%</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>list.message.no_records</source>
+                <target>Nessun risultato</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>filter.button.submit</source>
+                <target>Cerca</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>filter.button.reset</source>
+                <target>Azzera</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>list.action.search</source>
+                <target>Ricerca</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>pagination.total</source>
+                <target>Risultati totali: %count%</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>list.action.show</source>
+                <target>Mostra</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>show.button.close</source>
+                <target>Chiudi</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>show.title</source>
+                <target>Mostra %model%</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>show.boolean.true</source>
+                <target>Sì</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>show.boolean.false</source>
+                <target>No</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>pagination.filtered</source>
+                <target>filtrati</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>pagination.button.filters</source>
+                <target>Mostra filtri</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>filter.date.from</source>
+                <target>Dal</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>filter.date.to</source>
+                <target>Al</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>filter.date.upto</source>
+                <target>Fino al</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>filter.button.close</source>
+                <target>Chiudi</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>filter.dialog.title</source>
+                <target>Filtri attivi</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
