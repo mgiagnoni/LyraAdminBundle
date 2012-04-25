@@ -65,6 +65,18 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         return $this->configuration->getFilterOption($key);
     }
 
+    public function hasWidget($widget)
+    {
+        foreach ($this->getFilterFields() as $field => $attrs) {
+            if ($attrs['widget'] == $widget || ('daterange' == $attrs['widget'] && isset($attrs['options']['child_widget']) && $attrs['options']['child_widget'] == $widget)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
     protected function createForm($data = null)
     {
         $type = new AdminFilterFormType($this->getName(), $this->getFilterFields());

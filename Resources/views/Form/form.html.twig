@@ -54,8 +54,12 @@
 {% block stylesheets %}
 {{ parent() }}
 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/form.css') }}" />
+{% if form.hasWidget('datetime_picker') %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/jquery-ui-timepicker-addon.css') }}" />
+{% endif %}
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/form.js') }}"></script>
+{% include 'LyraAdminBundle:Admin:datepicker_js.html.twig' with { 'renderer' : form } %}
 {% endblock %}

@@ -1,0 +1,7 @@
+{% if ((renderer.hasWidget('date_picker') or renderer.hasWidget('datetime_picker')) and datepicker_lang_file()) %}
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/i18n/{{ datepicker_lang_file() }}"></script>
+{% endif %}
+{% if renderer.hasWidget('datetime_picker') %}
+    <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/jquery-ui-timepicker-addon.js') }}"></script>
+{% endif %}
+

@@ -55,7 +55,21 @@ jQuery().ready(function() {
 
     $('ul.error-list li').addClass('ui-state-error');
 
-    $('.date-picker').datepicker({
-        dateFormat : 'yy-mm-dd'
+    $('.date-picker').each(function() {
+        var format = $(this).data('date');
+        $(this).datepicker({
+            dateFormat : format,
+        })
+    });
+
+    $('.datetime-picker').each(function() {
+        var dateFormat = $(this).data('date');
+        var timeFormat = $(this).data('time');
+        var ampm = $(this).data('ampm');
+        $(this).datetimepicker({
+            dateFormat : dateFormat,
+            timeFormat : timeFormat,
+            ampm : ampm == '1',
+        })
     });
 });

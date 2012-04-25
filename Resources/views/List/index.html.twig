@@ -34,6 +34,9 @@
 {% if list.hasBatchActions %}
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/lyra_select.css') }}" />
 {% endif %}
+{% if filter.hasWidget('datetime_picker') %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/jquery-ui-timepicker-addon.css') }}" />
+{% endif %}
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
@@ -41,4 +44,5 @@
 {% if list.hasBatchActions %}
     <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_select.js') }}"></script>
 {% endif %}
+{% include 'LyraAdminBundle:Admin:datepicker_js.html.twig' with { 'renderer' : filter } %}
 {% endblock %}

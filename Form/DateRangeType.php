@@ -18,13 +18,22 @@ class DateRangeType extends AbstractType
 {
     public function buildForm(FormBuilder $builder, array $options)
     {
+        $options['child_options'] = array_merge($options['child_options'], array('required' => false));
         $builder
-            ->add('from', 'datetime', $options)
-            ->add('to', 'datetime', $options);
+            ->add('from', $options['child_widget'], $options['child_options'])
+            ->add('to', $options['child_widget'], $options['child_options']);
     }
 
     public function getName()
     {
         return 'daterange';
+    }
+
+    public function getDefaultOptions(array $options)
+    {
+        return array(
+            'child_widget' => 'datetime',
+            'child_options' => array()
+        );
     }
 }

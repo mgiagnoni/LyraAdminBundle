@@ -45,7 +45,7 @@ class LyraAdminExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        foreach (array($config['db_driver'], 'services', 'routing_loader', 'form') as $basename) {
+        foreach (array($config['db_driver'], 'services', 'routing_loader', 'form', 'twig') as $basename) {
             $loader->load(sprintf('%s.xml', $basename));
         }
 
@@ -203,6 +203,9 @@ class LyraAdminExtension extends Extension
                         case 'boolean':
                             $widget ='checkbox';
                             break;
+                        case 'date':
+                            $widget = 'date';
+                            break;
                         case 'datetime':
                             $widget = 'datetime';
                             break;
@@ -219,6 +222,10 @@ class LyraAdminExtension extends Extension
 
                 if (!isset($fields[$name]['options']['required'])) {
                     $fields[$name]['options']['required'] = !isset($attrs['nullable']) || false === $attrs['nullable'];
+                }
+
+                if ('checkbox' == $fields[$name]['widget']) {
+                    $fields[$name]['options']['required'] = false;
                 }
             }
 
@@ -238,6 +245,7 @@ class LyraAdminExtension extends Extension
                 if (!isset($attrs['get_method'])) {
                     $fields[$field]['get_method'] = 'get'.Util::camelize($field);
                 }
+
                 $fields[$field]['tag'] = Util::underscore($field);
             }
         }
@@ -252,8 +260,40 @@ class LyraAdminExtension extends Extension
             foreach ($filters as $field => $attrs) {
                 $filters[$field]['name'] = $fields[$field]['name'];
                 $filters[$field]['type'] = $fields[$field]['type'];
-                $filters[$field]['widget'] = $fields[$field]['widget'];
-                $filters[$field]['options'] = $fields[$field]['options'];
+                $filters[$field]['options'] = array_replace($attrs['options'], array('required' => false));
+                if (!isset($filters[$field]['widget'])) {
+                    switch($filters[$field]['type']) {
+                        case 'boolean':
+                            $filters[$field]['widget'] = 'choice';
+                            break;
+                        case 'date':
+                        case 'datetime':
+                            $filters[$field]['widget'] = 'daterange';
+                            break;
+                        default:
+                             $filters[$field]['widget'] = $fields[$field]['widget'];
+                    }
+                }
+
+                switch($filters[$field]['widget']) {
+                    case 'choice':
+                        $filters[$field]['options'] = array_merge(
+                            $filters[$field]['options'], array(
+                                'choices' => array(1 => 'Yes', 0 => 'No', null => 'Both'),
+                                'expanded' => true
+                            )
+                        );
+                        break;
+                    case 'entity':
+                        $filters[$field]['options'] = array_merge(
+                            $filters[$field]['options'], array(
+                                'class' => $fields[$field]['options']['class'],
+                                'multiple' => $fields[$field]['options']['multiple']
+                            )
+                        );
+                        break;
+                }
+
                 if (!isset($attrs['label'])) {
                     $filters[$field]['label'] = Util::humanize($field);
                 }

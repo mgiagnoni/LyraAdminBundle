@@ -8,6 +8,12 @@
         <service id="form.type.date_range" class="Lyra\AdminBundle\Form\DateRangeType">
             <tag name="form.type" alias="daterange" />
         </service>
+        <service id="form.type.date_picker" class="Lyra\AdminBundle\Form\DatePickerType">
+            <tag name="form.type" alias="date_picker" />
+        </service>
+        <service id="form.type.datetime_picker" class="Lyra\AdminBundle\Form\DateTimePickerType">
+            <tag name="form.type" alias="datetime_picker" />
+        </service>
     </services>
 
 </container>

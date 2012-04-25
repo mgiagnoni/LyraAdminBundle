@@ -1,5 +1,13 @@
 {% extends 'form_div_layout.html.twig' %}
 
+{% block date_picker_widget %}
+    {% set attr = attr|merge({'class': attr.class|default('') ~ ' date-picker'}) %}
+    {{ block('field_widget') }}
+{% endblock %}
+{% block datetime_picker_widget %}
+    {% set attr = attr|merge({'class': attr.class|default('') ~ ' datetime-picker'}) %}
+    {{ block('field_widget') }}
+{% endblock %}
 {% block daterange_widget %}
 {% spaceless %}
     <div class="daterange-container">

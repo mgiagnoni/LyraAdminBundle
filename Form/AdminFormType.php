@@ -13,6 +13,7 @@ namespace Lyra\AdminBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
+use Lyra\AdminBundle\Util\Util;
 
 /**
  * Generic form type for all admin forms.
@@ -32,25 +33,7 @@ class AdminFormType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         foreach ($this->fields as $field => $attrs) {
-
-            $widget = $attrs['widget'];
-            switch($widget) {
-                case 'checkbox':
-                    $attrs['options']['required'] = false;
-                    break;
-                case 'date_picker':
-                    $widget = 'datetime';
-                    $attrs['options']['attr']['class'] = 'date-picker';
-                    $attrs['options']['widget'] = 'single_text';
-                    break;
-            }
-
-            $options = array();
-            if(isset($attrs['options'])) {
-                $options = $attrs['options'];
-            }
-
-            $builder->add($attrs['tag'], $widget, $options);
+            $builder->add($attrs['tag'], $attrs['widget'], $attrs['options']);
         }
     }
 

@@ -128,6 +128,17 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
         return $this->configuration->getFieldsOptions();
     }
 
+    public function hasWidget($widget)
+    {
+        foreach ($this->getFields() as $field => $attrs) {
+            if ($attrs['widget'] == $widget) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected function createForm($data = null)
     {
         $typeClass = $this->getOption('class');

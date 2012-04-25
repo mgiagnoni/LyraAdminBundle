@@ -44,5 +44,26 @@ class Util
 
         return $a;
     }
+
+    static public function ICUTojQueryDate($format)
+    {
+        $maps[] = array('yyyy' => 'yy', 'yy' => 'y', 'y' => 'yy');
+        $maps[] = array('MMMM' => 'MM', 'MMM' => 'M', 'MM' => 'mm', 'M' => 'mm');
+        $maps[] = array('EEEE' => 'DD', 'EEE' => 'D', 'EE' => 'D', 'E' => 'D');
+        $maps[] = array('H' => 'h');
+        $maps[] = array('a' => 'TT');
+
+        foreach ($maps as $map) {
+            $count = 0;
+            foreach($map as $search => $replace) {
+                $format = str_replace($search, $replace, $format, $count);
+                if ($count > 0) {
+                    break;
+                }
+            }
+        }
+
+        return $format;
+    }
 }
 

@@ -13,6 +13,7 @@ namespace Lyra\AdminBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;
+use Lyra\AdminBundle\Util\Util;
 
 class AdminFilterFormType extends AbstractType
 {
@@ -29,20 +30,7 @@ class AdminFilterFormType extends AbstractType
     public function buildForm(FormBuilder $builder, array $options)
     {
         foreach ($this->fields as $field => $attrs) {
-            $options = array_replace($attrs['options'], array('required' => false));
-            $widget = $attrs['widget'];
-
-            switch ($attrs['type']) {
-                case 'boolean':
-                    $widget = 'choice';
-                    $options['choices'] = array(1 => 'Yes', 0 => 'No', null => 'Both');
-                    $options['expanded'] = true;
-                    break;
-                case 'datetime':
-                    $widget = 'daterange';
-            }
-
-            $builder->add($field, $widget, $options);
+            $builder->add($field, $attrs['widget'], $attrs['options']);
         }
     }
 
