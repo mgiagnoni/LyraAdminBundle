@@ -380,8 +380,35 @@ entity fields. Example::
 With these options ``Listing`` objects are searchable by title, posting date
 (from/to range) and published status.
 
-This feature is not fully implemented yet and it works only for string, datetime
-and boolean fields.
+This feature is not fully implemented yet and it works only for string, date,
+datetime and boolean fields.
+
+jQuery UI Datepicker in filter form
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To select date ranges standard Symfony date/datetime widgets are used by default,
+to replace them with jQuery UI datepicker use this configuration for the filter
+form::
+
+     # app/config/config.yml
+
+        # ... #
+            filter:
+                # ... #
+                fields:
+                    ad_title: ~
+                    posted_at:
+                        widget: daterange
+                        options:
+                            child_widget: date_picker 
+                    published: ~
+
+If you need to filter records by date and time use ``datetime_picker`` as value
+of the ``child_widget`` option. As the standard jQuery UI datepicker allows
+only to select a date not a time, a third party `Timepicker Addon`_ will be
+used.
+
+.. _Timepicker Addon: https://github.com/trentrichardson/jQuery-Timepicker-Addon
 
 Creating custom batch actions
 -----------------------------
@@ -549,6 +576,24 @@ columns (see the ``break_after`` option). You will notice that the ``posted_at``
 field is not present in any panel: this field will not be visible and not
 editable through the form. This can be useful for fields you want to automatically
 update via a Doctrine *lifecycle callback* and that cannot be changed by users.
+
+jQuery UI Datepicker in new/edit form
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Beside the standard Symfony date and datetime widgets, you can use the jQuery UI
+datepicker to edit date fields or the `Timepicker Addon`_ for datetime fields::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                fields:
+                    expires_at:
+                        widget: datetime_picker
+                form:
+                    # ... #
 
 Change admin theme
 ------------------
@@ -970,8 +1015,15 @@ seen up to this point::
                     title: Search listings
                     fields:
                         ad_title: ~
-                        posted_at: ~
+                        posted_at:
+                            widget: daterange
+                            options:
+                                child_widget: datetime_picker
+                        # or    child_widget: date_picker
                         published: ~
+                fields:
+                    expires_at:
+                        widget: datetime_picker
                 form:
                     groups:
                         listing:
