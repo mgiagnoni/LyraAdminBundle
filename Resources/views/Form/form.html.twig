@@ -12,6 +12,7 @@
     </div>
     {% endblock %}
     {% block form %}
+        {{ form_errors(form.view) }}
         <form class="ly-form" action="{{ path(form.routePrefix~'_'~form.action, form.routeParams) }}" method="post">
             <div id="column-1">
             {% for group in form.groups %}

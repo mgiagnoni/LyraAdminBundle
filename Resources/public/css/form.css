@@ -47,8 +47,11 @@
 .ly-form label {
   width: 135px; /* Width of labels */
 }
-.ly-form ul.error-list {
+.ly-form ul.error-list, #ly-form-wrapper ul.error-list {
     padding: 0;
+}
+#ly-form-wrapper ul.error-list {
+    list-style: none;
 }
 .ly-form ul.error-list li {
     font-size: 95%;
