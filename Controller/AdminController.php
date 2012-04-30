@@ -161,46 +161,25 @@ class AdminController extends ContainerAware
     }
 
     /**
-     * Action triggered by boolean switches and other list buttons.
+     * Action triggered by boolean switches and batch actions submit.
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function objectAction()
     {
-        $reqAction = $this->getRequest()->get('action');
-        $action = key($reqAction);
-        if(is_array($reqAction[$action])) {
-            $id = key($reqAction[$action]);
-        }
-        $response = $colName = null;
+        $action = $this->getRequest()->get('action');
+        $response = null;
 
-        if ('batch' == $action) {
-            $action = null;
-            if (null === $id = $this->getRequest()->get('ids')) {
-                // TODO setflash
-            } else if ($action =  $this->getRequest()->get('batch_action')) {
-                $this->checkSecurity($this->getListRenderer(), $action);
-                $action =  'Batch'.$action;
-            }
-        } else if (false !== strpos($action, '_boolean')) {
-            $parts = explode('_', $action);
-            if (count($parts) > 2 && in_array($parts[2], array('on','off'))) {
-                $action = 'Boolean';
-                $colName = $parts[3];
-                $colValue = 'on' === $parts[2];
-            }
+        switch(key($action)) {
+            case '_boolean':
+                $this->processBooleanAction($action);
+                break;
+            case 'batch':
+                $response = $this->processBatchAction();
+                break;
         }
 
-        if ($action) {
-            $method = 'execute'.$action;
-            $response = $colName ? $this->$method($id, $colName, $colValue) : $this->$method($id);
-        }
-
-        if (null !== $response) {
-            return $response;
-        }
-
-        return $this->getRedirectToListResponse();
+        return null !== $response ? $response : $this->getRedirectToListResponse();
     }
 
     public function filterAction($action)
@@ -398,6 +377,27 @@ class AdminController extends ContainerAware
             ));
     }
 
+    protected function processBatchAction()
+    {
+        if (null === $id = $this->getRequest()->get('ids')) {
+            // TODO setflash
+        } else if ($action = $this->getRequest()->get('batch_action')) {
+            $this->checkSecurity($this->getListRenderer(), $action);
+            $method = 'executeBatch'.$action;
+
+            return $this->$method($id);
+        }
+    }
+
+    protected function processBooleanAction($action)
+    {
+        $data = array();
+        $this->extractActionData($action, $data);
+        if (count($data) == 4) {
+            $this->executeBoolean($data[3], $data[2], 1 == $data[1]);
+        }
+    }
+
     protected function executeBoolean($id, $colName, $colValue)
     {
         if ($this->getListRenderer()->hasBooleanActions($colName)) {
@@ -505,5 +505,14 @@ class AdminController extends ContainerAware
                 'renderer' => $renderer,
                 'criteria' => $criteria,
             ));
+    }
+
+    protected function extractActionData($action, &$data)
+    {
+        if (is_array($action)) {
+            $key = key($action);
+            $data[] = $key;
+            $this->extractActionData($action[$key], $data);
+        }
     }
 }

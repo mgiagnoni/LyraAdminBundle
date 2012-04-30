@@ -11,7 +11,7 @@
             <td {{ col.class|raw }}>
                 {% block table_data_field %}
                     {% if col.type == 'boolean' %}
-                        <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[{{ list.booleanAction(col.name, object) }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
+                        <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[_boolean][{{ list.colValue(col.name, object) ? '0' : '1' }}][{{ col.name }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
                     {% elseif col.type == 'template' %}
                         {% include col.template %}
                     {% else %}

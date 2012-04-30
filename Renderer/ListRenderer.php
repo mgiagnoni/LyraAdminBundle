@@ -157,16 +157,9 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $value;
     }
 
-    public function getBooleanAction($colName, $object)
-    {
-        $actions = $this->getColOption($colName, 'boolean_actions');
-
-        return $actions[$this->getColValue($colName, $object) ? 1:0].'_'.$colName;
-    }
-
     public function hasBooleanActions($colName)
     {
-        return 'boolean' == $this->getColOption($colName, 'type') && count($this->getColOption($colName, 'boolean_actions')) == 2;
+        return 'boolean' == $this->getColOption($colName, 'type') && $this->getColOption($colName, 'boolean_actions');
     }
 
     public function getBooleanIcon($colName, $object)

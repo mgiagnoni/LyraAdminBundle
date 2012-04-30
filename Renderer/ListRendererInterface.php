@@ -94,16 +94,6 @@ interface ListRendererInterface extends BaseRendererInterface
     function getColValue($columnName, $object);
 
     /**
-     * Gets the name of boolean action (for a column of type 'boolean').
-     *
-     * @param string $columName
-     * @param array $object current record
-     *
-     * @return string
-     */
-    function getBooleanAction($columnName, $object);
-
-    /**
      * Check if boolean actions exist for a given list column.
      *
      * @param string $columnName
