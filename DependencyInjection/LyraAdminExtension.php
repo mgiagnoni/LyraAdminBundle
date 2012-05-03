@@ -164,7 +164,7 @@ class LyraAdminExtension extends Extension
                     $columns[$key]['type'] = $type;
                 }
 
-                if ('date' == $type || 'datetime' == $type && !isset($attrs['format'])) {
+                if (('date' == $type || 'datetime' == $type) && !isset($attrs['format'])) {
                     //TODO: make default date format configurable
                     $columns[$key]['format'] = 'j/M/Y';
                 }
