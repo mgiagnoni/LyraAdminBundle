@@ -1,3 +1,5 @@
+.. contents:: Table of Contents
+
 About LyraAdminBundle
 =====================
 
@@ -23,26 +25,24 @@ Former symfony users will notice quite a few similarities between this bundle
 and the symfony 1.x *Admin Generator*: the backend area is organized in a
 similar way and offers the same kind of *views*.
 
-List view
----------
+1.  **List view**
 
-This view displays a set of records in a grid layout with sortable columns and
-pagination. From the list view you can perform different *actions*.
+    This view displays a set of records in a grid layout with sortable columns and
+    pagination. From the list view you can perform different *actions*.
 
-*   **List actions**: ``new`` is the default list action.
+    *   **List actions**: ``new`` is the default list action.
 
-*   **Object actions**: these actions always affects a single record displayed
-    in a grid row. Default object actions are ``show``, ``edit`` and ``delete``.
+    *   **Object actions**: these actions always affects a single record displayed
+        in a grid row. Default object actions are ``show``, ``edit`` and ``delete``.
 
-*   **Batch actions**: these actions affects multiple records selected with
-    the grid *check boxes*. Default batch actions is ``delete``.
+    *   **Batch actions**: these actions affects multiple records selected with
+        the grid *check boxes*. Default batch actions is ``delete``.
 
-Form view
----------
+2.  **Form view**
 
-This view displays the form to insert and edit a record. Form fields can be
-ordered and grouped in *panels*. Separate configuration options are available
-for ``new`` and ``edit`` form.
+    This view displays the form to insert and edit a record. Form fields can be
+    ordered and grouped in *panels*. Separate configuration options are available
+    for ``new`` and ``edit`` form.
 
 ----
 
@@ -67,10 +67,16 @@ the symfony *Admin Generator*.
 Installation
 ============
 
-You can install LyraAdminBundle with standard vendor script or as git submodule.
+LyraAdminBundle can be installed as any other Symfony2 bundle.
+
+Install source code
+----------------------
+
+You can retrieve LyraAdminBundle source code from GitHub repository by editing the
+standard Symfony2 vendor script or directly utilizing git.
 
 Vendor script
--------------
+~~~~~~~~~~~~~
 
 Add the following lines to your ``deps`` file::
 
@@ -83,7 +89,7 @@ Run the vendors script::
     php bin/vendors install
 
 Git submodule
--------------
+~~~~~~~~~~~~~
 
 Alternatively from your project root folder run::
 
@@ -182,9 +188,14 @@ Getting started
 ===============
 
 To demonstrate the very basic features of **LyraAdminBundle** let's generate a 
-simple bundle and create an admin area for it. Our example bundle will be named
-**AcmeClassifiedsBundle**: its purpose is managing a simple advertising board
-where users and administrators of the site can post classified ads.
+simple bundle and create an admin area for it.
+
+Create a demo bundle
+--------------------
+
+Our example bundle will be named **AcmeClassifiedsBundle**: its purpose is
+managing a simple advertising board where users and administrators of the
+site can post classified ads.
 
 `AcmeClassifiedsBundle source code`_ is available at GitHub.
 
@@ -201,6 +212,9 @@ Generate a ``Listing`` entity::
 Create the table in the database::
 
     app/console doctrine:schema:update --force
+
+Minimal backend configuration
+-----------------------------
 
 Configure LyraAdminBundle to create an admin area where you will perform all
 CRUD operations on the ``Listing`` entity::
@@ -595,8 +609,8 @@ datepicker to edit date fields or the `Timepicker Addon`_ for datetime fields::
                 form:
                     # ... #
 
-Change admin theme
-------------------
+Changing admin theme
+--------------------
 
 The bundle includes two themes: ``ui-lightness`` (default) and ``smoothness``.
 To change theme use this configuration::
@@ -1046,6 +1060,17 @@ seen up to this point::
                         name: ~
                         description: ~
 
+Contact info
+============
 
+Bug reports and feedback should be preferably submitted via the `GitHub issue tracker`_.
+If you need to contact me, my email address is in the source code.
+
+Updates about the development of LyraAdminBundle will be posted on Twitter (`@mgiagnoni`_)
+and on `Lyra CMS blog`_.
+
+.. _GitHub issue tracker: https://github.com/mgiagnoni/LyraAdminBundle/issues
+.. _@mgiagnoni: http://twitter.com/mgiagnoni
+.. _Lyra CMS blog: http://www.lyra-cms.com/blog
 
 [to be continued ...]
