@@ -10,13 +10,13 @@
         {% include 'LyraAdminBundle:List:flash_messages.html.twig' %}
         <table class="ly-list {{ list.name }}">
             <thead>
-                {% include 'LyraAdminBundle:List:header.html.twig' %}
+                {% block list_header %}{% include 'LyraAdminBundle:List:header.html.twig' %}{% endblock %}
             </thead>
             <tfoot>
-                {% include 'LyraAdminBundle:List:footer.html.twig' %}
+                {% block list_footer %}{% include 'LyraAdminBundle:List:footer.html.twig' %}{% endblock %}
             </tfoot>
             <tbody>
-                {% include 'LyraAdminBundle:List:body.html.twig' %}
+                {% block list_body %}{% include 'LyraAdminBundle:List:body.html.twig' %}{% endblock %}
             </tbody>
         </table>
         {% include 'LyraAdminBundle:List:batch_actions.html.twig' %}
