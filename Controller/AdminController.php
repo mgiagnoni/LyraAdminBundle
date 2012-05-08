@@ -410,6 +410,11 @@ class AdminController extends ContainerAware
         }
     }
 
+    protected function setFilterCriteria($criteria)
+    {
+        $this->container->get('session')->set($this->getModelName().'.criteria', $criteria);
+    }
+
     protected function getFilterCriteria()
     {
         return $this->container->get('session')->get($this->getModelName().'.criteria', array());
@@ -487,12 +492,12 @@ class AdminController extends ContainerAware
             }
         }
 
-        $this->container->get('session')->set($this->getModelName().'.criteria', $criteria);
+        $this->setFilterCriteria($criteria);
     }
 
     protected function resetFilterCriteria()
     {
-        $this->container->get('session')->set($this->getModelName().'.criteria', array());
+        $this->setFilterCriteria(array());
     }
 
     protected function showFilterCriteria()
