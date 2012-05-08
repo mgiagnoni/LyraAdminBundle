@@ -94,8 +94,9 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         $options = $this->getOptions();
         $options['fields']['test-1']['get_method'] = 'getField1';
         $options['fields']['test-1']['options'] = array();
+        $pager = $this->getMock('Lyra\AdminBundle\Pager\PagerInterface');
         $configuration = new AdminConfiguration($options);
-        $renderer = new ListRenderer($configuration);
+        $renderer = new ListRenderer($pager, $configuration);
         $object = new \Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
         $object->setField1('val-1');
         $this->assertEquals('val-1', $renderer->getColValue('test-1', $object));
@@ -103,7 +104,9 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->renderer = new ListRenderer($this->getConfiguration());
+        $pager = $this->getMock('Lyra\AdminBundle\Pager\PagerInterface');
+
+        $this->renderer = new ListRenderer($pager, $this->getConfiguration());
         $this->renderer->setName('test');
         $this->renderer->setSort(array('column' => null, 'order' => null));
     }

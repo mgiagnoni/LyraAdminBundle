@@ -11,15 +11,16 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session;
-use Doctrine\ORM\Query;
+use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
+use Lyra\AdminBundle\Pager\PagerInterface;
 
 /**
  * List renderer class.
  */
 class ListRenderer extends BaseRenderer implements ListRendererInterface
 {
+    protected $pager;
+
     /**
      * @var mixed
      */
@@ -65,6 +66,12 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
      */
     protected $page;
 
+    public function __construct(PagerInterface $pager, AdminConfigurationInterface $configuration)
+    {
+        parent::__construct($configuration);
+        $this->pager = $pager;
+    }
+
     public function getTemplate()
     {
         return $this->getOption('template');
@@ -73,6 +80,34 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function getTitle()
     {
         return $this->getOption('title');
+    }
+
+    public function setPage($page)
+    {
+        $this->page = $page;
+    }
+
+    public function getPage()
+    {
+        return $this->page;
+    }
+
+    public function setQueryBuilder($queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    public function getQueryBuilder()
+    {
+        return $this->queryBuilder;
+    }
+
+    public function getPager()
+    {
+        $this->pager->setPage($this->getPage());
+        $this->pager->setQueryBuilder($this->getQueryBuilder());
+
+        return $this->pager;
     }
 
     public function getColumns()

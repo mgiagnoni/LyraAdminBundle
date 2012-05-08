@@ -28,7 +28,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
 
-        $this->pager->expects($this->once())
+        $this->listRenderer->expects($this->once())
             ->method('setPage')
             ->with(1);
 
@@ -47,7 +47,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->services['request'] = Request::create('/', 'GET', array('page' => 2, 'lyra_admin_model' => 'test'));
 
-        $this->pager->expects($this->once())
+        $this->listRenderer->expects($this->once())
             ->method('setPage')
             ->with(2);
 
@@ -65,7 +65,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->session->set('test.page', 3);
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
 
-        $this->pager->expects($this->once())
+        $this->listRenderer->expects($this->once())
             ->method('setPage')
             ->with(3);
 

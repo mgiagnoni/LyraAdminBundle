@@ -1,4 +1,5 @@
 {% from 'LyraAdminBundle:Admin:macros.html.twig' import page_link %}
+{% set pager = list.pager %}
 <tr>
     <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">
         <span class="pagination">      

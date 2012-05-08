@@ -33,12 +33,10 @@ class AdminController extends ContainerAware
         $listRenderer = $this->getListRenderer();
         $sort = $this->getSort();
         $listRenderer->setSort($sort);
+        $listRenderer->setPage($this->getCurrentPage());
         $criteria = $this->getFilterCriteria();
 
-        $pager = $this->getPager();
-        $pager->setMaxRows($config->getListOption('max_page_rows'));
-        $pager->setPage($this->getCurrentPage());
-        $pager->setQueryBuilder(
+        $listRenderer->setQueryBuilder(
             $this->getModelManager()->buildQuery(
                 $criteria,
                 $sort
@@ -52,7 +50,6 @@ class AdminController extends ContainerAware
             ->renderResponse($listRenderer->getTemplate(), array(
                 'renderer' => $listRenderer,
                 'filter' => $this->getFilterRenderer(),
-                'pager' => $pager,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
                 'filtered' => count($criteria),
                 'form' => $filterForm->createView()
