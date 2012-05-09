@@ -24,11 +24,6 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     /**
      * @var mixed
      */
-    protected $baseQueryBuilder;
-
-    /**
-     * @var mixed
-     */
     protected $queryBuilder;
 
     /**
@@ -92,20 +87,11 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->page;
     }
 
-    public function setQueryBuilder($queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
-
-    public function getQueryBuilder()
-    {
-        return $this->queryBuilder;
-    }
-
     public function getPager()
     {
         $this->pager->setPage($this->getPage());
-        $this->pager->setQueryBuilder($this->getQueryBuilder());
+        $this->pager->setSort($this->getSort());
+        $this->pager->setCriteria($this->getFilterCriteria());
 
         return $this->pager;
     }

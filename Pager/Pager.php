@@ -16,6 +16,8 @@ namespace Lyra\AdminBundle\Pager;
  */
 class Pager implements PagerInterface
 {
+    protected $baseQueryBuilder;
+
     protected $queryBuilder;
 
     protected $countQueryBuilder;
@@ -24,20 +26,22 @@ class Pager implements PagerInterface
 
     protected $maxRows;
 
+    protected $sort;
+
+    protected $criteria;
+
     protected $maxPageLinks = 7;
 
     protected $total;
 
     public function setQueryBuilder($qb)
     {
-        $this->queryBuilder = $qb;
-        $this->countQueryBuilder = clone $qb;
-        $this->countQueryBuilder->resetDQLPart('orderBy');
+        $this->baseQueryBuilder = $qb;
     }
 
     public function getQueryBuilder()
     {
-        return $this->queryBuilder;
+        return $this->baseQueryBuilder;
     }
 
     public function setPage($page)
@@ -60,9 +64,30 @@ class Pager implements PagerInterface
         return $this->maxRows;
     }
 
+    public function setCriteria($criteria)
+    {
+        $this->criteria = $criteria;
+    }
+
+    public function getCriteria()
+    {
+        return $this->criteria;
+    }
+
+    public function setSort($sort)
+    {
+        $this->sort = $sort;
+    }
+
+    public function getSort()
+    {
+        return $this->sort;
+    }
+
     public function getTotal()
     {
         if (null === $this->total) {
+            $this->initQueryBuilders();
             $alias = $this->countQueryBuilder->getRootAlias();
 
             $this->total = $this->countQueryBuilder
@@ -76,12 +101,12 @@ class Pager implements PagerInterface
 
     public function getResults()
     {
+        $this->initQueryBuilders();
         $maxRows = $this->getMaxRows();
-        $qb = $this->getQueryBuilder();
-        $alias = $qb->getRootAlias();
+        $alias = $this->queryBuilder->getRootAlias();
         $page = min($this->getPage(), max(1, $this->getNbPages()));
 
-        return $qb
+        return $this->queryBuilder
             ->select($alias)
             ->setFirstResult(($page - 1) * $maxRows)
             ->setMaxResults($maxRows)
@@ -111,5 +136,17 @@ class Pager implements PagerInterface
         $start = max(1, $start - ($this->maxPageLinks - ($end - $start + 1)));
 
         return range($start, $end);
+    }
+
+    protected function initQueryBuilders()
+    {
+        if (null === $this->queryBuilder) {
+            $criteria = $this->getCriteria();
+            $sort = $this->getSort();
+
+            $this->queryBuilder = $this->baseQueryBuilder->buildQuery($criteria, $sort);
+            $this->countQueryBuilder = clone $this->queryBuilder;
+            $this->countQueryBuilder->resetDQLPart('orderBy');
+        }
     }
 }

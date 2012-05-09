@@ -31,9 +31,7 @@ interface ListRendererInterface extends BaseRendererInterface
 
     function getPage();
 
-    function setQueryBuilder($queryBuilder);
-
-    function getQueryBuilder();
+    function setFilterCriteria($criteria);
 
     /**
      * Gets list columns configuration options.

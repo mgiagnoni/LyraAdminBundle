@@ -31,17 +31,10 @@ class AdminController extends ContainerAware
         $config = $this->getConfiguration();
 
         $listRenderer = $this->getListRenderer();
-        $sort = $this->getSort();
-        $listRenderer->setSort($sort);
+        $listRenderer->setSort($this->getSort());
         $listRenderer->setPage($this->getCurrentPage());
         $criteria = $this->getFilterCriteria();
-
-        $listRenderer->setQueryBuilder(
-            $this->getModelManager()->buildQuery(
-                $criteria,
-                $sort
-            )
-        );
+        $listRenderer->setFilterCriteria($criteria);
 
         $criteria = $this->getModelManager()->mergeFilterCriteriaObjects($criteria);
         $filterForm = $this->getFilterRenderer()->getForm($criteria);

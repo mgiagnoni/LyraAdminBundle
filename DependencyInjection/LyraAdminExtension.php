@@ -360,8 +360,15 @@ class LyraAdminExtension extends Extension
             $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
                 ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
 
+            // List
+            $queryBuilder = new DefinitionDecorator('lyra_admin.query_builder');
+            $queryBuilder->setArguments(array(new Reference(sprintf('lyra_admin.%s.model_manager', $model)), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
+            $queryBuilder->setPublic(false);
+            $container->setDefinition(sprintf('lyra_admin.%s.query_builder', $model), $queryBuilder);
+
             $pager = new DefinitionDecorator('lyra_admin.pager');
             $pager->addMethodCall('setMaxRows', array($options['list']['max_page_rows']));
+            $pager->addMethodCall('setQueryBuilder', array(new Reference(sprintf('lyra_admin.%s.query_builder', $model))));
             $pager->setPublic(false);
             $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
 
