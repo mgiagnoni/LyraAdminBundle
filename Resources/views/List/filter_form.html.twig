@@ -1,4 +1,5 @@
 {% if filter.hasFields %}
+{% set form = filter.view %}
 {% form_theme form 'LyraAdminBundle:Form:form_theme.html.twig' %}
 <div id="ly-filter-wrapper">
     <h2>{{ filter.title|trans({}, filter.transDomain)}}</h2>

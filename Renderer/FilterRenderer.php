@@ -20,6 +20,8 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected $formView;
 
+    protected $criteria;
+
     public function __construct(FormFactory $factory, $configuration)
     {
         parent::__construct($configuration);
@@ -27,15 +29,25 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         $this->factory = $factory;
     }
 
+    public function setCriteria($criteria)
+    {
+        $this->criteria = $criteria;
+    }
+
+    public function getCriteria()
+    {
+        return $this->criteria;
+    }
+
     public function getTitle()
     {
         return $this->getOption('title');
     }
 
-    public function getForm($data = null)
+    public function getForm()
     {
         if (null === $this->form) {
-            $this->form = $this->createForm($data);
+            $this->form = $this->createForm();
         }
 
         return $this->form;
@@ -77,11 +89,11 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
     }
 
 
-    protected function createForm($data = null)
+    protected function createForm()
     {
         $type = new AdminFilterFormType($this->getName(), $this->getFilterFields());
 
-        return $this->factory->createForm($type, $this->getName(), $data);
+        return $this->factory->createForm($type, $this->getName(), $this->criteria);
     }
 
     protected function createFormView()

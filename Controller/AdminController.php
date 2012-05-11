@@ -36,15 +36,14 @@ class AdminController extends ContainerAware
 
         $criteria = $this->getFilterCriteria();
         $criteria = $this->getModelManager()->mergeFilterCriteriaObjects($criteria);
-        $filterForm = $this->getFilterRenderer()->getForm($criteria);
+        $filter = $this->getFilterRenderer();
+        $filter->setCriteria($criteria);
 
         return $this->container->get('templating')
             ->renderResponse($listRenderer->getTemplate(), array(
                 'renderer' => $listRenderer,
-                'filter' => $this->getFilterRenderer(),
+                'filter' => $filter,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
-                'filtered' => count($criteria),
-                'form' => $filterForm->createView()
             ));
     }
 

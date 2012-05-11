@@ -6,7 +6,7 @@
             <span class="info">
             {% if pager.total > 0 %}
                 {{ 'pagination.total'|trans({'%count%' : pager.total}, 'LyraAdminBundle') }}
-                {% if filtered %}
+                {% if filter.criteria|length > 0 %}
                      ({{ 'pagination.filtered'|trans({}, 'LyraAdminBundle') }})
                      <a href="{{ path(filter.routePrefix~'_filter', {'action' : 'criteria'}) }}" class="button icon-only ui-icon-lightbulb show-filter">{{ 'pagination.button.filters'|trans({}, 'LyraAdminBundle')}}</a>
                 {% endif %}

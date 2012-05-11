@@ -14,6 +14,20 @@ namespace Lyra\AdminBundle\Renderer;
 interface FilterRendererInterface
 {
     /**
+     * Sets filter criteria
+     *
+     * @param array $criteria
+     */
+    function setCriteria($criteria);
+
+    /**
+     * Gets filter criteria
+     *
+     * @return array
+     */
+    function getCriteria();
+
+    /**
      * Gets search dialog title.
      *
      * @return string
@@ -25,7 +39,7 @@ interface FilterRendererInterface
      *
      * @return \Symfony\Component\Form\Form
      */
-    function getForm($data = null);
+    function getForm();
 
     /**
      * Gets search form view.
