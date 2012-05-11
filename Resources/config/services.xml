@@ -44,6 +44,7 @@
 
         <service id="lyra_admin.filter_renderer.abstract" class="%lyra_admin.filter_renderer.class%" abstract="true">
             <argument type="service" id="lyra_admin.form_factory" />
+            <argument /> <!-- Model manager -->
             <argument /> <!-- Configuration -->
         </service>
 

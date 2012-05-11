@@ -19,10 +19,11 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
     private $factory;
     private $options;
     private $configuration;
+    private $manager;
 
     public function testGetTitle()
     {
-        $renderer = new FilterRenderer($this->factory, $this->configuration);
+        $renderer = new FilterRenderer($this->factory, $this->manager, $this->configuration);
         $this->assertEquals('test', $renderer->getTitle());
     }
 
@@ -31,7 +32,7 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->once())
             ->method('createForm');
 
-        $renderer = new FilterRenderer($this->factory, $this->configuration);
+        $renderer = new FilterRenderer($this->factory, $this->manager, $this->configuration);
         $renderer->getForm();
     }
 
@@ -48,13 +49,13 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
             ->method('createForm')
             ->will($this->returnValue($form));
 
-        $renderer = new FilterRenderer($this->factory, $this->configuration);
+        $renderer = new FilterRenderer($this->factory, $this->manager, $this->configuration);
         $renderer->getView();
     }
 
     public function testGetFilterFields()
     {
-        $renderer = new FilterRenderer($this->factory, $this->configuration);
+        $renderer = new FilterRenderer($this->factory, $this->manager, $this->configuration);
 
         $this->assertEquals(array(
             'field1' => array('type' => 'text'),
@@ -64,7 +65,7 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
 
     public function testHasFields()
     {
-        $renderer = new FilterRenderer($this->factory, $this->configuration);
+        $renderer = new FilterRenderer($this->factory, $this->manager, $this->configuration);
         $this->assertTrue($renderer->hasFields());
 
         $this->options['filter']['fields'] = array();
@@ -88,5 +89,6 @@ class FilterRendererTest extends \PHPUnit_Framework_TestCase
         ));
 
         $this->configuration = new AdminConfiguration($this->options);
+        $this->manager = $this->getMock('Lyra\AdminBundle\Model\ModelManagerInterface');
     }
 }

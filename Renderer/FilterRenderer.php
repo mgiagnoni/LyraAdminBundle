@@ -13,6 +13,8 @@ namespace Lyra\AdminBundle\Renderer;
 
 use Lyra\AdminBundle\FormFactory\AdminFormFactory as FormFactory;
 use Lyra\AdminBundle\Form\AdminFilterFormType;
+use Lyra\AdminBundle\UserState\UserStateInterface;
+use Lyra\AdminBundle\Model\ModelManagerInterface;
 
 class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 {
@@ -20,23 +22,45 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected $formView;
 
-    protected $criteria;
+    protected $state;
 
-    public function __construct(FormFactory $factory, $configuration)
+    protected $modelManager;
+
+    public function __construct(FormFactory $factory, ModelManagerInterface $modelManager, $configuration)
     {
         parent::__construct($configuration);
 
         $this->factory = $factory;
+        $this->modelManager = $modelManager;
+    }
+
+    public function setState(UserStateInterface $state)
+    {
+        $this->state = $state;
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function setCriteria($criteria)
     {
-        $this->criteria = $criteria;
+        $criteria = $this->removeEmptyCriteria($criteria);
+        $this->state->set('criteria', $criteria);
     }
 
     public function getCriteria()
     {
-        return $this->criteria;
+        // criteria objects coming back from session need to be managed
+        $criteria = $this->modelManager->mergeFilterCriteriaObjects($this->state->get('criteria'));
+
+        return $criteria;
+    }
+
+    public function resetCriteria()
+    {
+        $this->state->set('criteria', array());
     }
 
     public function getTitle()
@@ -88,12 +112,11 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         return false;
     }
 
-
     protected function createForm()
     {
         $type = new AdminFilterFormType($this->getName(), $this->getFilterFields());
 
-        return $this->factory->createForm($type, $this->getName(), $this->criteria);
+        return $this->factory->createForm($type, $this->getName(), $this->getCriteria());
     }
 
     protected function createFormView()
@@ -104,5 +127,30 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         }
 
         return $this->formView;
+    }
+
+    protected function removeEmptyCriteria($criteria)
+    {
+        foreach ($this->getFilterFields() as $name => $attrs) {
+            switch($attrs['type']) {
+            case 'date':
+            case 'datetime':
+                if (null === $criteria[$name]['from'] && null === $criteria[$name]['to']) {
+                    unset($criteria[$name]);
+                }
+                break;
+            case 'boolean':
+                if ('' == $criteria[$name]) {
+                    unset($criteria[$name]);
+                }
+                break;
+            default:
+                if (empty($criteria[$name])) {
+                    unset($criteria[$name]);
+                }
+            }
+        }
+
+        return $criteria;
     }
 }

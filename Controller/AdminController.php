@@ -34,15 +34,10 @@ class AdminController extends ContainerAware
         // Initializes list persistent states (page, sort, criteria)
         $listRenderer->getState()->initFromRequest($this->getRequest());
 
-        $criteria = $this->getFilterCriteria();
-        $criteria = $this->getModelManager()->mergeFilterCriteriaObjects($criteria);
-        $filter = $this->getFilterRenderer();
-        $filter->setCriteria($criteria);
-
         return $this->container->get('templating')
             ->renderResponse($listRenderer->getTemplate(), array(
                 'renderer' => $listRenderer,
-                'filter' => $filter,
+                'filter' => $this->getFilterRenderer(),
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
             ));
     }
@@ -180,7 +175,7 @@ class AdminController extends ContainerAware
                 }
                 break;
             case 'reset':
-                $response = $this->resetFilterCriteria();
+                $this->getFilterRenderer()->resetCriteria();
                 break;
             case 'criteria':
                 $response = $this->showFilterCriteria();
@@ -208,11 +203,6 @@ class AdminController extends ContainerAware
     public function getRequest()
     {
         return $this->container->get('request');
-    }
-
-    public function getSession()
-    {
-        return $this->container->get('session');
     }
 
     public function getConfiguration($name = null)
@@ -421,47 +411,18 @@ class AdminController extends ContainerAware
 
     protected function saveFilterCriteria()
     {
-        $form = $this->getFilterRenderer()->getForm();
+        $filter = $this->getFilterRenderer();
+        $form = $filter->getForm();
         $form->bindRequest($this->getRequest());
-        $criteria = $form->getData();
-        //Only filters that are actually set are saved
-        foreach ($this->getFilterRenderer()->getFilterFields() as $name => $attrs) {
-            switch($attrs['type']) {
-            case 'date':
-            case 'datetime':
-                if (null === $criteria[$name]['from'] && null === $criteria[$name]['to']) {
-                    unset($criteria[$name]);
-                }
-                break;
-            case 'boolean':
-                if ('' == $criteria[$name]) {
-                    unset($criteria[$name]);
-                }
-                break;
-            default:
-                if (empty($criteria[$name])) {
-                    unset($criteria[$name]);
-                }
-            }
-        }
 
-        $this->setFilterCriteria($criteria);
-    }
-
-    protected function resetFilterCriteria()
-    {
-        $this->setFilterCriteria(array());
+        $filter->setCriteria($form->getData());
     }
 
     protected function showFilterCriteria()
     {
-        $criteria = $this->getFilterCriteria();
-        $renderer = $this->getFilterRenderer();
-
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Filter:dialog.html.twig', array(
-                'renderer' => $renderer,
-                'criteria' => $criteria,
+                'renderer' => $this->getFilterRenderer(),
             ));
     }
 

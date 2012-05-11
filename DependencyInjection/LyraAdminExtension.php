@@ -396,9 +396,22 @@ class LyraAdminExtension extends Extension
                 ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
                 ->addMethodCall('setName', array($model));
 
+            // Filter
+
+            $filterState = new DefinitionDecorator('lyra_admin.user_state');
+            $states = array(
+                'criteria' => array()
+            );
+            $filterState->replaceArgument(1, $states);
+            $filterState->replaceArgument(2, $model);
+            $filterState->setPublic(false);
+            $container->setDefinition(sprintf('lyra_admin.%s.filter_state', $model), $filterState);
+
             $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-                ->addMethodCall('setName', array($model));
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.model_manager', $model)))
+                ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+                ->addMethodCall('setName', array($model))
+                ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))));
 
             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))

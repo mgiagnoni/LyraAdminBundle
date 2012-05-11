@@ -3,6 +3,7 @@
 <div id="ly-show-wrapper">
     <h1>{{ 'filter.dialog.title'|trans({}, 'LyraAdminBundle') }}</h1>
     <ol>
+        {% set criteria = renderer.criteria %}
         {% for field in renderer.filterFields %}
             {% if criteria[field.name] is defined %}
                 <li>
