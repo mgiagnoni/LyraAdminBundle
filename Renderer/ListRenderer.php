@@ -13,18 +13,22 @@ namespace Lyra\AdminBundle\Renderer;
 
 use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Lyra\AdminBundle\Pager\PagerInterface;
+use Lyra\AdminBundle\UserState\UserStateInterface;
 
 /**
  * List renderer class.
  */
 class ListRenderer extends BaseRenderer implements ListRendererInterface
 {
+    /**
+     * @var \Lyra\AdminBundle\Pager\PagerInterface
+     */
     protected $pager;
 
     /**
-     * @var mixed
+     * @var \Lyra\AdminBundle\UserState\UserStateInterface
      */
-    protected $queryBuilder;
+    protected $state;
 
     /**
      * @var array
@@ -34,37 +38,22 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     /**
      * @var array
      */
-    protected $actions;
-
-    /**
-     * @var integer
-     */
-    protected $maxPageLinks = 7;
-
-    /**
-     * @var integer
-     */
-    protected $total;
-
-    /**
-     * @var array
-     */
-    protected $filterCriteria = array();
-
-    /**
-     * @var array
-     */
     protected $sort;
-
-    /**
-     * @var integer
-     */
-    protected $page;
 
     public function __construct(PagerInterface $pager, AdminConfigurationInterface $configuration)
     {
         parent::__construct($configuration);
         $this->pager = $pager;
+    }
+
+    public function setState(UserStateInterface $state)
+    {
+        $this->state = $state;
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function getTemplate()
@@ -77,21 +66,9 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->getOption('title');
     }
 
-    public function setPage($page)
-    {
-        $this->page = $page;
-    }
-
-    public function getPage()
-    {
-        return $this->page;
-    }
-
     public function getPager()
     {
-        $this->pager->setPage($this->getPage());
-        $this->pager->setSort($this->getSort());
-        $this->pager->setCriteria($this->getFilterCriteria());
+        $this->pager->setPage($this->state->get('page'));
 
         return $this->pager;
     }
@@ -143,6 +120,22 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getSort()
     {
+        if (null === $this->sort) {
+            $sort = array(
+                'column' => $this->state->get('column'),
+                'order' => $this->state->get('order')
+            );
+
+            if (null !== $sort['column']) {
+                $sort['field'] = $this->getColOption($sort['column'], 'field');
+            } else {
+                $default = $this->getOption('default_sort');
+                $sort['field'] = $default['field'];
+            }
+
+            $this->sort = $sort;
+        }
+
         return $this->sort;
     }
 
@@ -197,16 +190,6 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     public function getColFormat($colName)
     {
         return $this->getColOption($colName,'format');
-    }
-
-    public function getFilterCriteria()
-    {
-        return $this->filterCriteria;
-    }
-
-    public function setFilterCriteria($criteria)
-    {
-        $this->filterCriteria = $criteria;
     }
 
     public function getColOption($colName, $key)

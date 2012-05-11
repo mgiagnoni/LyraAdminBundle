@@ -11,30 +11,49 @@
 
 namespace Lyra\AdminBundle\Pager;
 
+use Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface;
+
 /**
  * List pager class.
  */
 class Pager implements PagerInterface
 {
+    /**
+     * @var \Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface
+     */
     protected $baseQueryBuilder;
 
+    /**
+     * @var mixed
+     */
     protected $queryBuilder;
 
+    /**
+     * @var mixed
+     */
     protected $countQueryBuilder;
 
+    /**
+     * @var integer
+     */
     protected $page;
 
+    /**
+     * @var integer
+     */
     protected $maxRows;
 
-    protected $sort;
-
-    protected $criteria;
-
+    /**
+     * @var integer
+     */
     protected $maxPageLinks = 7;
 
+    /**
+     * @var integer
+     */
     protected $total;
 
-    public function setQueryBuilder($qb)
+    public function setQueryBuilder(QueryBuilderInterface $qb)
     {
         $this->baseQueryBuilder = $qb;
     }
@@ -62,26 +81,6 @@ class Pager implements PagerInterface
     public function getMaxRows()
     {
         return $this->maxRows;
-    }
-
-    public function setCriteria($criteria)
-    {
-        $this->criteria = $criteria;
-    }
-
-    public function getCriteria()
-    {
-        return $this->criteria;
-    }
-
-    public function setSort($sort)
-    {
-        $this->sort = $sort;
-    }
-
-    public function getSort()
-    {
-        return $this->sort;
     }
 
     public function getTotal()
@@ -141,10 +140,8 @@ class Pager implements PagerInterface
     protected function initQueryBuilders()
     {
         if (null === $this->queryBuilder) {
-            $criteria = $this->getCriteria();
-            $sort = $this->getSort();
 
-            $this->queryBuilder = $this->baseQueryBuilder->buildQuery($criteria, $sort);
+            $this->queryBuilder = $this->baseQueryBuilder->buildQuery();
             $this->countQueryBuilder = clone $this->queryBuilder;
             $this->countQueryBuilder->resetDQLPart('orderBy');
         }

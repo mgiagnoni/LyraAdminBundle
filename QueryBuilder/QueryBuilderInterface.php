@@ -11,8 +11,24 @@
 
 namespace Lyra\AdminBundle\QueryBuilder;
 
+use Lyra\AdminBundle\UserState\UserStateInterface;
+
 interface QueryBuilderInterface
 {
+    /**
+     * Sets user state service.
+     *
+     * @param \Lyra\AdminBundle\UserState\UserStateInterface $state
+     */
+    function setState(UserStateInterface $state);
+
+    /**
+     * Gets user state service.
+     *
+     * @return \Lyra\AdminBundle\UserState\UserStateInterface
+     */
+    function getState();
+
     /**
      * Sets the base query builder.
      *
@@ -31,8 +47,6 @@ interface QueryBuilderInterface
      * Returns a query builder to extract an ordered list of records
      * filtered by given search criteria.
      *
-     * @param array $criteria
-     * @param array $sort
      */
-    function buildQuery($criteria, $sort);
+    function buildQuery();
 }

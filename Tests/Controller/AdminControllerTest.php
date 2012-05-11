@@ -23,19 +23,11 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     protected $listRenderer;
     protected $filterRenderer;
     protected $session;
+    protected $state;
 
     public function testIndexAction()
     {
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
-
-        $this->listRenderer->expects($this->once())
-            ->method('setPage')
-            ->with(1);
-
-        $this->listRenderer->expects($this->once())
-            ->method('setSort')
-            ->with(array('column' => null, 'field' => null, 'order' => null));
-
         $this->setIndexExpects();
 
         $controller = new AdminController();
@@ -46,10 +38,6 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     public function testIndexActionPageFromRequest()
     {
         $this->services['request'] = Request::create('/', 'GET', array('page' => 2, 'lyra_admin_model' => 'test'));
-
-        $this->listRenderer->expects($this->once())
-            ->method('setPage')
-            ->with(2);
 
         $this->setIndexExpects();
 
@@ -65,10 +53,6 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->session->set('test.page', 3);
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
 
-        $this->listRenderer->expects($this->once())
-            ->method('setPage')
-            ->with(3);
-
         $this->setIndexExpects();
 
         $controller = new AdminController();
@@ -79,9 +63,6 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
     public function testIndexActionSortFromRequest()
     {
         $this->services['request'] = Request::create('/', 'GET', array('column' => 'name', 'order' => 'desc', 'lyra_admin_model' => 'test'));
-        $this->listRenderer->expects($this->once())
-            ->method('setSort')
-            ->with(array('column' => 'name', 'field' => 'name', 'order' => 'desc'));
 
         $this->setIndexExpects();
 
@@ -98,10 +79,6 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->session->set('test.sort.column', 'name');
         $this->session->set('test.sort.order', 'desc');
         $this->services['request'] = Request::create('/', 'GET', array('lyra_admin_model' => 'test'));
-
-        $this->listRenderer->expects($this->once())
-            ->method('setSort')
-            ->with(array('column' => 'name', 'field' => 'name','order' => 'desc'));
 
         $this->setIndexExpects();
 
@@ -138,6 +115,10 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->will($this->returnValue('/'));
 
+        $this->listRenderer->expects($this->any())
+            ->method('getState')
+            ->will($this->returnValue($this->state));
+
         $controller = new AdminController();
         $controller->setContainer($this->getMockContainer());
         $controller->filterAction('save');
@@ -168,6 +149,7 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
         $this->pager = $this->getMock('Lyra\AdminBundle\Pager\PagerInterface');
 
         $this->session = new Session(new ArraySessionStorage());
+        $this->state = $this->getMock('Lyra\AdminBundle\UserState\UserStateInterface');
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
         $csrfProvider = $this->getMock('Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface');
         $router = $this->getMock('Symfony\Component\Routing\RouterInterface');
@@ -203,6 +185,10 @@ class AdminControllerTest extends \PHPUnit_Framework_TestCase
 
     protected function setIndexExpects()
     {
+        $this->listRenderer->expects($this->any())
+            ->method('getState')
+            ->will($this->returnValue($this->state));
+
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();

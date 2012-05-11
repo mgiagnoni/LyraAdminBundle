@@ -10,20 +10,21 @@
  */
 
 namespace Lyra\AdminBundle\Pager;
+use Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface;
 
 interface PagerInterface
 {
     /**
      * Sets the query builder to extract the records to paginate.
      *
-     * @param mixed $queryBuilder
+     * @param \Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface $queryBuilder
      */
-    function setQueryBuilder($queryBuilder);
+    function setQueryBuilder(QueryBuilderInterface $queryBuilder);
 
     /**
      * Gets the pager query builder.
      *
-     * @return mixed
+     * @return \Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface
      */
     function getQueryBuilder();
 

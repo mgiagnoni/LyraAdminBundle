@@ -13,20 +13,42 @@ namespace Lyra\AdminBundle\QueryBuilder;
 
 use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Lyra\AdminBundle\Model\ModelManagerInterface;
+use Lyra\AdminBundle\UserState\UserStateInterface;
 
 /**
  * Query builder
  */
 class QueryBuilder implements QueryBuilderInterface
 {
+    /**
+     * @var \Lyra\AdminBundle\Configuration\AdminConfigurationInterface
+     */
     protected $configuration;
 
+    /**
+     * @var \Lyra\AdminBundle\UserState\UserStateInterface
+     */
+    protected $state;
+
+    /**
+     * @var mixed
+     */
     protected $baseQueryBuilder;
 
     public function __construct(ModelManagerInterface $manager, AdminConfigurationInterface $configuration)
     {
         $this->configuration = $configuration;
         $this->setBaseQueryBuilder($manager->getBaseListQueryBuilder());
+    }
+
+    public function setState(UserStateInterface $state)
+    {
+        $this->state = $state;
+    }
+
+    public function getState()
+    {
+        return $this->state;
     }
 
     public function setBaseQueryBuilder($queryBuilder)
@@ -39,8 +61,22 @@ class QueryBuilder implements QueryBuilderInterface
         return $this->baseQueryBuilder;
     }
 
-    public function buildQuery($criteria, $sort)
+    public function buildQuery()
     {
+        $sort = array(
+            'column' => $this->state->get('column'),
+            'order' => $this->state->get('order')
+        );
+
+        if (null !== $sort['column']) {
+            $sort['field'] = $this->configuration->getListColumnOption($sort['column'], 'field');
+        } else {
+            $default = $this->configuration->getListOption('default_sort');
+            $sort['field'] = $default['field'];
+        }
+
+        $criteria = $this->state->get('criteria');
+
         $qb = $this->getBaseQueryBuilder();
 
         $this->addFilterCriteria($qb, $criteria);

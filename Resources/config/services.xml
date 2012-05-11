@@ -14,7 +14,7 @@
         <parameter key="lyra_admin.show_renderer.class">Lyra\AdminBundle\Renderer\ShowRenderer</parameter>
         <parameter key="lyra_admin.pager.class">Lyra\AdminBundle\Pager\Pager</parameter>
         <parameter key="lyra_admin.query_builder.class">Lyra\AdminBundle\QueryBuilder\QueryBuilder</parameter>
-
+        <parameter key="lyra_admin.user_state.class">Lyra\AdminBundle\UserState\UserState</parameter>
     </parameters>
 
     <services>
@@ -25,6 +25,8 @@
         <service id="lyra_admin.configuration.abstract" class="%lyra_admin.configuration.class%" abstract="true" />
 
         <service id="lyra_admin.list_renderer.abstract" class="%lyra_admin.list_renderer.class%" abstract="true">
+            <argument /> <!-- Pager -->
+            <argument /> <!-- Configuration -->
             <call method="setSecurityContext">
                 <argument type="service" id="security.context" />
             </call>
@@ -50,6 +52,12 @@
         <service id="lyra_admin.pager" class="%lyra_admin.pager.class%" />
 
         <service id="lyra_admin.query_builder" class="%lyra_admin.query_builder.class%" />
+
+        <service id="lyra_admin.user_state" class="%lyra_admin.user_state.class%">
+            <argument type="service" id="session" />
+            <argument /> <!-- Defaults -->
+            <argument /> <!-- Prefix -->
+        </service>
     </services>
 
 </container>

@@ -31,11 +31,10 @@ class AdminController extends ContainerAware
         $config = $this->getConfiguration();
 
         $listRenderer = $this->getListRenderer();
-        $listRenderer->setSort($this->getSort());
-        $listRenderer->setPage($this->getCurrentPage());
-        $criteria = $this->getFilterCriteria();
-        $listRenderer->setFilterCriteria($criteria);
+        // Initializes list persistent states (page, sort, criteria)
+        $listRenderer->getState()->initFromRequest($this->getRequest());
 
+        $criteria = $this->getFilterCriteria();
         $criteria = $this->getModelManager()->mergeFilterCriteriaObjects($criteria);
         $filterForm = $this->getFilterRenderer()->getForm($criteria);
 
@@ -215,11 +214,6 @@ class AdminController extends ContainerAware
     public function getSession()
     {
         return $this->container->get('session');
-    }
-
-    public function getPager()
-    {
-        return $this->container->get('lyra_admin.pager');
     }
 
     public function getConfiguration($name = null)
@@ -402,42 +396,12 @@ class AdminController extends ContainerAware
 
     protected function setFilterCriteria($criteria)
     {
-        $this->container->get('session')->set($this->getModelName().'.criteria', $criteria);
+        $this->getListRenderer()->getState()->set('criteria', $criteria);
     }
 
     protected function getFilterCriteria()
     {
-        return $this->container->get('session')->get($this->getModelName().'.criteria', array());
-    }
-
-    protected function getSort()
-    {
-        $config = $this->getConfiguration();
-        $default = $config->getListOption('default_sort');
-
-        if ($column = $this->getRequest()->get('column')) {
-            $this->getSession()->set($this->getModelName().'.sort.column', $column);
-            $this->getSession()->set($this->getModelName().'.sort.order', $this->getRequest()->get('order'));
-        }
-
-        $sort = array('column' => $this->getSession()->get($this->getModelName().'.sort.column', $default['column']), 'order' => $this->getSession()->get($this->getModelName().'.sort.order', $default['order']));
-
-        if (null !== $sort['column']) {
-            $sort['field'] = $config->getListColumnOption($sort['column'], 'field');
-        } else {
-            $sort['field'] = $default['field'];
-        }
-
-        return $sort;
-    }
-
-    protected function getCurrentPage()
-    {
-        if ($page = $this->getRequest()->get('page')) {
-            $this->getSession()->set($this->getModelName().'.page', $page);
-        }
-
-        return $this->getSession()->get($this->getModelName().'.page', 1);
+        return $this->getListRenderer()->getState()->get('criteria');
     }
 
     protected function getModelName()

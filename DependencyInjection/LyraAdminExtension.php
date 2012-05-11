@@ -361,8 +361,22 @@ class LyraAdminExtension extends Extension
                 ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
 
             // List
+
+            $listState = new DefinitionDecorator('lyra_admin.user_state');
+            $states = array(
+                'column' => $options['list']['default_sort']['column'],
+                'order' => $options['list']['default_sort']['order'],
+                'page' => 1,
+                'criteria' => array()
+            );
+            $listState->replaceArgument(1, $states);
+            $listState->replaceArgument(2, $model);
+            $listState->setPublic(false);
+            $container->setDefinition(sprintf('lyra_admin.%s.user_state', $model), $listState);
+
             $queryBuilder = new DefinitionDecorator('lyra_admin.query_builder');
             $queryBuilder->setArguments(array(new Reference(sprintf('lyra_admin.%s.model_manager', $model)), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
+            $queryBuilder->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))));
             $queryBuilder->setPublic(false);
             $container->setDefinition(sprintf('lyra_admin.%s.query_builder', $model), $queryBuilder);
 
@@ -373,8 +387,10 @@ class LyraAdminExtension extends Extension
             $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
 
             $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
-                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.pager', $model)), new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                ->addMethodCall('setName', array($model));
+                ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+                ->addMethodCall('setName', array($model))
+                ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))));
 
             $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
                 ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))

@@ -97,6 +97,7 @@ class ListRendererTest extends \PHPUnit_Framework_TestCase
         $pager = $this->getMock('Lyra\AdminBundle\Pager\PagerInterface');
         $configuration = new AdminConfiguration($options);
         $renderer = new ListRenderer($pager, $configuration);
+        $renderer->setSort(array('column' => null, 'order' => null));
         $object = new \Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
         $object->setField1('val-1');
         $this->assertEquals('val-1', $renderer->getColValue('test-1', $object));

@@ -11,8 +11,24 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
+use Lyra\AdminBundle\UserState\UserStateInterface;
+
 interface ListRendererInterface extends BaseRendererInterface
 {
+    /**
+     * Sets user state service.
+     *
+     * @param \Lyra\AdminBundle\UserState\UserStateInterface $state
+     */
+    function setState(UserStateInterface $state);
+
+    /**
+     * Gets user state service.
+     *
+     * @return \Lyra\AdminBundle\UserState\UserStateInterface
+     */
+    function getState();
+
     /**
      * Gets list template.
      *
@@ -26,12 +42,6 @@ interface ListRendererInterface extends BaseRendererInterface
      * @return string
      */
     function getTitle();
-
-    function setPage($page);
-
-    function getPage();
-
-    function setFilterCriteria($criteria);
 
     /**
      * Gets list columns configuration options.
