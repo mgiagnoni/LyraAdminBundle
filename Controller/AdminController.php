@@ -28,8 +28,6 @@ class AdminController extends ContainerAware
      */
     public function indexAction()
     {
-        $config = $this->getConfiguration();
-
         $listRenderer = $this->getListRenderer();
         // Initializes list persistent states (page, sort, criteria)
         $listRenderer->getState()->initFromRequest($this->getRequest());

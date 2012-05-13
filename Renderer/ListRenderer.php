@@ -40,9 +40,45 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
      */
     protected $sort;
 
+    /**
+     * @var string
+     */
+    protected $title;
+
+    /**
+     * @var string
+     */
+    protected $template;
+
+    /**
+     * @var string
+     */
+    protected $transDomain;
+
+    /**
+     * @var array
+     */
+    protected $actions = array();
+
+    /**
+     * @var array
+     */
+    protected $listActions = array();
+
+    /**
+     * @var array
+     */
+    protected $objectActions = array();
+
+    /**
+     * @var array
+     */
+    protected $batchActions = array();
+
     public function __construct(PagerInterface $pager, AdminConfigurationInterface $configuration)
     {
         parent::__construct($configuration);
+
         $this->pager = $pager;
     }
 
@@ -56,14 +92,34 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->state;
     }
 
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
     public function getTemplate()
     {
-        return $this->getOption('template');
+        return $this->template;
+    }
+
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 
     public function getTitle()
     {
-        return $this->getOption('title');
+        return $this->title;
+    }
+
+    public function setTransDomain($transDomain)
+    {
+        $this->transDomain = $transDomain;
+    }
+
+    public function getTransDomain()
+    {
+        return $this->transDomain;
     }
 
     public function getPager()
@@ -73,19 +129,26 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->pager;
     }
 
+    public function setColumns($columns)
+    {
+        $this->columns = $columns;
+    }
+
     public function getColumns()
     {
-        if (null === $this->columns) {
-            $this->columns = $this->getOption('columns');
-            $this->initColumns();
-        }
+        $this->initColumns();
 
         return $this->columns;
     }
 
+    public function setBatchActions($actions)
+    {
+        $this->batchActions = $actions;
+    }
+
     public function getBatchActions()
     {
-        return $this->getAllowedActions('batch');
+        return $this->filterAllowedActions($this->batchActions);
     }
 
     public function hasBatchActions()
@@ -93,24 +156,34 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return (boolean)count($this->getBatchActions());
     }
 
+    public function setObjectActions($actions)
+    {
+        $this->objectActions = $actions;
+    }
+
     public function getObjectActions()
     {
-        return $this->getAllowedActions('object');
+        return $this->filterAllowedActions($this->objectActions);
+    }
+
+    public function setListActions($actions)
+    {
+        $this->listActions = $actions;
     }
 
     public function getListActions()
     {
-        return $this->getAllowedActions('list');
+        return $this->filterAllowedActions($this->listActions);
     }
 
-    public function getDefaultSort()
+    public function setActions($actions)
     {
-        return $this->configuration->getListOption('default_sort');
+        $this->actions = $actions;
     }
 
     public function getActions()
     {
-        return $this->configuration->getOption('actions');
+        return $this->actions;
     }
 
     public function setSort(array $sort)
@@ -141,17 +214,13 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColValue($colName, $object)
     {
-        $field = $this->getColOption($colName, 'field');
+        $methods = $this->getColOption($colName, 'get_methods');
 
-        if (false !== strpos($field, '.')) {
-            list($model, $field) = explode('.', $field);
-            $method = $this->configuration->getFieldOption($model, 'get_method');
-            $object = $object->$method();
-            $method = $this->configuration->getAssocFieldOption($model, $field, 'get_method');
+        foreach ($methods as $method) {
             $value = $object->$method();
-        } else {
-            $method = $this->configuration->getFieldOption($field, 'get_method');
-            $value = $object->$method();
+            if (is_object($value)) {
+                $object = $value;
+            }
         }
 
         $function = $this->getColOption($colName, 'format_function');
@@ -194,17 +263,29 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function getColOption($colName, $key)
     {
-        $columns = $this->getColumns();
-        if (!array_key_exists($key,$columns[$colName])) {
+        if (!array_key_exists($key, $this->columns[$colName])) {
            throw new \InvalidArgumentException(sprintf('Column option %s does not exist', $key));
         }
 
-        return $columns[$colName][$key];
+        return $this->columns[$colName][$key];
     }
 
-    public function getOption($key)
+    public function isActionAllowed($action)
     {
-        return $this->configuration->getListOption($key);
+        $roles = array();
+        if (isset($this->actions[$action]['roles'])) {
+            $roles = $this->actions[$action]['roles'];
+        }
+
+        if (null === $this->securityContext || count($roles) == 0) {
+            return true;
+        }
+
+        if ($this->securityContext->isGranted($roles)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function initColumns()
@@ -219,10 +300,9 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         }
     }
 
-    protected function getAllowedActions($type)
+    protected function filterAllowedActions($actions)
     {
         $allowed = array();
-        $actions = $this->getOption($type.'_actions');
         foreach ($actions as $action) {
             if ($this->isActionAllowed($action)) {
                 $allowed[] = $action;

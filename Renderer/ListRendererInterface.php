@@ -13,7 +13,7 @@ namespace Lyra\AdminBundle\Renderer;
 
 use Lyra\AdminBundle\UserState\UserStateInterface;
 
-interface ListRendererInterface extends BaseRendererInterface
+interface ListRendererInterface
 {
     /**
      * Sets user state service.
@@ -30,11 +30,25 @@ interface ListRendererInterface extends BaseRendererInterface
     function getState();
 
     /**
+     * Sets list template.
+     *
+     * @param string $template
+     */
+    function setTemplate($template);
+
+    /**
      * Gets list template.
      *
      * @return string
      */
     function getTemplate();
+
+    /**
+     * Sets list title (header).
+     *
+     * @param string $title
+     */
+    function setTitle($title);
 
     /**
      * Gets list title (header).
@@ -44,11 +58,41 @@ interface ListRendererInterface extends BaseRendererInterface
     function getTitle();
 
     /**
+     * Sets the list translation domain.
+     *
+     * Used in templates to translate list title, headers.
+     *
+     * @param string $transDomain
+     */
+    function setTransDomain($transDomain);
+
+    /**
+     * Gets the list translation domain.
+     *
+     * @return string
+     */
+    function getTransDomain();
+
+    /**
+     * Sets list columns configuration options.
+     *
+     * @param array $columns
+     */
+    function setColumns($columns);
+
+    /**
      * Gets list columns configuration options.
      *
      * @return array
      */
     function getColumns();
+
+    /**
+     * Sets list batch actions names.
+     *
+     * @param array $actions
+     */
+    function setBatchActions($actions);
 
     /**
      * Gets list batch actions names.
@@ -65,11 +109,25 @@ interface ListRendererInterface extends BaseRendererInterface
     function hasBatchActions();
 
     /**
+     * Sets list object action names.
+     *
+     * @param array $actions
+     */
+    function setObjectActions($actions);
+
+    /**
      * Gets list object actions names.
      *
      * @return array
      */
     function getObjectActions();
+
+    /**
+     * Sets list actions names.
+     *
+     * @param array $actions
+     */
+    function setListActions($actions);
 
     /**
      * Gets list actions names.
@@ -79,6 +137,13 @@ interface ListRendererInterface extends BaseRendererInterface
     function getListActions();
 
     /**
+     * Sets full configuration options of all list actions
+     *
+     * @param array $actions assoc array with action name as key, options as value
+     */
+    function setActions($actions);
+
+    /**
      * Gets configuration options of all list actions.
      *
      * @return array
@@ -86,16 +151,16 @@ interface ListRendererInterface extends BaseRendererInterface
     function getActions();
 
     /**
-     * Sets current sort field and sort direction (asc/desc).
+     * Sets current sort column and sort direction (asc/desc).
      *
-     * @param array $sort array('field' => $sortField, 'order' => $sortDir)
+     * @param array $sort array('column' => $sortCol, 'order' => $sortDir)
      */
     function setSort(array $sort);
 
     /**
-     * Gets current sort field and sort direction (asc/desc).
+     * Gets current sort column and sort direction (asc/desc).
      *
-     * @return array array('field' => $sortField, 'order' => $sortDir)
+     * @return array array('column' => $sortCol, 'order' => $sortDir)
      */
     function getSort();
 
@@ -156,4 +221,13 @@ interface ListRendererInterface extends BaseRendererInterface
      * @return mixed
      */
     function getColOption($colName, $key);
+
+    /**
+     * Checks if an action is allowed.
+     *
+     * @param string $action action name
+     *
+     * @return Boolean
+     */
+    function isActionAllowed($action);
 }

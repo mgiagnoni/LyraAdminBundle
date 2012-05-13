@@ -70,13 +70,4 @@ interface BaseRendererInterface
      * @return array
      */
     function getRouteParams();
-
-    /**
-     * Checks if an action is allowed.
-     *
-     * @param string $action action name
-     *
-     * @return Boolean
-     */
-    function isActionAllowed($action);
 }

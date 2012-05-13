@@ -82,6 +82,7 @@ class LyraAdminExtension extends Extension
         $this->setShowFieldsDefaults();
         $this->updateColumnsDefaults();
         $this->setModelOptions($container);
+        $this->updateServiceDefinitions($container);
     }
 
 
@@ -173,6 +174,33 @@ class LyraAdminExtension extends Extension
                 $class = $columns[$key]['sortable'] ? 'sortable' : '';
                 $class .= ' col-'.$key.' '.$type;
                 $columns[$key]['th_class'] = 'class="'.trim($class).'"';
+
+                $getMethods = array();
+                $colFields = explode('.', $columns[$key]['field']);
+                $field = array_shift($colFields);
+
+                if (isset($fields[$field])) {
+                    $getMethods[] = $fields[$field]['get_method'];
+                }
+
+                $assocFields = $fields;
+
+                foreach ($colFields as $colField) {
+                    if (!isset($assocFields[$field]['assoc'])) {
+                        break;
+                    }
+
+                    $assocModel = $assocFields[$field]['assoc']['model'];
+                    $assocFields = $this->config['models'][$assocModel]['fields'];
+
+                    if (isset($assocFields[$colField])) {
+                        $getMethods[] = $assocFields[$colField]['get_method'];
+                    }
+
+                    $field = $colField;
+                }
+
+                $columns[$key]['get_methods'] = $getMethods;
             }
         }
     }
@@ -386,11 +414,21 @@ class LyraAdminExtension extends Extension
             $pager->setPublic(false);
             $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
 
+            $keys = array_unique(array_merge($options['list']['list_actions'], $options['list']['object_actions'], $options['list']['batch_actions']));
+            $actions = array_intersect_key($options['actions'], array_flip($keys));
+
             $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
                 ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
                 ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
                 ->addMethodCall('setName', array($model))
-                ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))));
+                ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
+                ->addMethodCall('setTitle', array($options['list']['title']))
+                ->addMethodCall('setTemplate', array($options['list']['template']))
+                ->addMethodCall('setTransDomain', array($options['trans_domain']))
+                ->addMethodCall('setActions', array($actions))
+                ->addMethodCall('setListActions', array($options['list']['list_actions']))
+                ->addMethodCall('setObjectActions', array($options['list']['object_actions']))
+                ->addMethodCall('setBatchActions', array($options['list']['batch_actions']));
 
             $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
                 ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
@@ -420,6 +458,14 @@ class LyraAdminExtension extends Extension
             $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
                 ->addMethodCall('setName', array($model));
+        }
+    }
+
+    private function updateServiceDefinitions(ContainerBuilder $container)
+    {
+        foreach ($this->config['models'] as $model => $options) {
+            $list = $container->getDefinition(sprintf('lyra_admin.%s.list_renderer', $model));
+            $list->addMethodCall('setColumns', array($options['list']['columns']));
         }
     }
 
