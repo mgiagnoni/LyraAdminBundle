@@ -199,13 +199,6 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
                 'order' => $this->state->get('order')
             );
 
-            if (null !== $sort['column']) {
-                $sort['field'] = $this->getColOption($sort['column'], 'field');
-            } else {
-                $default = $this->getOption('default_sort');
-                $sort['field'] = $default['field'];
-            }
-
             $this->sort = $sort;
         }
 
