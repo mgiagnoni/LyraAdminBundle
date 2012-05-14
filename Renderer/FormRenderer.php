@@ -30,6 +30,41 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
     protected $action;
 
     /**
+     * @var string
+     */
+    protected $newTitle;
+
+    /**
+     * @var string
+     */
+    protected $editTitle;
+
+    /**
+     * @var string
+     */
+    protected $template;
+
+    /**
+     * @var string
+     */
+    protected $transDomain;
+
+    /**
+     * @var string
+     */
+    protected $class;
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @var array
+     */
+    protected $fields;
+
+    /**
      * @var \Symfony\Component\Form\Form
      */
     protected $form;
@@ -61,9 +96,44 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
         return $this->action;
     }
 
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
     public function getTemplate()
     {
-        return $this->getOption('template');
+        return $this->template;
+    }
+
+    public function setTransDomain($transDomain)
+    {
+        $this->transDomain = $transDomain;
+    }
+
+    public function getTransDomain()
+    {
+        return $this->transDomain;
+    }
+
+    public function setClass($class)
+    {
+        $this->class = $class;
+    }
+
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    public function setDataClass($class)
+    {
+        $this->dataClass = $class;
+    }
+
+    public function getDataClass()
+    {
+        return $this->dataClass;
     }
 
     public function getForm($data = null)
@@ -91,11 +161,19 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
 
     public function getGroups()
     {
-        if (null === $this->groups) {
-            $this->groups = $this->mergeGroups();
+        if (null === $this->action) {
+            throw new \LogicException('Can\'t retrieve form groups as form action is not set');
         }
 
-        if (count($this->groups) == 0) {
+        $key = '_'.$this->action;
+
+        if (isset($this->groups[$key])) {
+            $groups = $this->groups[$key];
+        } else {
+            $groups = $this->groups;
+        }
+
+        if (count($groups) == 0) {
             return array('main' => array(
                 'caption' => null,
                 'break_after' => false,
@@ -104,28 +182,32 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
 
         }
 
-        return $this->groups;
+        return $groups;
+    }
+
+    public function setTitle($newTitle, $editTitle)
+    {
+        $this->newTitle = $newTitle;
+        $this->editTitle = $editTitle;
     }
 
     public function getTitle()
     {
         if (null === $this->action) {
-            throw new \LogicException('Can\'t retrieve form title as renderer action is not set');
+            throw new \LogicException('Can\'t retrieve form title as form action is not set');
         }
 
-        $options = $this->getOption($this->action);
-
-        return $options['title'];
+        return $this->action == 'new' ? $this->newTitle : $this->editTitle;
     }
 
-    public function getOption($key)
+    public function setFields($fields)
     {
-        return $this->configuration->getFormOption($key);
+        $this->fields = $fields;
     }
 
     public function getFields()
     {
-        return $this->configuration->getFieldsOptions();
+        return $this->fields;
     }
 
     public function hasWidget($widget)
@@ -141,9 +223,7 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
 
     protected function createForm($data = null)
     {
-        $typeClass = $this->getOption('class');
         $fields = $this->getFields();
-
         $existing = array();
 
         foreach ($this->getGroups() as $group) {
@@ -158,24 +238,10 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
         }
 
         $fields = array_intersect_key($fields, $existing);
+        $typeClass = $this->class;
         $type = new $typeClass($this->getName(), $fields);
 
-        return $this->factory->createForm($type, $this->getName(), $data, array('data_class' => $this->configuration->getOption('class')));
-    }
-
-    protected function mergeGroups()
-    {
-        if (null === $this->action) {
-            throw new \LogicException('Can\'t merge form fields groups as form action is not set');
-        }
-
-        $options = $this->configuration->getFormOptions();
-        $groups = array_merge(
-            $options['groups'],
-            $options[$this->action]['groups']
-        );
-
-        return $groups;
+        return $this->factory->createForm($type, $this->getName(), $data, array('data_class' => $this->dataClass));
     }
 
     protected function createFormView()

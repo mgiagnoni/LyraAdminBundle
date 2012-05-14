@@ -430,9 +430,28 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setObjectActions', array($options['list']['object_actions']))
                 ->addMethodCall('setBatchActions', array($options['list']['batch_actions']));
 
+            // Form
+
+            $groups = $options['form']['groups'];
+            $new = $options['form']['new']['groups'];
+            $edit = $options['form']['edit']['groups'];
+
+            if (count($new) || count($edit)) {
+                $groups = array(
+                    '_new' => array_merge($groups, $new),
+                    '_edit' => array_merge($groups, $edit)
+                );
+            }
+
             $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
                 ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-                ->addMethodCall('setName', array($model));
+                ->addMethodCall('setName', array($model))
+                ->addMethodCall('setTemplate', array($options['form']['template']))
+                ->addMethodCall('setTitle', array($options['form']['new']['title'], $options['form']['edit']['title']))
+                ->addMethodCall('setTransDomain', array($options['trans_domain']))
+                ->addMethodCall('setClass', array($options['form']['class']))
+                ->addMethodCall('setDataClass', array($options['class']))
+                ->addMethodCall('setGroups', array($groups));
 
             // Filter
 
@@ -470,6 +489,9 @@ class LyraAdminExtension extends Extension
 
             $filter = $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model));
             $filter->addMethodCall('setFields', array($options['filter']['fields']));
+
+            $form = $container->getDefinition(sprintf('lyra_admin.%s.form_renderer', $model));
+            $form->addMethodCall('setFields', array($options['fields']));
         }
     }
 

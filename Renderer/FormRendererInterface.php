@@ -11,7 +11,7 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
-interface FormRendererInterface extends BaseRendererInterface
+interface FormRendererInterface
 {
     /**
      * Sets form action.
@@ -28,11 +28,62 @@ interface FormRendererInterface extends BaseRendererInterface
     function getAction();
 
     /**
+     * Sets form template.
+     *
+     * @param string $template
+     */
+    function setTemplate($template);
+
+    /**
      * Gets form template.
      *
      * @return string
      */
     function getTemplate();
+
+    /**
+     * Sets the form translation domain.
+     *
+     * Used in templates to translate form title, labels.
+     *
+     * @param string $transDomain
+     */
+    function setTransDomain($transDomain);
+
+    /**
+     * Gets the form translation domain.
+     *
+     * @return string
+     */
+    function getTransDomain();
+
+    /**
+     * Sets form type class.
+     *
+     * @param string $class FQN of type class
+     */
+    function setClass($class);
+
+    /**
+     * Gets form type class.
+     *
+     * @return string
+     */
+    function getClass();
+
+    /**
+     * Sets form data class.
+     *
+     * @param string $dataClass FQN of data class
+     */
+    function setDataClass($dataClass);
+
+    /**
+     * Gets form data class.
+     *
+     * @return string
+     */
+    function getDataClass();
 
     /**
      * Gets the form object.
@@ -67,9 +118,38 @@ interface FormRendererInterface extends BaseRendererInterface
     function getGroups();
 
     /**
+     * Sets the form title (new,edit).
+     *
+     * @param string $newTitle
+     * @param string $editTitle
+     */
+    function setTitle($newTitle, $editTitle);
+
+    /**
      * Gets form title (header).
      *
-     * @return string
+     * @return string edit or new title based on form action
      */
     function getTitle();
+
+    /**
+     * Sets fields configuration options.
+     *
+     * @param array $fields
+     */
+    function setFields($fields);
+
+    /**
+     * Gets fields configuration options.
+     *
+     * @return array
+     */
+    function getFields();
+
+    /**
+     * Checks if form contains a given widget.
+     *
+     * @param string $widget widget name
+     */
+    function hasWidget($widget);
 }
