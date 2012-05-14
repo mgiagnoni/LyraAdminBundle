@@ -160,26 +160,32 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected function removeEmptyCriteria($criteria)
     {
-        foreach ($this->getFields() as $name => $attrs) {
-            switch($attrs['type']) {
-            case 'date':
-            case 'datetime':
-                if (null === $criteria[$name]['from'] && null === $criteria[$name]['to']) {
-                    unset($criteria[$name]);
-                }
-                break;
-            case 'boolean':
-                if ('' == $criteria[$name]) {
-                    unset($criteria[$name]);
-                }
-                break;
-            default:
-                if (empty($criteria[$name])) {
-                    unset($criteria[$name]);
-                }
+        $fields = $this->getFields();
+        $filtered = array();
+
+        foreach ($criteria as $name => $value) {
+            if (!isset($fields[$name])) {
+                continue;
+            }
+            switch($fields[$name]['type']) {
+                case 'date':
+                case 'datetime':
+                    if (null === $value['from'] && null === $value['to']) {
+                        $value = null;
+                    }
+                    break;
+                case 'boolean':
+                    if ('' == $value) {
+                        $value = null;
+                    }
+                    break;
+            }
+
+            if (null !== $value) {
+                $filtered[$name] = $value;
             }
         }
 
-        return $criteria;
+        return $filtered;
     }
 }
