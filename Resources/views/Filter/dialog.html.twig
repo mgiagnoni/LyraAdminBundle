@@ -4,7 +4,7 @@
     <h1>{{ 'filter.dialog.title'|trans({}, 'LyraAdminBundle') }}</h1>
     <ol>
         {% set criteria = renderer.criteria %}
-        {% for field in renderer.filterFields %}
+        {% for field in renderer.fields %}
             {% if criteria[field.name] is defined %}
                 <li>
                     <div class="label">{{ field.label }}</div>

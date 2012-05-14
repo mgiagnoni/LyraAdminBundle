@@ -449,6 +449,7 @@ class LyraAdminExtension extends Extension
                 ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.model_manager', $model)))
                 ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
                 ->addMethodCall('setName', array($model))
+                ->addMethodCall('setTitle', array($options['filter']['title']))
                 ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))));
 
             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
@@ -466,6 +467,9 @@ class LyraAdminExtension extends Extension
         foreach ($this->config['models'] as $model => $options) {
             $list = $container->getDefinition(sprintf('lyra_admin.%s.list_renderer', $model));
             $list->addMethodCall('setColumns', array($options['list']['columns']));
+
+            $filter = $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model));
+            $filter->addMethodCall('setFields', array($options['filter']['fields']));
         }
     }
 

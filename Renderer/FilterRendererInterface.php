@@ -11,8 +11,24 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
+use Lyra\AdminBundle\UserState\UserStateInterface;
+
 interface FilterRendererInterface
 {
+    /**
+     * Sets user state service.
+     *
+     * @param \Lyra\AdminBundle\UserState\UserStateInterface $state
+     */
+    function setState(UserStateInterface $state);
+
+    /**
+     * Gets user state service.
+     *
+     * @return \Lyra\AdminBundle\UserState\UserStateInterface
+     */
+    function getState();
+
     /**
      * Sets filter criteria
      *
@@ -26,6 +42,18 @@ interface FilterRendererInterface
      * @return array
      */
     function getCriteria();
+
+    /**
+     * Resets filter criteria.
+     */
+    function resetCriteria();
+
+    /**
+     * Sets search dialog title.
+     *
+     * @param string $title
+     */
+    function setTitle($title);
 
     /**
      * Gets search dialog title.
@@ -49,11 +77,18 @@ interface FilterRendererInterface
     function getView();
 
     /**
+     * Sets search form fields options.
+     *
+     * @param array $fields
+     */
+    function setFields($fields);
+
+    /**
      * Gets search form fields options.
      *
      * @return array
      */
-    function getFilterFields();
+    function getFields();
 
     /**
      * Checks if filter fields are defined.
@@ -61,4 +96,13 @@ interface FilterRendererInterface
      * @return boolean
      */
     function hasFields();
+
+    /**
+     * Check if search forms contains a given widget.
+     *
+     * @param $widget widget name
+     *
+     * @return boolean
+     */
+    function hasWidget($widget);
 }

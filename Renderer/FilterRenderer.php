@@ -16,15 +16,40 @@ use Lyra\AdminBundle\Form\AdminFilterFormType;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Model\ModelManagerInterface;
 
+/**
+ * Filter renderer.
+ */
 class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 {
+    /**
+     * @var \Symfony\Component\Form\Form
+     */
     protected $form;
 
+    /**
+     * @var \Symfony\Component\Form\FormView
+     */
     protected $formView;
 
+    /**
+     * @var \Lyra\AdminBundle\UserState\UserStateInterface
+     */
     protected $state;
 
+    /**
+     * @var \Lyra\AdminBundle\Model\ModelManagerInterface
+     */
     protected $modelManager;
+
+    /**
+     * @var string
+     */
+    protected $title;
+
+    /**
+     * @var array
+     */
+    protected $fields;
 
     public function __construct(FormFactory $factory, ModelManagerInterface $modelManager, $configuration)
     {
@@ -54,7 +79,6 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
     {
         // criteria objects coming back from session need to be managed
         $criteria = $this->modelManager->mergeFilterCriteriaObjects($this->state->get('criteria'));
-
         return $criteria;
     }
 
@@ -63,9 +87,14 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         $this->state->set('criteria', array());
     }
 
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
     public function getTitle()
     {
-        return $this->getOption('title');
+        return $this->title;
     }
 
     public function getForm()
@@ -86,24 +115,24 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         return $this->formView;
     }
 
-    public function getFilterFields()
+    public function setFields($fields)
     {
-        return $this->getOption('fields');
+        $this->fields = $fields;
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
     }
 
     public function hasFields()
     {
-        return (boolean)count($this->getFilterFields());
-    }
-
-    public function getOption($key)
-    {
-        return $this->configuration->getFilterOption($key);
+        return (boolean)count($this->getFields());
     }
 
     public function hasWidget($widget)
     {
-        foreach ($this->getFilterFields() as $field => $attrs) {
+        foreach ($this->getFields() as $field => $attrs) {
             if ($attrs['widget'] == $widget || ('daterange' == $attrs['widget'] && isset($attrs['options']['child_widget']) && $attrs['options']['child_widget'] == $widget)) {
                 return true;
             }
@@ -114,7 +143,7 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected function createForm()
     {
-        $type = new AdminFilterFormType($this->getName(), $this->getFilterFields());
+        $type = new AdminFilterFormType($this->getName(), $this->getFields());
 
         return $this->factory->createForm($type, $this->getName(), $this->getCriteria());
     }
@@ -131,7 +160,7 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected function removeEmptyCriteria($criteria)
     {
-        foreach ($this->getFilterFields() as $name => $attrs) {
+        foreach ($this->getFields() as $name => $attrs) {
             switch($attrs['type']) {
             case 'date':
             case 'datetime':

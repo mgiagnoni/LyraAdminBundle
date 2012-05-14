@@ -5,7 +5,7 @@
     <h2>{{ filter.title|trans({}, filter.transDomain)}}</h2>
     <form class="ly-form-filter" action="{{ path(filter.routePrefix~'_filter', {'action' : 'save'}) }}" method="post">
     <ol>
-    {% for field, attrs in filter.filterFields %}
+    {% for field, attrs in filter.fields %}
         <li>
         {{ form_errors(form[field]) }}
         {% if not (attrs.label is defined and attrs.label is empty) %}
