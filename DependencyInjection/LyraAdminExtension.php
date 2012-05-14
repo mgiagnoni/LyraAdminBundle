@@ -471,9 +471,19 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setTitle', array($options['filter']['title']))
                 ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))));
 
+            // Dialog
+
+            $actions = array();
+            foreach ($options['actions'] as $action => $attrs) {
+                if (isset($attrs['dialog']) && count($attrs['dialog'])) {
+                    $actions[$action] = $attrs['dialog'];
+                }
+            }
+
             $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                ->addMethodCall('setName', array($model));
+                ->addMethodCall('setName', array($model))
+                ->addMethodCall('setActions', array($actions));
 
             $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))

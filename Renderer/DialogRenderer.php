@@ -21,6 +21,26 @@ class DialogRenderer extends BaseRenderer
      */
     protected $action;
 
+    /**
+     * @var array
+     */
+    protected $actions;
+
+    /**
+     * @var string
+     */
+    protected $transDomain;
+
+    public function setActions($actions)
+    {
+        $this->actions = $actions;
+    }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
     public function setAction($action)
     {
         $this->action = $action;
@@ -31,22 +51,23 @@ class DialogRenderer extends BaseRenderer
         return $this->action;
     }
 
+    public function setTransDomain($transDomain)
+    {
+        $this->transDomain = $transDomain;
+    }
+
+    public function getTransDomain()
+    {
+        return $this->transDomain;
+    }
+
     public function getTitle()
     {
-        $options = $this->getDialogOptions();
-
-        return $options['title'];
+        return $this->actions[$this->action]['title'];
     }
 
     public function getMessage()
     {
-        $options = $this->getDialogOptions();
-
-        return $options['message'];
-    }
-
-    public function getDialogOptions()
-    {
-        return $this->configuration->getActionOption($this->action, 'dialog');
+        return $this->actions[$this->action]['message'];
     }
 }

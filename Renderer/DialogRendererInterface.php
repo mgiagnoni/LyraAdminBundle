@@ -14,18 +14,48 @@ namespace Lyra\AdminBundle\Renderer;
 interface DialogRendererInterface
 {
     /**
-     * Sets form dialog action.
+     * Sets actions configuration for dialog.
+     *
+     * @param array $actions
+     */
+    function setActions($actions);
+
+    /**
+     * Gets actions configuration for dialog.
+     *
+     * @return array
+     */
+    function getActions();
+
+    /**
+     * Sets dialog action.
      *
      * @param string action action name
      */
     function setAction($action);
 
     /**
-     * Gets form dialog action
+     * Gets dialog action
      *
      * @return string
      */
     function getAction();
+
+    /**
+     * Sets the dialog translation domain.
+     *
+     * Used in templates to translate dialog title, message.
+     *
+     * @param string $transDomain
+     */
+    function setTransDomain($transDomain);
+
+    /**
+     * Gets the dialog translation domain.
+     *
+     * @return string
+     */
+    function getTransDomain();
 
     /**
      * Gets dialog title.
