@@ -381,16 +381,6 @@ class AdminController extends ContainerAware
         }
     }
 
-    protected function setFilterCriteria($criteria)
-    {
-        $this->getListRenderer()->getState()->set('criteria', $criteria);
-    }
-
-    protected function getFilterCriteria()
-    {
-        return $this->getListRenderer()->getState()->get('criteria');
-    }
-
     protected function getModelName()
     {
         if (null === $name = $this->getRequest()->get('lyra_admin_model')) {
