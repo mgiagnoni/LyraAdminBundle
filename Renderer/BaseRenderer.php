@@ -69,11 +69,6 @@ abstract class BaseRenderer
         return $this->configuration->getOption('route_prefix');
     }
 
-    public function getTheme()
-    {
-        return $this->configuration->getOption('theme');
-    }
-
     public function setRouteParams(array $routeParams)
     {
         $this->routeParams = $routeParams;
