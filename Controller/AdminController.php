@@ -28,13 +28,13 @@ class AdminController extends ContainerAware
      */
     public function indexAction()
     {
-        $listRenderer = $this->getListRenderer();
+        $list = $this->getListRenderer();
         // Initializes list persistent states (page, sort, criteria)
-        $listRenderer->getState()->initFromRequest($this->getRequest());
+        $list->getState()->initFromRequest($this->getRequest());
 
         return $this->container->get('templating')
-            ->renderResponse($listRenderer->getTemplate(), array(
-                'renderer' => $listRenderer,
+            ->renderResponse($list->getTemplate(), array(
+                'list' => $list,
                 'filter' => $this->getFilterRenderer(),
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
             ));
@@ -129,14 +129,14 @@ class AdminController extends ContainerAware
             return $this->getRedirectToListResponse();
         }
 
-        $renderer = $this->getDialogRenderer();
-        $renderer->setRouteParams(array('id' => $object->getId()));
+        $dialog = $this->getDialogRenderer();
+        $dialog->setRouteParams(array('id' => $object->getId()));
 
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Dialog:delete.html.twig', array(
                 'object' => $object,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('delete'),
-                'renderer' => $renderer
+                'dialog' => $dialog
             ));
     }
 
@@ -308,15 +308,15 @@ class AdminController extends ContainerAware
     protected function getRenderFormResponse($form)
     {
         $object = $form->getData();
-        $renderer = $this->getFormRenderer();
+        $form = $this->getFormRenderer();
 
-        if ('edit' == $renderer->getAction()) {
-            $renderer->setRouteParams(array('id' => $object->getId()));
+        if ('edit' == $form->getAction()) {
+            $form->setRouteParams(array('id' => $object->getId()));
         }
 
         return $this->container->get('templating')
-            ->renderResponse($renderer->getTemplate(), array(
-                'renderer' => $renderer,
+            ->renderResponse($form->getTemplate(), array(
+                'form' => $form,
             ));
     }
 
@@ -336,13 +336,13 @@ class AdminController extends ContainerAware
             return $this->getRedirectToListResponse();
         }
 
-        $renderer = $this->getDialogRenderer();
-        $renderer->setAction('delete');
+        $dialog = $this->getDialogRenderer();
+        $dialog->setAction('delete');
 
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Dialog:batch_dialog.html.twig', array(
                 'ids' => $ids,
-                'renderer' => $renderer,
+                'dialog' => $dialog,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('batch_delete'),
             ));
     }

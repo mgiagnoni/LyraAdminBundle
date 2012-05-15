@@ -1,5 +1,4 @@
 {% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Dialog:ajax.html.twig' : 'LyraAdminBundle:Dialog:base.html.twig' %}
-{% set dialog = renderer %}
 {% block form %}
     <p>{{ dialog.message|transchoice(1, {'%object%': object}, 'LyraAdminBundle') }}</p>
     <form id="ly-form" action="{{ path(dialog.routePrefix~'_'~dialog.action, dialog.routeParams) }}" method="post">

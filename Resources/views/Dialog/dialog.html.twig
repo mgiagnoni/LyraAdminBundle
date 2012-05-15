@@ -1,5 +1,4 @@
 {% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Dialog:ajax.html.twig' : 'LyraAdminBundle:Dialog:base.html.twig' %}
-{% set dialog = renderer %}
 {% block dialog_title %}
 <h1>{{ dialog.title|trans({}, dialog.transDomain) }}</h1>
 {% endblock %}
