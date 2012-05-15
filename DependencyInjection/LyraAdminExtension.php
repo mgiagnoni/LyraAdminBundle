@@ -78,7 +78,6 @@ class LyraAdminExtension extends Extension
         $this->readMetadata($container);
         $this->setFieldsDefaultsFromMetadata();
         $this->setFilterFieldsDefaults();
-        $this->setAssocFieldsOptions();
         $this->setShowFieldsDefaults();
         $this->updateColumnsDefaults();
         $this->setModelOptions($container);
@@ -207,6 +206,12 @@ class LyraAdminExtension extends Extension
 
     private function setFieldsDefaultsFromMetadata()
     {
+        $classes = array();
+        foreach ($this->modelNames as $model) {
+            $options = $this->config['models'][$model];
+            $classes[$options['class']] = array('model' => $model, 'fields' => $options['fields']);
+        }
+
         foreach ($this->modelNames as $model) {
 
             if (!isset($this->metadata[$model])) {
@@ -262,10 +267,15 @@ class LyraAdminExtension extends Extension
                     $fields[$name]['name'] = $name;
                     $fields[$name]['type'] = 'entity';
                     $fields[$name]['widget'] = 'entity';
+                    $class = $attrs['targetEntity'];
                     $fields[$name]['options'] = array(
-                        'class' => $attrs['targetEntity'],
+                        'class' => $class,
                         'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
                     );
+
+                    if (isset($classes[$class])) {
+                        $fields[$name]['assoc'] = $classes[$class];
+                    }
                 }
             }
 
@@ -353,27 +363,6 @@ class LyraAdminExtension extends Extension
 
                 if ('date' == $type || 'datetime' == $type && !isset($attrs['format'])) {
                     $showFields[$field]['format'] = 'j/M/Y';
-                }
-            }
-        }
-    }
-
-    private function setAssocFieldsOptions()
-    {
-        $classes = array();
-        foreach ($this->modelNames as $model) {
-            $options = $this->config['models'][$model];
-            $classes[$options['class']] = array('model' => $model, 'fields' => $options['fields']);
-        }
-
-        foreach ($this->modelNames as $model) {
-            $fields =& $this->config['models'][$model]['fields'];
-            foreach ($fields as $name => $attrs) {
-                if ('entity' == $attrs['type']) {
-                    $class = $attrs['options']['class'];
-                    if (isset($classes[$class])) {
-                        $fields[$name]['assoc'] = $classes[$class];
-                    }
                 }
             }
         }
