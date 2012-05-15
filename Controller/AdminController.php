@@ -104,7 +104,6 @@ class AdminController extends ContainerAware
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Show:show.html.twig', array(
                 'renderer' => $renderer,
-                'object' => $object
             ));
     }
 

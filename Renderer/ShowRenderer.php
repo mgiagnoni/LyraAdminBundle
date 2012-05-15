@@ -18,7 +18,20 @@ namespace Lyra\AdminBundle\Renderer;
  */
 class ShowRenderer extends BaseRenderer
 {
+    /**
+     * @var mixed
+     */
     protected $object;
+
+    /**
+     * @var string
+     */
+    protected $title;
+
+    /**
+     * @var array
+     */
+    protected $fields;
 
     public function setObject($object)
     {
@@ -30,20 +43,30 @@ class ShowRenderer extends BaseRenderer
         return $this->object;
     }
 
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
     public function getTitle()
     {
-        return $this->configuration->getShowOption('title');
+        return $this->title;
+    }
+
+    public function setFields($fields)
+    {
+        $this->fields = $fields;
     }
 
     public function getFields()
     {
-        return $this->configuration->getShowFieldsOptions();
+        return $this->fields;
     }
 
     public function getFieldValue($field)
     {
-        $method = $this->configuration->getFieldOption($field, 'get_method');
-        $type = $this->configuration->getFieldOption($field, 'type');
+        $method = $this->fields[$field]['get_method'];
+        $type = $this->fields[$field]['type'];
         $value = $this->object->$method();
 
         if (null !== $value && ('date' == $type || 'datetime' == $type)) {

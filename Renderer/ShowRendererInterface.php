@@ -28,14 +28,30 @@ interface ShowRendererInterface
     function getObject();
 
     /**
-     * Gets the dialog title from configuration.
+     * Sets the show dialog title.
+     *
+     * @param string $title
+     */
+    function setTitle($title)
+    {
+        $this->title = $title;
+    }
+    /**
+     * Gets the show dialog title
      *
      * @return string.
      */
     function getTitle();
 
     /**
-     * Gets the fields to display from configuration.
+     * Sets configuration options of the fields to show.
+     *
+     * @param array $fields
+     */
+    function setFields($fields);
+
+    /**
+     * Gets configuration options of the fields to show.
      *
      * @return array
      */

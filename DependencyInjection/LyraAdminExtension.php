@@ -345,6 +345,7 @@ class LyraAdminExtension extends Extension
                 $showFields[$field]['name'] = $field;
                 $type = $fields[$field]['type'];
                 $showFields[$field]['type'] = $type;
+                $showFields[$field]['get_method'] = $fields[$field]['get_method'];
 
                 if (!isset($attrs['label'])) {
                     $showFields[$field]['label'] = $options['auto_labels'] ? Util::humanize($field) : $model.'.field.'.$field;
@@ -487,7 +488,8 @@ class LyraAdminExtension extends Extension
 
             $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
                 ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                ->addMethodCall('setName', array($model));
+                ->addMethodCall('setName', array($model))
+                ->addMethodCall('setTitle', array($options['show']['title']));
         }
     }
 
@@ -502,6 +504,9 @@ class LyraAdminExtension extends Extension
 
             $form = $container->getDefinition(sprintf('lyra_admin.%s.form_renderer', $model));
             $form->addMethodCall('setFields', array($options['fields']));
+
+            $show = $container->getDefinition(sprintf('lyra_admin.%s.show_renderer', $model));
+            $show->addMethodCall('setFields', array($options['show']['fields']));
         }
     }
 
