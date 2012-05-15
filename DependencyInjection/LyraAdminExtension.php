@@ -508,6 +508,11 @@ class LyraAdminExtension extends Extension
             $show = $container->getDefinition(sprintf('lyra_admin.%s.show_renderer', $model));
             $show->addMethodCall('setFields', array($options['show']['fields']));
         }
+
+        // Twig extension
+        $options = array('theme_path' => $this->config['theme']);
+        $container->getDefinition('twig.extension.lyra.jquery')
+            ->replaceArgument(1, $options);
     }
 
     private function setRouteLoaderOptions(ContainerBuilder $container)

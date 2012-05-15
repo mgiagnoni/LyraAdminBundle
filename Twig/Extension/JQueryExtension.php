@@ -15,16 +15,19 @@ class JQueryExtension extends \Twig_Extension
 {
     private $locale;
 
-    public function __construct($session)
+    private $options;
+
+    public function __construct($session, $options = array())
     {
-       $this->locale = $session->getLocale();
+        $this->locale = $session->getLocale();
+        $this->options = $options;
     }
 
     public function getFunctions()
     {
         return array(
             'datepicker_lang_file' => new \Twig_Function_Method($this, 'getDatepickerLangFile'),
-
+            'ui_theme_path' => new \Twig_Function_Method($this, 'getUiThemePath')
         );
     }
 
@@ -47,6 +50,11 @@ class JQueryExtension extends \Twig_Extension
         }
 
         return $lang;
+    }
+
+    public function getUiThemePath()
+    {
+        return $this->options['theme_path'];
     }
 
     public function getName()
