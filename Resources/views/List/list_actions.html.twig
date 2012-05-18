@@ -9,8 +9,7 @@
 {% block list_actions %}
     <div class="list-actions">
     {% for action in list.listActions %}
-        {% set attrs = list.actions[action] %}
-        {% include attrs.template|default('LyraAdminBundle:List:action.html.twig') %}
+        {% include action.template|default('LyraAdminBundle:List:action.html.twig') %}
     {% endfor %}
     </div>
 {% endblock %}

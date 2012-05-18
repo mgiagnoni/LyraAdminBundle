@@ -116,7 +116,7 @@ class AdminController extends ContainerAware
      */
     public function deleteAction($id)
     {
-        $this->checkSecurity($this->getListRenderer(), 'delete');
+        $this->checkSecurity($this->getListRenderer(), $this->getListRenderer()->getObjectAction('delete'));
         $object = $this->getModelManager()->find($id);
         $request = $this->getRequest();
 
@@ -352,7 +352,8 @@ class AdminController extends ContainerAware
         if (null === $id = $this->getRequest()->get('ids')) {
             // TODO setflash
         } else if ($action = $this->getRequest()->get('batch_action')) {
-            $this->checkSecurity($this->getListRenderer(), $action);
+            $this->checkSecurity($this->getListRenderer(), $this->getListRenderer()->getBatchAction($action));
+
             $method = 'executeBatch'.$action;
 
             return $this->$method($id);
@@ -389,6 +390,7 @@ class AdminController extends ContainerAware
         return $name;
     }
 
+    // TODO move to Security manager
     protected function checkSecurity($renderer, $action)
     {
         if (!$renderer->isActionAllowed($action)) {

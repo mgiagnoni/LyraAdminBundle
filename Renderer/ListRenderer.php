@@ -14,6 +14,7 @@ namespace Lyra\AdminBundle\Renderer;
 use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Lyra\AdminBundle\Pager\PagerInterface;
 use Lyra\AdminBundle\UserState\UserStateInterface;
+use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
 /**
  * List renderer class.
@@ -56,24 +57,24 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     protected $transDomain;
 
     /**
-     * @var array
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
-    protected $actions = array();
+    protected $actions;
 
     /**
-     * @var array
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
-    protected $listActions = array();
+    protected $listActions;
 
     /**
-     * @var array
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
-    protected $objectActions = array();
+    protected $objectActions;
 
     /**
-     * @var array
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
-    protected $batchActions = array();
+    protected $batchActions;
 
     public function __construct(PagerInterface $pager, AdminConfigurationInterface $configuration)
     {
@@ -141,7 +142,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->columns;
     }
 
-    public function setBatchActions($actions)
+    public function setBatchActions(ActionCollectionInterface $actions)
     {
         $this->batchActions = $actions;
     }
@@ -156,7 +157,14 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return (boolean)count($this->getBatchActions());
     }
 
-    public function setObjectActions($actions)
+    public function getBatchAction($actionName)
+    {
+        if ($this->batchActions->has($actionName)) {
+            return $this->batchActions->get($actionName);
+        }
+    }
+
+    public function setObjectActions(ActionCollectionInterface $actions)
     {
         $this->objectActions = $actions;
     }
@@ -166,7 +174,14 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->filterAllowedActions($this->objectActions);
     }
 
-    public function setListActions($actions)
+    public function getObjectAction($actionName)
+    {
+        if ($this->objectActions->has($actionName)) {
+            return $this->objectActions->get($actionName);
+        }
+    }
+
+    public function setListActions(ActionCollectionInterface $actions)
     {
         $this->listActions = $actions;
     }
@@ -176,7 +191,15 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->filterAllowedActions($this->listActions);
     }
 
-    public function setActions($actions)
+    public function getListAction($actionName)
+    {
+        if ($this->listActions->has($actionName)) {
+            return $this->listActions->get($actionName);
+        }
+
+    }
+
+    public function setActions(ActionCollectionInterface $actions)
     {
         $this->actions = $actions;
     }
@@ -265,10 +288,8 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
 
     public function isActionAllowed($action)
     {
-        $roles = array();
-        if (isset($this->actions[$action]['roles'])) {
-            $roles = $this->actions[$action]['roles'];
-        }
+        // TODO: cannot stay here. Create a security manager service.
+        $roles = $action->getRoles();
 
         if (null === $this->securityContext || count($roles) == 0) {
             return true;

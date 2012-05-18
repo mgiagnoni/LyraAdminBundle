@@ -12,6 +12,7 @@
 namespace Lyra\AdminBundle\Renderer;
 
 use Lyra\AdminBundle\UserState\UserStateInterface;
+use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
 interface ListRendererInterface
 {
@@ -90,14 +91,14 @@ interface ListRendererInterface
     /**
      * Sets list batch actions names.
      *
-     * @param array $actions
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
      */
-    function setBatchActions($actions);
+    function setBatchActions(ActionCollectionInterface $actions);
 
     /**
      * Gets list batch actions names.
      *
-     * @return array
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
     function getBatchActions();
 
@@ -109,44 +110,45 @@ interface ListRendererInterface
     function hasBatchActions();
 
     /**
-     * Sets list object action names.
+     * Sets list object action.
      *
-     * @param array $actions
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
      */
-    function setObjectActions($actions);
+    function setObjectActions(ActionCollectionInterface $actions);
 
     /**
-     * Gets list object actions names.
+     * Gets list object actions.
      *
-     * @return array
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
     function getObjectActions();
 
     /**
-     * Sets list actions names.
+     * Sets list actions.
      *
-     * @param array $actions
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
      */
-    function setListActions($actions);
+    function setListActions(ActionCollectionInterface $actions);
 
     /**
-     * Gets list actions names.
+     * Gets list actions.
      *
-     * @return array
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
     function getListActions();
 
     /**
-     * Sets full configuration options of all list actions
+     * Sets list other actions.
      *
-     * @param array $actions assoc array with action name as key, options as value
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
      */
-    function setActions($actions);
+    function setActions(ActionCollectionInterface $actions);
 
     /**
-     * Gets configuration options of all list actions.
+     * Gets list other actions.
+
      *
-     * @return array
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
     function getActions();
 

@@ -5,7 +5,7 @@
         <h1>{{ list.title|trans({}, list.transDomain) }}</h1>
     {% endblock %}
     {% include 'LyraAdminBundle:List:list_actions.html.twig' %}
-        <form action="{{ path(list.routePrefix~'_object', list.routeParams) }}" method="post">
+        <form action="{{ path(list.actions.object.routeName, list.routeParams) }}" method="post">
         {% include 'LyraAdminBundle:List:flash_messages.html.twig' %}
         <table class="ly-list {{ list.name }}">
             <thead>

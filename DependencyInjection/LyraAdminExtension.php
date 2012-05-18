@@ -25,7 +25,6 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration as ORMConfig;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Annotations\AnnotationReader;
-
 use Lyra\AdminBundle\Util\Util;
 
 /**
@@ -55,8 +54,9 @@ class LyraAdminExtension extends Extension
 
         foreach ($this->modelNames as $model)
         {
-            $this->setActionsDefaults($model);
             $this->setRouteDefaults($model);
+            $this->setActionsDefaults($model);
+            $this->setListActionsDefaults($model);
             $this->setColumnsDefaults($model);
         }
 
@@ -87,16 +87,22 @@ class LyraAdminExtension extends Extension
 
     private function setActionsDefaults($model)
     {
-        $options =& $this->config['models'][$model]['actions'];
+        $actions =& $this->config['models'][$model]['actions'];
 
         foreach ($this->config['actions'] as $action => $attrs) {
-            if (isset($options[$action])) {
-                if (count($options[$action]['route_defaults']) == 0) {
-                    unset($options[$action]['route_defaults']);
+            if (isset($actions[$action])) {
+                if (count($actions[$action]['route_defaults']) == 0) {
+                    unset($actions[$action]['route_defaults']);
                 }
-                $options[$action] = array_merge($attrs, $options[$action]);
+                $actions[$action] = array_merge($attrs, $actions[$action]);
             } else {
-                $options[$action] = $attrs;
+                $actions[$action] = $attrs;
+            }
+        }
+
+        foreach ($actions as $action => $attrs) {
+            if (!isset($attrs['route_name'])) {
+                $actions[$action]['route_name'] = $this->config['models'][$model]['route_prefix'].'_'.$action;
             }
         }
     }
@@ -111,6 +117,28 @@ class LyraAdminExtension extends Extension
 
         if (!isset($options['route_pattern_prefix'])) {
             $options['route_pattern_prefix'] = $model;
+        }
+    }
+
+    private function setListActionsDefaults($model)
+    {
+        $actions =  $this->config['models'][$model]['actions'];
+        $this->config['models'][$model]['list']['other_actions'] = array('index', 'object');
+        $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
+        foreach ($types as $type) {
+            $listActions =& $this->config['models'][$model]['list'][$type];
+            $defaults = array();
+            foreach ($listActions as $action) {
+                $defaults[$action]['name'] = $action;
+                $keys = array('route_name', 'route_pattern', 'route_params', 'text', 'icon', 'style', 'dialog', 'trans_domain', 'template', 'roles');
+                foreach ($keys as $key) {
+                    if (!isset($actions[$action][$key])) {
+                        continue;
+                    }
+                    $defaults[$action][$key] = $actions[$action][$key];
+                }
+            }
+            $listActions = $defaults;
         }
     }
 
@@ -404,8 +432,12 @@ class LyraAdminExtension extends Extension
             $pager->setPublic(false);
             $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
 
-            $keys = array_unique(array_merge($options['list']['list_actions'], $options['list']['object_actions'], $options['list']['batch_actions']));
-            $actions = array_intersect_key($options['actions'], array_flip($keys));
+            // Action collections
+
+            $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
+            foreach ($types as $type) {
+                $this->createCollectionDefinition($model, $type, $options['list'][$type], $container);
+            }
 
             $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
                 ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
@@ -415,10 +447,10 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setTitle', array($options['list']['title']))
                 ->addMethodCall('setTemplate', array($options['list']['template']))
                 ->addMethodCall('setTransDomain', array($options['trans_domain']))
-                ->addMethodCall('setActions', array($actions))
-                ->addMethodCall('setListActions', array($options['list']['list_actions']))
-                ->addMethodCall('setObjectActions', array($options['list']['object_actions']))
-                ->addMethodCall('setBatchActions', array($options['list']['batch_actions']));
+                ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.other_actions.collection', $model))))
+                ->addMethodCall('setListActions', array(new Reference(sprintf('lyra_admin.%s.list_actions.collection', $model))))
+                ->addMethodCall('setObjectActions', array(new Reference(sprintf('lyra_admin.%s.object_actions.collection', $model))))
+                ->addMethodCall('setBatchActions', array(new Reference(sprintf('lyra_admin.%s.batch_actions.collection', $model))));
 
             // Form
 
@@ -480,6 +512,15 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setName', array($model))
                 ->addMethodCall('setTitle', array($options['show']['title']));
         }
+    }
+
+    private function createCollectionDefinition($model, $type, $options, ContainerBuilder $container)
+    {
+        $collection = new DefinitionDecorator('lyra_admin.action_collection');
+        $collection->setArguments(array($options));
+        $collection->setPublic(false);
+
+        $container->setDefinition(sprintf('lyra_admin.%s.%s.collection', $model, $type), $collection);
     }
 
     private function updateServiceDefinitions(ContainerBuilder $container)

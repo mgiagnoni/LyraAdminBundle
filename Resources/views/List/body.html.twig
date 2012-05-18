@@ -24,8 +24,7 @@
         <td>
             {% block table_object_actions %}
                 {% for action in list.objectActions %}
-                    {% set attrs = list.actions[action] %}
-                    {% include attrs.template|default('LyraAdminBundle:List:action.html.twig') %}
+                    {% include action.template|default('LyraAdminBundle:List:action.html.twig') %}
                 {% endfor %}
             {% endblock %}
         </td>
