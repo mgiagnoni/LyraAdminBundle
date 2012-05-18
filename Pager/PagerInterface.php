@@ -78,7 +78,7 @@ interface PagerInterface
      *
      * @return integer
      */
-    function getNBPages();
+    function getNbPages();
 
     /**
      * Gets the previous page number.
@@ -92,7 +92,7 @@ interface PagerInterface
      *
      * @return integer
      */
-    function getNextpage();
+    function getNextPage();
 
     /**
      * Gets an array of page numbers to display as pager links.
