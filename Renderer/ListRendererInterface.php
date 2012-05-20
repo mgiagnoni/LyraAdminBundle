@@ -223,13 +223,4 @@ interface ListRendererInterface
      * @return mixed
      */
     function getColOption($colName, $key);
-
-    /**
-     * Checks if an action is allowed.
-     *
-     * @param string $action action name
-     *
-     * @return Boolean
-     */
-    function isActionAllowed($action);
 }

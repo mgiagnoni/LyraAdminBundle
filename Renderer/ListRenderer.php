@@ -15,6 +15,7 @@ use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Lyra\AdminBundle\Pager\PagerInterface;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
+use Lyra\AdminBundle\Security\SecurityManagerInterface;
 
 /**
  * List renderer class.
@@ -76,11 +77,17 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
      */
     protected $batchActions;
 
-    public function __construct(PagerInterface $pager, AdminConfigurationInterface $configuration)
+    /**
+     * @var \Lyra\AdminBundle\Security\SecurityManagerInterface
+     */
+    protected $securityManager;
+
+    public function __construct(PagerInterface $pager, SecurityManagerInterface $securityManager, AdminConfigurationInterface $configuration)
     {
         parent::__construct($configuration);
 
         $this->pager = $pager;
+        $this->securityManager = $securityManager;
     }
 
     public function setState(UserStateInterface $state)
@@ -286,22 +293,6 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
         return $this->columns[$colName][$key];
     }
 
-    public function isActionAllowed($action)
-    {
-        // TODO: cannot stay here. Create a security manager service.
-        $roles = $action->getRoles();
-
-        if (null === $this->securityContext || count($roles) == 0) {
-            return true;
-        }
-
-        if ($this->securityContext->isGranted($roles)) {
-            return true;
-        }
-
-        return false;
-    }
-
     protected function initColumns()
     {
         $sort = $this->getSort();
@@ -318,7 +309,7 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
     {
         $allowed = array();
         foreach ($actions as $action) {
-            if ($this->isActionAllowed($action)) {
+            if ($this->securityManager->isActionAllowed($action->getName())) {
                 $allowed[] = $action;
             }
         }

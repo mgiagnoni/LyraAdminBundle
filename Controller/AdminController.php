@@ -13,8 +13,6 @@ namespace Lyra\AdminBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 
 /**
  * Base controller to manage CRUD actions.
@@ -47,10 +45,9 @@ class AdminController extends ContainerAware
      */
     public function newAction()
     {
-        $renderer = $this->getFormRenderer();
-        $this->checkSecurity($renderer, 'new');
+        $this->getSecurityManager()->allowOr403('new');
         $object = $this->getModelManager()->create();
-        $form = $renderer->getForm($object);
+        $form = $this->getFormRenderer()->getForm($object);
 
         $request = $this->getRequest();
         if ('POST' == $request->getMethod()) {
@@ -72,10 +69,9 @@ class AdminController extends ContainerAware
      */
     public function editAction($id)
     {
-        $renderer = $this->getFormRenderer();
-        $this->checkSecurity($renderer, 'edit');
+        $this->getSecurityManager()->allowOr403('edit');
         $object = $this->getModelManager()->find($id);
-        $form = $renderer->getForm($object);
+        $form = $this->getFormRenderer()->getForm($object);
 
         $request = $this->getRequest();
         if ('POST' == $request->getMethod()) {
@@ -116,7 +112,7 @@ class AdminController extends ContainerAware
      */
     public function deleteAction($id)
     {
-        $this->checkSecurity($this->getListRenderer(), $this->getListRenderer()->getObjectAction('delete'));
+        $this->getSecurityManager()->allowOr403('delete');
         $object = $this->getModelManager()->find($id);
         $request = $this->getRequest();
 
@@ -285,6 +281,14 @@ class AdminController extends ContainerAware
         return $this->container->get(sprintf('lyra_admin.%s.model_manager', $name ?: $this->getModelName()));
     }
 
+    public function getSecurityManager($name = null)
+    {
+        $manager = $this->container->get(sprintf('lyra_admin.security_manager'));
+        $manager->setModelName($name ?: $this->getModelName());
+
+        return $manager;
+    }
+
     /**
      * Returns the response to redirect to the list of objects.
      *
@@ -352,7 +356,7 @@ class AdminController extends ContainerAware
         if (null === $id = $this->getRequest()->get('ids')) {
             // TODO setflash
         } else if ($action = $this->getRequest()->get('batch_action')) {
-            $this->checkSecurity($this->getListRenderer(), $this->getListRenderer()->getBatchAction($action));
+            $this->getSecurityManager()->allowOr403($action);
 
             $method = 'executeBatch'.$action;
 
@@ -388,14 +392,6 @@ class AdminController extends ContainerAware
         }
 
         return $name;
-    }
-
-    // TODO move to Security manager
-    protected function checkSecurity($renderer, $action)
-    {
-        if (!$renderer->isActionAllowed($action)) {
-            throw new AccessDeniedException();
-        }
     }
 
     protected function saveFilterCriteria()

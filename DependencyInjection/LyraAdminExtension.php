@@ -62,6 +62,7 @@ class LyraAdminExtension extends Extension
 
         $this->createServiceDefinitions($container);
         $this->setRouteLoaderOptions($container);
+        $this->setSecurityManagerOptions($container);
         $this->setMenuOptions($container);
 
         $resources = array();
@@ -432,7 +433,10 @@ class LyraAdminExtension extends Extension
             $pager->setPublic(false);
             $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
 
-            // Action collections
+            $manager = new DefinitionDecorator('lyra_admin.security_manager');
+            $manager->addMethodCall('setModelName', array($model));
+            $manager->setPublic(false);
+            $container->setDefinition(sprintf('lyra_admin.%s.security_manager', $model), $manager);
 
             $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
             foreach ($types as $type) {
@@ -441,7 +445,8 @@ class LyraAdminExtension extends Extension
 
             $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
                 ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.security_manager', $model)))
+                ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
                 ->addMethodCall('setName', array($model))
                 ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
                 ->addMethodCall('setTitle', array($options['list']['title']))
@@ -568,6 +573,22 @@ class LyraAdminExtension extends Extension
         }
 
         $container->setParameter('lyra_admin.routes', $routes);
+    }
+
+    private function setSecurityManagerOptions(ContainerBuilder $container)
+    {
+        $securityActions = array();
+
+        foreach ($this->modelNames as $model) {
+            $actions = $this->config['models'][$model]['actions'];
+            foreach ($actions as $action => $attrs) {
+                if (isset($attrs['roles']) && count($attrs['roles']) > 0) {
+                    $securityActions[$model][$action] = $attrs['roles'];
+                }
+            }
+        }
+
+        $container->setParameter('lyra_admin.security_actions', $securityActions);
     }
 
     private function setMenuOptions(ContainerBuilder $container)
