@@ -56,7 +56,8 @@ class LyraAdminExtension extends Extension
         {
             $this->setRouteDefaults($model);
             $this->setActionsDefaults($model);
-            $this->setListActionsDefaults($model);
+            $this->setListDefaults($model);
+            $this->setFormDefaults($model);
             $this->setColumnsDefaults($model);
         }
 
@@ -121,9 +122,9 @@ class LyraAdminExtension extends Extension
         }
     }
 
-    private function setListActionsDefaults($model)
+    private function setListDefaults($model)
     {
-        $actions =  $this->config['models'][$model]['actions'];
+        $actions = $this->config['models'][$model]['actions'];
         $this->config['models'][$model]['list']['other_actions'] = array('index', 'object');
         $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
         foreach ($types as $type) {
@@ -141,6 +142,7 @@ class LyraAdminExtension extends Extension
             }
             $listActions = $defaults;
         }
+        $this->config['models'][$model]['list']['trans_domain'] = $this->config['models'][$model]['trans_domain'];
     }
 
     private function setColumnsDefaults($model)
@@ -164,6 +166,27 @@ class LyraAdminExtension extends Extension
                 $columns[$col]['type'] = 'template';
             }
         }
+    }
+
+    private function setFormDefaults($model)
+    {
+        $modelOpts = $this->config['models'][$model];
+        $options =& $this->config['models'][$model]['form'];
+
+        $groups = $options['groups'];
+        $new = $options['new']['groups'];
+        $edit = $options['edit']['groups'];
+
+        if (count($new) || count($edit)) {
+            $groups = array(
+                '_new' => array_merge($groups, $new),
+                '_edit' => array_merge($groups, $edit)
+            );
+        }
+
+        $options['groups'] = $groups;
+        $options['trans_domain'] = $modelOpts['trans_domain'];
+        $options['data_class'] = $modelOpts['class'];
     }
 
     private function setModelOptions(ContainerBuilder $container)
@@ -400,129 +423,147 @@ class LyraAdminExtension extends Extension
     private function createServiceDefinitions(ContainerBuilder $container)
     {
         foreach ($this->config['models'] as $model => $options) {
-
-            $container->setDefinition(sprintf('lyra_admin.%s.configuration', $model), new DefinitionDecorator('lyra_admin.configuration.abstract'))
-                ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.options', $model))));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
-                ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
-
-            // List
-
-            $listState = new DefinitionDecorator('lyra_admin.user_state');
-            $states = array(
-                'column' => $options['list']['default_sort']['column'],
-                'order' => $options['list']['default_sort']['order'],
-                'page' => 1,
-                'criteria' => array()
-            );
-            $listState->replaceArgument(1, $states);
-            $listState->replaceArgument(2, $model);
-            $listState->setPublic(false);
-            $container->setDefinition(sprintf('lyra_admin.%s.user_state', $model), $listState);
-
-            $queryBuilder = new DefinitionDecorator('lyra_admin.query_builder');
-            $queryBuilder->setArguments(array(new Reference(sprintf('lyra_admin.%s.model_manager', $model)), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
-            $queryBuilder->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))));
-            $queryBuilder->setPublic(false);
-            $container->setDefinition(sprintf('lyra_admin.%s.query_builder', $model), $queryBuilder);
-
-            $pager = new DefinitionDecorator('lyra_admin.pager');
-            $pager->addMethodCall('setMaxRows', array($options['list']['max_page_rows']));
-            $pager->addMethodCall('setQueryBuilder', array(new Reference(sprintf('lyra_admin.%s.query_builder', $model))));
-            $pager->setPublic(false);
-            $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
-
-            $manager = new DefinitionDecorator('lyra_admin.security_manager');
-            $manager->addMethodCall('setModelName', array($model));
-            $manager->setPublic(false);
-            $container->setDefinition(sprintf('lyra_admin.%s.security_manager', $model), $manager);
-
-            $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
-            foreach ($types as $type) {
-                $this->createCollectionDefinition($model, $type, $options['list'][$type], $container);
-            }
-
-            $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
-                ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.security_manager', $model)))
-                ->addMethodCall('setModelName', array($model))
-                ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
-                ->addMethodCall('setTitle', array($options['list']['title']))
-                ->addMethodCall('setTemplate', array($options['list']['template']))
-                ->addMethodCall('setTransDomain', array($options['trans_domain']))
-                ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.other_actions.collection', $model))))
-                ->addMethodCall('setListActions', array(new Reference(sprintf('lyra_admin.%s.list_actions.collection', $model))))
-                ->addMethodCall('setObjectActions', array(new Reference(sprintf('lyra_admin.%s.object_actions.collection', $model))))
-                ->addMethodCall('setBatchActions', array(new Reference(sprintf('lyra_admin.%s.batch_actions.collection', $model))));
-
-            // Form
-
-            $groups = $options['form']['groups'];
-            $new = $options['form']['new']['groups'];
-            $edit = $options['form']['edit']['groups'];
-
-            if (count($new) || count($edit)) {
-                $groups = array(
-                    '_new' => array_merge($groups, $new),
-                    '_edit' => array_merge($groups, $edit)
-                );
-            }
-
-            $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-                ->addMethodCall('setName', array($model))
-                ->addMethodCall('setTemplate', array($options['form']['template']))
-                ->addMethodCall('setTitle', array($options['form']['new']['title'], $options['form']['edit']['title']))
-                ->addMethodCall('setTransDomain', array($options['trans_domain']))
-                ->addMethodCall('setClass', array($options['form']['class']))
-                ->addMethodCall('setDataClass', array($options['class']))
-                ->addMethodCall('setGroups', array($groups));
-
-            // Filter
-
-            $filterState = new DefinitionDecorator('lyra_admin.user_state');
-            $states = array(
-                'criteria' => array()
-            );
-            $filterState->replaceArgument(1, $states);
-            $filterState->replaceArgument(2, $model);
-            $filterState->setPublic(false);
-            $container->setDefinition(sprintf('lyra_admin.%s.filter_state', $model), $filterState);
-
-            $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
-                ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.model_manager', $model)))
-                ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-                ->addMethodCall('setName', array($model))
-                ->addMethodCall('setTitle', array($options['filter']['title']))
-                ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))));
-
-            // Dialog
-
-            $actions = array();
-            foreach ($options['actions'] as $action => $attrs) {
-                if (isset($attrs['dialog']) && count($attrs['dialog'])) {
-                    $actions[$action] = $attrs['dialog'];
-                }
-            }
-
-            $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
-                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                ->addMethodCall('setName', array($model))
-                ->addMethodCall('setActions', array($actions));
-
-            $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
-                ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-                ->addMethodCall('setName', array($model))
-                ->addMethodCall('setTitle', array($options['show']['title']));
+            $this->createConfigurationDefinition($model, $container);
+            $this->createModelManagerDefinition($model, $options, $container);
+            $this->createListDefinition($model, $options['list'], $container);
+            $this->createFormDefinition($model, $options['form'], $container);
+            $this->createFilterDefinition($model, $options['filter'], $container);
+            $this->createDialogDefinition($model, $options, $container);
+            $this->createShowDefinition($model, $options['show'], $container);
         }
+    }
+
+    private function createConfigurationDefinition($model, ContainerBuilder $container)
+    {
+        $container->setDefinition(sprintf('lyra_admin.%s.configuration', $model), new DefinitionDecorator('lyra_admin.configuration.abstract'))
+            ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.options', $model))));
+    }
+
+    private function createModelManagerDefinition($model, $options, ContainerBuilder $container)
+    {
+        $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
+            ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
+
+    }
+
+    private function createListDefinition($model, $options, ContainerBuilder $container)
+    {
+        $states = array(
+            'column' => $options['default_sort']['column'],
+            'order' => $options['default_sort']['order'],
+            'page' => 1,
+            'criteria' => array()
+        );
+
+        $listState = new DefinitionDecorator('lyra_admin.user_state');
+        $listState
+            ->replaceArgument(1, $states)
+            ->replaceArgument(2, $model)
+            ->setPublic(false);
+        $container->setDefinition(sprintf('lyra_admin.%s.user_state', $model), $listState);
+
+        $queryBuilder = new DefinitionDecorator('lyra_admin.query_builder');
+        $queryBuilder
+            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.model_manager', $model)), new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+            ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
+            ->setPublic(false);
+        $container->setDefinition(sprintf('lyra_admin.%s.query_builder', $model), $queryBuilder);
+
+        $pager = new DefinitionDecorator('lyra_admin.pager');
+        $pager
+            ->addMethodCall('setMaxRows', array($options['max_page_rows']))
+            ->addMethodCall('setQueryBuilder', array(new Reference(sprintf('lyra_admin.%s.query_builder', $model))))
+            ->setPublic(false);
+        $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
+
+        $manager = new DefinitionDecorator('lyra_admin.security_manager');
+        $manager
+            ->addMethodCall('setModelName', array($model))
+            ->setPublic(false);
+        $container->setDefinition(sprintf('lyra_admin.%s.security_manager', $model), $manager);
+
+        $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
+        foreach ($types as $type) {
+            $this->createCollectionDefinition($model, $type, $options[$type], $container);
+        }
+
+        $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
+            ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
+            ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.security_manager', $model)))
+            ->addMethodCall('setModelName', array($model))
+            ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
+            ->addMethodCall('setTitle', array($options['title']))
+            ->addMethodCall('setTemplate', array($options['template']))
+            ->addMethodCall('setTransDomain', array($options['trans_domain']))
+            ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.other_actions.collection', $model))))
+            ->addMethodCall('setListActions', array(new Reference(sprintf('lyra_admin.%s.list_actions.collection', $model))))
+            ->addMethodCall('setObjectActions', array(new Reference(sprintf('lyra_admin.%s.object_actions.collection', $model))))
+            ->addMethodCall('setBatchActions', array(new Reference(sprintf('lyra_admin.%s.batch_actions.collection', $model))));
+    }
+
+    private function createFormDefinition($model, $options, ContainerBuilder $container)
+    {
+        $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
+            ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setTemplate', array($options['template']))
+            ->addMethodCall('setTitle', array($options['new']['title'], $options['edit']['title']))
+            ->addMethodCall('setTransDomain', array($options['trans_domain']))
+            ->addMethodCall('setClass', array($options['class']))
+            ->addMethodCall('setDataClass', array($options['data_class']))
+            ->addMethodCall('setGroups', array($options['groups']));
+    }
+
+    private function createFilterDefinition($model, $options, ContainerBuilder $container)
+    {
+        $states = array(
+            'criteria' => array()
+        );
+
+        $state = new DefinitionDecorator('lyra_admin.user_state');
+        $state
+            ->replaceArgument(1, $states)
+            ->replaceArgument(2, $model)
+            ->setPublic(false);
+        $container->setDefinition(sprintf('lyra_admin.%s.filter_state', $model), $state);
+
+        $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
+            ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.model_manager', $model)))
+            ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
+            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setTitle', array($options['title']))
+            ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))));
+    }
+
+    private function createDialogDefinition($model, $options, ContainerBuilder $container)
+    {
+        $actions = array();
+        foreach ($options['actions'] as $action => $attrs) {
+            if (isset($attrs['dialog']) && count($attrs['dialog'])) {
+                $actions[$action] = $attrs['dialog'];
+            }
+        }
+
+        $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
+            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setActions', array($actions));
+    }
+
+    private function createShowDefinition($model, $options, ContainerBuilder $container)
+    {
+        $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
+            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setTitle', array($options['title']));
     }
 
     private function createCollectionDefinition($model, $type, $options, ContainerBuilder $container)
     {
         $collection = new DefinitionDecorator('lyra_admin.action_collection');
-        $collection->setArguments(array($options));
-        $collection->setPublic(false);
+        $collection
+            ->setArguments(array($options))
+            ->setPublic(false);
 
         $container->setDefinition(sprintf('lyra_admin.%s.%s.collection', $model, $type), $collection);
     }
@@ -530,17 +571,17 @@ class LyraAdminExtension extends Extension
     private function updateServiceDefinitions(ContainerBuilder $container)
     {
         foreach ($this->config['models'] as $model => $options) {
-            $list = $container->getDefinition(sprintf('lyra_admin.%s.list_renderer', $model));
-            $list->addMethodCall('setColumns', array($options['list']['columns']));
+            $container->getDefinition(sprintf('lyra_admin.%s.list_renderer', $model))
+                ->addMethodCall('setColumns', array($options['list']['columns']));
 
-            $filter = $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model));
-            $filter->addMethodCall('setFields', array($options['filter']['fields']));
+            $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model))
+                ->addMethodCall('setFields', array($options['filter']['fields']));
 
-            $form = $container->getDefinition(sprintf('lyra_admin.%s.form_renderer', $model));
-            $form->addMethodCall('setFields', array($options['fields']));
+            $container->getDefinition(sprintf('lyra_admin.%s.form_renderer', $model))
+                ->addMethodCall('setFields', array($options['fields']));
 
-            $show = $container->getDefinition(sprintf('lyra_admin.%s.show_renderer', $model));
-            $show->addMethodCall('setFields', array($options['show']['fields']));
+            $container->getDefinition(sprintf('lyra_admin.%s.show_renderer', $model))
+                ->addMethodCall('setFields', array($options['show']['fields']));
         }
 
         // Twig extension
