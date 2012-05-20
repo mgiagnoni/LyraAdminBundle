@@ -29,7 +29,6 @@
         <service id="lyra_admin.list_renderer.abstract" class="%lyra_admin.list_renderer.class%" abstract="true">
             <argument /> <!-- Pager -->
             <argument /> <!-- Security manager -->
-            <argument /> <!-- Configuration -->
         </service>
 
         <service id="lyra_admin.form_renderer.abstract" class="%lyra_admin.form_renderer.class%" abstract="true">

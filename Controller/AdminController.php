@@ -299,7 +299,7 @@ class AdminController extends ContainerAware
         $renderer = $this->getListrenderer();
 
         return new RedirectResponse(
-            $this->container->get('router')->generate($renderer->getRoutePrefix().'_index')
+            $this->container->get('router')->generate($renderer->getActions()->get('index')->getRouteName())
         );
     }
 

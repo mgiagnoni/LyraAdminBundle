@@ -3,7 +3,7 @@
         <select name="batch_action">
             <option value="">{{ 'batch.action.empty'|trans({}, 'LyraAdminBundle') }}</option>
             {% for action in list.batchActions %}
-                <option value="{{ action }}">{{ (action.text|default(list.name~'.batch.action.'~action))|trans({}, action.trans_domain|default(list.transDomain)) }}</option>
+                <option value="{{ action }}">{{ (action.text|default(list.modelName~'.batch.action.'~action))|trans({}, action.trans_domain|default(list.transDomain)) }}</option>
             {% endfor %}
         </select>
         <input type="submit" name="action[batch]" value="{{ 'batch.form.submit'|trans({}, 'LyraAdminBundle') }}" />

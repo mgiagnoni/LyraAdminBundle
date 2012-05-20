@@ -17,6 +17,20 @@ use Lyra\AdminBundle\Action\ActionCollectionInterface;
 interface ListRendererInterface
 {
     /**
+     * Sets the model name.
+     *
+     * @param string $modelName
+     */
+    function setModelName($modelName);
+
+    /**
+     * Gets the model name.
+     *
+     * @return string
+     */
+    function getModelName();
+
+    /**
      * Sets user state service.
      *
      * @param \Lyra\AdminBundle\UserState\UserStateInterface $state

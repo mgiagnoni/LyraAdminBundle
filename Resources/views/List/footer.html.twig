@@ -16,19 +16,18 @@
             {% endif %}
             </span>
             {% if pager.nbPages > 1 %}
-                {% set route = list.routePrefix~'_index'  %}
-                {% set params = list.routeParams %}
-                {{ page_link(pager, 'first', 1, route, params) }}
-                {{ page_link(pager, 'prev', pager.prevPage, route, params) }}
+                {% set route = list.actions.index.routeName  %}
+                {{ page_link(pager, 'first', 1, route) }}
+                {{ page_link(pager, 'prev', pager.prevPage, route) }}
                 {% for p in pager.pageLinks %}
                     {% if p == pager.page %}
                         {{ p }}
                     {% else %}
-                        {{ page_link(pager, 'page', p, route, params) }}
+                        {{ page_link(pager, 'page', p, route) }}
                     {% endif %}
                 {% endfor %}
-                {{ page_link(pager, 'next', pager.nextPage, route, params) }}
-                {{ page_link(pager, 'last', pager.nbPages, route, params) }}
+                {{ page_link(pager, 'next', pager.nextPage, route) }}
+                {{ page_link(pager, 'last', pager.nbPages, route) }}
             {% endif %}
         </span>
     </td>

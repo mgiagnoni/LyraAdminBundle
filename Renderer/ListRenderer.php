@@ -11,7 +11,6 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
-use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Lyra\AdminBundle\Pager\PagerInterface;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
@@ -20,12 +19,17 @@ use Lyra\AdminBundle\Security\SecurityManagerInterface;
 /**
  * List renderer class.
  */
-class ListRenderer extends BaseRenderer implements ListRendererInterface
+class ListRenderer implements ListRendererInterface
 {
     /**
      * @var \Lyra\AdminBundle\Pager\PagerInterface
      */
     protected $pager;
+
+    /**
+     * @var string
+     */
+    protected $modelName;
 
     /**
      * @var \Lyra\AdminBundle\UserState\UserStateInterface
@@ -82,12 +86,20 @@ class ListRenderer extends BaseRenderer implements ListRendererInterface
      */
     protected $securityManager;
 
-    public function __construct(PagerInterface $pager, SecurityManagerInterface $securityManager, AdminConfigurationInterface $configuration)
+    public function __construct(PagerInterface $pager, SecurityManagerInterface $securityManager)
     {
-        parent::__construct($configuration);
-
         $this->pager = $pager;
         $this->securityManager = $securityManager;
+    }
+
+    public function setModelName($modelName)
+    {
+        $this->modelName = $modelName;
+    }
+
+    public function getModelName()
+    {
+        return $this->modelName;
     }
 
     public function setState(UserStateInterface $state)
