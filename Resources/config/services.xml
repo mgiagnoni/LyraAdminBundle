@@ -33,10 +33,6 @@
 
         <service id="lyra_admin.form_renderer.abstract" class="%lyra_admin.form_renderer.class%" abstract="true">
             <argument type="service" id="lyra_admin.form_factory" />
-            <argument /> <!-- Configuration -->
-            <call method="setSecurityContext">
-                <argument type="service" id="security.context" />
-            </call>
         </service>
 
         <service id="lyra_admin.dialog_renderer.abstract" class="%lyra_admin.dialog_renderer.class%" abstract="true" />

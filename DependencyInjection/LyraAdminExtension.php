@@ -185,6 +185,20 @@ class LyraAdminExtension extends Extension
         }
 
         $options['groups'] = $groups;
+        $actions = $modelOpts['actions'];
+        $defaults = array();
+
+        foreach (array('new', 'edit', 'index') as $action) {
+            $defaults[$action]['name'] = $action;
+            $keys = array('route_name', 'route_pattern', 'route_params', 'text', 'icon', 'style', 'dialog', 'trans_domain', 'template', 'roles');
+            foreach ($keys as $key) {
+                if (!isset($actions[$action][$key])) {
+                    continue;
+                }
+                $defaults[$action][$key] = $actions[$action][$key];
+            }
+        }
+        $options['actions'] = $defaults;
         $options['trans_domain'] = $modelOpts['trans_domain'];
         $options['data_class'] = $modelOpts['class'];
     }
@@ -503,15 +517,17 @@ class LyraAdminExtension extends Extension
 
     private function createFormDefinition($model, $options, ContainerBuilder $container)
     {
+        $this->createCollectionDefinition($model, 'form_actions', $options['actions'], $container);
+
         $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
-            ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setTemplate', array($options['template']))
             ->addMethodCall('setTitle', array($options['new']['title'], $options['edit']['title']))
             ->addMethodCall('setTransDomain', array($options['trans_domain']))
             ->addMethodCall('setClass', array($options['class']))
             ->addMethodCall('setDataClass', array($options['data_class']))
-            ->addMethodCall('setGroups', array($options['groups']));
+            ->addMethodCall('setGroups', array($options['groups']))
+            ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.form_actions.collection', $model))));
     }
 
     private function createFilterDefinition($model, $options, ContainerBuilder $container)

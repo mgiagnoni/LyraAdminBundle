@@ -11,19 +11,54 @@
 
 namespace Lyra\AdminBundle\Renderer;
 
+use Lyra\AdminBundle\Action\ActionCollectionInterface;
+
 interface FormRendererInterface
 {
     /**
+     * Sets the model name.
+     *
+     * @param string $modelName
+     */
+    function setModelName($modelName);
+
+    /**
+     * Gets the model name.
+     *
+     * @return string
+     */
+    function getModelName();
+
+    /**
+     * Sets form actions.
+     *
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
+     */
+    function setActions(ActionCollectionInterface $actions);
+
+    /**
+     * Gets form actions.
+     *
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    function getActions();
+
+    /**
      * Sets form action.
      *
-     * @param string $action (new/edit)
+     * This is the action executed when the form is submitted.
+     *
+     * @param string $actionName (new/edit)
+     * @throws InvalidArgumentException if action named $actionName does not exist in form config
      */
-    function setAction($action);
+    function setAction($actionName);
 
     /**
      * Gets form action.
      *
-     * @return string
+     * Action is set by name and retrieved as object.
+     *
+     * @return \Lyra\AdminBundle\Action\ActionInterface
      */
     function getAction();
 

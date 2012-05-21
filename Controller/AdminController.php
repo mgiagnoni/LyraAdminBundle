@@ -314,13 +314,10 @@ class AdminController extends ContainerAware
         $object = $form->getData();
         $form = $this->getFormRenderer();
 
-        if ('edit' == $form->getAction()) {
-            $form->setRouteParams(array('id' => $object->getId()));
-        }
-
         return $this->container->get('templating')
             ->renderResponse($form->getTemplate(), array(
                 'form' => $form,
+                'object' => $object
             ));
     }
 

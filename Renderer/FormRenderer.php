@@ -13,16 +13,22 @@ namespace Lyra\AdminBundle\Renderer;
 
 use Symfony\Component\HttpFoundation\Request;
 use Lyra\AdminBundle\FormFactory\AdminFormFactory as FormFactory;
+use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
 /**
  * Form renderer class.
  */
-class FormRenderer extends BaseRenderer implements FormRendererInterface
+class FormRenderer implements FormRendererInterface
 {
     /**
      * @var \Lyra\AdminBundle\FormFactory\AdminFormFactory
      */
     protected $factory;
+
+    /**
+     * @var string
+     */
+    protected $modelName;
 
     /**
      * @var string
@@ -79,16 +85,42 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
      */
     protected $groups;
 
-    public function __construct(FormFactory $factory, $configuration)
-    {
-        parent::__construct($configuration);
+    /**
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    protected $actions;
 
+    public function __construct(FormFactory $factory)
+    {
         $this->factory = $factory;
     }
 
-    public function setAction($action)
+    public function setModelName($modelName)
     {
-        $this->action = $action;
+        $this->modelName = $modelName;
+    }
+
+    public function getModelName()
+    {
+        return $this->modelName;
+    }
+
+    public function setActions(ActionCollectionInterface $actions)
+    {
+        $this->actions = $actions;
+    }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
+    public function setAction($actionName)
+    {
+        if (!$this->actions->has($actionName)) {
+            throw new \InvalidArgumentException("Action $actionName does not exist");
+        }
+        $this->action = $this->actions->get($actionName);
     }
 
     public function getAction()
@@ -239,9 +271,9 @@ class FormRenderer extends BaseRenderer implements FormRendererInterface
 
         $fields = array_intersect_key($fields, $existing);
         $typeClass = $this->class;
-        $type = new $typeClass($this->getName(), $fields);
+        $type = new $typeClass($this->getModelName(), $fields);
 
-        return $this->factory->createForm($type, $this->getName(), $data, array('data_class' => $this->dataClass));
+        return $this->factory->createForm($type, $this->getModelName(), $data, array('data_class' => $this->dataClass));
     }
 
     protected function createFormView()

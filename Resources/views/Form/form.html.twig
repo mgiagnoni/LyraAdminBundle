@@ -7,12 +7,13 @@
     {% endblock %}
     {% block form_actions %}
     <div class="form-actions">
-        <a class="button ui-icon-arrowthick-1-w action-back" href="{{ path(form.routePrefix~'_index') }}">{{ 'form.action.back'|trans({}, 'LyraAdminBundle') }}</a>
+        <a class="button ui-icon-arrowthick-1-w action-back" href="{{ path(form.actions.index.routeName) }}">{{ 'form.action.back'|trans({}, 'LyraAdminBundle') }}</a>
     </div>
     {% endblock %}
     {% block form %}
         {{ form_errors(form.view) }}
-        <form class="ly-form" action="{{ path(form.routePrefix~'_'~form.action, form.routeParams) }}" method="post">
+        {% set params = object.id is defined ? { 'id' : object.id } : {} %}
+        <form class="ly-form" action="{{ path(form.action.routeName, params) }}" method="post">
             <div id="column-1">
             {% for group in form.groups %}
                 {% block form_group %}
