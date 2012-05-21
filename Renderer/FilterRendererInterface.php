@@ -12,9 +12,40 @@
 namespace Lyra\AdminBundle\Renderer;
 
 use Lyra\AdminBundle\UserState\UserStateInterface;
+use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
 interface FilterRendererInterface
 {
+    /**
+     * Sets the model name.
+     *
+     * @param string $modelName
+     */
+    function setModelName($modelName);
+
+    /**
+     * Gets the model name.
+     *
+     * @return string
+     */
+    function getModelName();
+
+    /**
+     * Sets the filter translation domain.
+     *
+     * Used in templates to translate list title, headers.
+     *
+     * @param string $transDomain
+     */
+    function setTransDomain($transDomain);
+
+    /**
+     * Gets the filter translation domain.
+     *
+     * @return string
+     */
+    function getTransDomain();
+
     /**
      * Sets user state service.
      *
@@ -28,6 +59,20 @@ interface FilterRendererInterface
      * @return \Lyra\AdminBundle\UserState\UserStateInterface
      */
     function getState();
+
+    /**
+     * Sets filter actions.
+     *
+     * @param  \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    function setActions(ActionCollectionInterface $actions);
+
+    /**
+     * Gets filter actions.
+     *
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    function getActions();
 
     /**
      * Sets filter criteria

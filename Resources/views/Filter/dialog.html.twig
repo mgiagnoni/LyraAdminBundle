@@ -3,8 +3,8 @@
 <div id="ly-show-wrapper">
     <h1>{{ 'filter.dialog.title'|trans({}, 'LyraAdminBundle') }}</h1>
     <ol>
-        {% set criteria = renderer.criteria %}
-        {% for field in renderer.fields %}
+        {% set criteria = filter.criteria %}
+        {% for field in filter.fields %}
             {% if criteria[field.name] is defined %}
                 <li>
                     <div class="label">{{ field.label }}</div>
@@ -27,6 +27,6 @@
             {% endif %}
         {% endfor %}
     </ol>
-    <a class="close" href="{{ path(renderer.routePrefix~'_index') }}">{{ 'filter.button.close'|trans({}, 'LyraAdminBundle') }}</a>
+    <a class="close" href="{{ path(filter.actions.index.routeName) }}">{{ 'filter.button.close'|trans({}, 'LyraAdminBundle') }}</a>
 </div>
 {% endblock %}

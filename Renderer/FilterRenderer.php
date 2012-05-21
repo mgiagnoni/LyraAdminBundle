@@ -15,12 +15,28 @@ use Lyra\AdminBundle\FormFactory\AdminFormFactory as FormFactory;
 use Lyra\AdminBundle\Form\AdminFilterFormType;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Model\ModelManagerInterface;
+use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
 /**
  * Filter renderer.
  */
-class FilterRenderer extends BaseRenderer implements FilterRendererInterface
+class FilterRenderer implements FilterRendererInterface
 {
+    /**
+     * @var \Lyra\AdminBundle\FormFactory\AdminFormFactory
+     */
+    protected $factory;
+
+    /**
+     * @var string
+     */
+    protected $modelName;
+
+    /**
+     * @var string
+     */
+    protected $transDomain;
+
     /**
      * @var \Symfony\Component\Form\Form
      */
@@ -47,16 +63,39 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
     protected $title;
 
     /**
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    protected $actions;
+
+    /**
      * @var array
      */
     protected $fields;
 
-    public function __construct(FormFactory $factory, ModelManagerInterface $modelManager, $configuration)
+    public function __construct(FormFactory $factory, ModelManagerInterface $modelManager)
     {
-        parent::__construct($configuration);
-
         $this->factory = $factory;
         $this->modelManager = $modelManager;
+    }
+
+    public function setModelName($modelName)
+    {
+        $this->modelName = $modelName;
+    }
+
+    public function getModelName()
+    {
+        return $this->modelName;
+    }
+
+    public function setTransDomain($transDomain)
+    {
+        $this->transDomain = $transDomain;
+    }
+
+    public function getTransDomain()
+    {
+        return $this->transDomain;
     }
 
     public function setState(UserStateInterface $state)
@@ -69,6 +108,16 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
         return $this->state;
     }
 
+    public function setActions(ActionCollectionInterface $actions)
+    {
+        $this->actions = $actions;
+    }
+
+    public function getActions()
+    {
+        return $this->actions;
+    }
+
     public function setCriteria($criteria)
     {
         $criteria = $this->removeEmptyCriteria($criteria);
@@ -79,6 +128,7 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
     {
         // criteria objects coming back from session need to be managed
         $criteria = $this->modelManager->mergeFilterCriteriaObjects($this->state->get('criteria'));
+
         return $criteria;
     }
 
@@ -143,9 +193,9 @@ class FilterRenderer extends BaseRenderer implements FilterRendererInterface
 
     protected function createForm()
     {
-        $type = new AdminFilterFormType($this->getName(), $this->getFields());
+        $type = new AdminFilterFormType($this->getModelName(), $this->getFields());
 
-        return $this->factory->createForm($type, $this->getName(), $this->getCriteria());
+        return $this->factory->createForm($type, $this->getModelName(), $this->getCriteria());
     }
 
     protected function createFormView()

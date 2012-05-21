@@ -2,7 +2,7 @@
     {% if filter.hasFields %}
     <div class="search-actions">
         <a href="#filter" class="button ui-icon-search">{{ 'list.action.search'|trans({}, 'LyraAdminBundle') }}</a>
-        <a href="{{ path(filter.routePrefix~'_filter', {'action' : 'reset'}) }}" class="button ui-icon-arrowrefresh-1-e{{ filter.criteria|length > 0 ? '' : ' disabled'}}">{{ 'filter.button.reset'|trans({}, 'LyraAdminBundle') }}</a>
+        <a href="{{ path(filter.actions.filter.routeName, {'action' : 'reset'}) }}" class="button ui-icon-arrowrefresh-1-e{{ filter.criteria|length > 0 ? '' : ' disabled'}}">{{ 'filter.button.reset'|trans({}, 'LyraAdminBundle') }}</a>
     </div>
     {% endif %}
 {% endblock %}

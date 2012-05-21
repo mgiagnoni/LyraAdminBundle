@@ -58,6 +58,7 @@ class LyraAdminExtension extends Extension
             $this->setActionsDefaults($model);
             $this->setListDefaults($model);
             $this->setFormDefaults($model);
+            $this->setFilterDefaults($model);
             $this->setColumnsDefaults($model);
         }
 
@@ -124,23 +125,15 @@ class LyraAdminExtension extends Extension
 
     private function setListDefaults($model)
     {
-        $actions = $this->config['models'][$model]['actions'];
         $this->config['models'][$model]['list']['other_actions'] = array('index', 'object');
         $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
         foreach ($types as $type) {
             $listActions =& $this->config['models'][$model]['list'][$type];
-            $defaults = array();
+            $actions = array();
             foreach ($listActions as $action) {
-                $defaults[$action]['name'] = $action;
-                $keys = array('route_name', 'route_pattern', 'route_params', 'text', 'icon', 'style', 'dialog', 'trans_domain', 'template', 'roles');
-                foreach ($keys as $key) {
-                    if (!isset($actions[$action][$key])) {
-                        continue;
-                    }
-                    $defaults[$action][$key] = $actions[$action][$key];
-                }
+                $actions[$action] = $this->setActionOptions($action, $model);
             }
-            $listActions = $defaults;
+            $listActions = $actions;
         }
         $this->config['models'][$model]['list']['trans_domain'] = $this->config['models'][$model]['trans_domain'];
     }
@@ -185,22 +178,43 @@ class LyraAdminExtension extends Extension
         }
 
         $options['groups'] = $groups;
-        $actions = $modelOpts['actions'];
-        $defaults = array();
+        $actions = array();
 
         foreach (array('new', 'edit', 'index') as $action) {
-            $defaults[$action]['name'] = $action;
-            $keys = array('route_name', 'route_pattern', 'route_params', 'text', 'icon', 'style', 'dialog', 'trans_domain', 'template', 'roles');
-            foreach ($keys as $key) {
-                if (!isset($actions[$action][$key])) {
-                    continue;
-                }
-                $defaults[$action][$key] = $actions[$action][$key];
-            }
+            $actions[$action] = $this->setActionOptions($action, $model);
         }
-        $options['actions'] = $defaults;
+
+        $options['actions'] = $actions;
         $options['trans_domain'] = $modelOpts['trans_domain'];
         $options['data_class'] = $modelOpts['class'];
+    }
+
+    private function setFilterDefaults($model)
+    {
+        $options =& $this->config['models'][$model]['filter'];
+        $actions = array();
+        foreach (array('filter', 'index') as $action) {
+            $actions[$action] = $this->setActionOptions($action, $model);
+        }
+
+        $options['actions'] = $actions;
+        $options['trans_domain'] = $this->config['models'][$model]['trans_domain'];
+    }
+
+    private function setActionOptions($action, $model)
+    {
+        $actions = $this->config['models'][$model]['actions'];
+
+        $options['name'] = $action;
+        $keys = array('route_name', 'route_pattern', 'route_params', 'text', 'icon', 'style', 'dialog', 'trans_domain', 'template', 'roles');
+        foreach ($keys as $key) {
+            if (!isset($actions[$action][$key])) {
+                continue;
+            }
+            $options[$key] = $actions[$action][$key];
+        }
+
+        return $options;
     }
 
     private function setModelOptions(ContainerBuilder $container)
@@ -543,12 +557,15 @@ class LyraAdminExtension extends Extension
             ->setPublic(false);
         $container->setDefinition(sprintf('lyra_admin.%s.filter_state', $model), $state);
 
+        $this->createCollectionDefinition($model, 'filter_actions', $options['actions'], $container);
+
         $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
             ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.model_manager', $model)))
-            ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.configuration', $model)))
-            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setTitle', array($options['title']))
-            ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))));
+            ->addMethodCall('setTransDomain', array($options['trans_domain']))
+            ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))))
+            ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.filter_actions.collection', $model))));
     }
 
     private function createDialogDefinition($model, $options, ContainerBuilder $container)

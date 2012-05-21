@@ -404,7 +404,7 @@ class AdminController extends ContainerAware
     {
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Filter:dialog.html.twig', array(
-                'renderer' => $this->getFilterRenderer(),
+                'filter' => $this->getFilterRenderer(),
             ));
     }
 
