@@ -16,8 +16,13 @@ namespace Lyra\AdminBundle\Renderer;
  *
  * Displays a single record in a dialog window.
  */
-class ShowRenderer extends BaseRenderer
+class ShowRenderer implements ShowRendererInterface
 {
+    /**
+     * @var string
+     */
+    protected $modelName;
+
     /**
      * @var mixed
      */
@@ -32,6 +37,16 @@ class ShowRenderer extends BaseRenderer
      * @var array
      */
     protected $fields;
+
+    public function setModelName($modelName)
+    {
+        $this->modelName = $modelName;
+    }
+
+    public function getModelName()
+    {
+        return $this->modelName;
+    }
 
     public function setObject($object)
     {
@@ -70,7 +85,7 @@ class ShowRenderer extends BaseRenderer
         $value = $this->object->$method();
 
         if (null !== $value && ('date' == $type || 'datetime' == $type)) {
-            $value = $value->format($format = $this->configuration->getShowFieldOption($field, 'format'));
+            $value = $value->format($format = $this->fields[$field]['format']);
         }
 
         return $value;

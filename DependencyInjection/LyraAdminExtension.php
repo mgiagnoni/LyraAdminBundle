@@ -441,7 +441,7 @@ class LyraAdminExtension extends Extension
                     $showFields[$field]['label'] = $options['auto_labels'] ? Util::humanize($field) : $model.'.field.'.$field;
                 }
 
-                if ('date' == $type || 'datetime' == $type && !isset($attrs['format'])) {
+                if (('date' == $type || 'datetime' == $type) && !isset($attrs['format'])) {
                     $showFields[$field]['format'] = 'j/M/Y';
                 }
             }
@@ -587,7 +587,7 @@ class LyraAdminExtension extends Extension
     {
         $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
             ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-            ->addMethodCall('setName', array($model))
+            ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setTitle', array($options['title']));
     }
 

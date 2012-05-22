@@ -1,7 +1,7 @@
 {% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle::layout_ajax.html.twig' : 'LyraAdminBundle::layout.html.twig' %}
 {% block content %}
 <div id="ly-show-wrapper">
-    <h1>{{ renderer.title|trans({'%model%' : renderer.name}, 'LyraAdminBundle') }}</h1>
+    <h1>{{ renderer.title|trans({'%model%' : renderer.modelName}, 'LyraAdminBundle') }}</h1>
     <ol>
     {% for fld in renderer.fields %}
         <li>
@@ -17,6 +17,6 @@
         </li>
     {% endfor %}
     </ol>
-    <a class="close" href="{{ path(renderer.routePrefix~'_index') }}">{{ 'show.button.close'|trans({}, 'LyraAdminBundle') }}</a>
+    <a class="close" href="{{ path('lyra_admin_'~renderer.modelName~'_index') }}">{{ 'show.button.close'|trans({}, 'LyraAdminBundle') }}</a>
 </div>
 {% endblock %}

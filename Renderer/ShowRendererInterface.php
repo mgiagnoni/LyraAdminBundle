@@ -14,6 +14,20 @@ namespace Lyra\AdminBundle\Renderer;
 interface ShowRendererInterface
 {
     /**
+     * Sets the model name.
+     *
+     * @param string $modelName
+     */
+    function setModelName($modelName);
+
+    /**
+     * Gets the model name.
+     *
+     * @return string
+     */
+    function getModelName();
+
+    /**
      * Sets the instance of the record to display.
      *
      * @param mixed $object
@@ -32,10 +46,8 @@ interface ShowRendererInterface
      *
      * @param string $title
      */
-    function setTitle($title)
-    {
-        $this->title = $title;
-    }
+    function setTitle($title);
+
     /**
      * Gets the show dialog title
      *
