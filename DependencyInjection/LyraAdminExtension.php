@@ -452,11 +452,11 @@ class LyraAdminExtension extends Extension
     {
         foreach ($this->config['models'] as $model => $options) {
             $this->createConfigurationDefinition($model, $container);
+            $this->createActionsDefinition($model, $options, $container);
             $this->createModelManagerDefinition($model, $options, $container);
             $this->createListDefinition($model, $options['list'], $container);
             $this->createFormDefinition($model, $options['form'], $container);
             $this->createFilterDefinition($model, $options['filter'], $container);
-            $this->createDialogDefinition($model, $options, $container);
             $this->createShowDefinition($model, $options['show'], $container);
         }
     }
@@ -465,6 +465,12 @@ class LyraAdminExtension extends Extension
     {
         $container->setDefinition(sprintf('lyra_admin.%s.configuration', $model), new DefinitionDecorator('lyra_admin.configuration.abstract'))
             ->setArguments(array(new Parameter(sprintf('lyra_admin.%s.options', $model))));
+    }
+
+    private function createActionsDefinition($model, $options, ContainerBuilder $container)
+    {
+        $container->setDefinition(sprintf('lyra_admin.%s.actions', $model), new DefinitionDecorator('lyra_admin.action_collection'))
+            ->setArguments(array($options['actions']));
     }
 
     private function createModelManagerDefinition($model, $options, ContainerBuilder $container)
@@ -566,21 +572,6 @@ class LyraAdminExtension extends Extension
             ->addMethodCall('setTransDomain', array($options['trans_domain']))
             ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.filter_state', $model))))
             ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.filter_actions.collection', $model))));
-    }
-
-    private function createDialogDefinition($model, $options, ContainerBuilder $container)
-    {
-        $actions = array();
-        foreach ($options['actions'] as $action => $attrs) {
-            if (isset($attrs['dialog']) && count($attrs['dialog'])) {
-                $actions[$action] = $attrs['dialog'];
-            }
-        }
-
-        $container->setDefinition(sprintf('lyra_admin.%s.dialog_renderer', $model), new DefinitionDecorator('lyra_admin.dialog_renderer.abstract'))
-            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-            ->addMethodCall('setName', array($model))
-            ->addMethodCall('setActions', array($actions));
     }
 
     private function createShowDefinition($model, $options, ContainerBuilder $container)

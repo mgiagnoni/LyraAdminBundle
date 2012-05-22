@@ -1,15 +1,15 @@
 {% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Dialog:ajax.html.twig' : 'LyraAdminBundle:Dialog:base.html.twig' %}
 {% block dialog_title %}
-<h1>{{ dialog.title|trans({}, dialog.transDomain) }}</h1>
+<h1>{{ action.dialogTitle|trans({}, action.transDomain) }}</h1>
 {% endblock %}
 {% block form %}
-    <p>{{ dialog.message|trans({}, dialog.transDomain) }}</p>
-    <form id="ly-form" action="{{ path(dialog.routePrefix~'_'~dialog.action, dialog.routeParams) }}" method="post">
+    <p>{{ action.dialogMessage|trans({}, action.transDomain) }}</p>
+    <form id="ly-form" action="{{ path(action.routeName) }}" method="post">
     {% if csrf is defined %}
         <input type="hidden" name="_token" value="{{ csrf }}" />
     {% endif %}
     <hr class="clear" />
     <input type="submit" name ="submit" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
-    <a href="{{ path(dialog.routePrefix~'_index') }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
+    <a href="{{ path(cancel.routeName) }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
     </form>
 {% endblock %}

@@ -1,8 +1,8 @@
 {% extends app.request.isXmlHttpRequest ? 'LyraAdminBundle:Dialog:ajax.html.twig' : 'LyraAdminBundle:Dialog:base.html.twig' %}
 {% block form %}
-    <p>{{ dialog.message|transchoice(ids|length,{},'LyraAdminBundle') }}</p>
-    <form id="ly-form" action="{{ path(dialog.routePrefix~'_'~'object', dialog.routeParams) }}" method="post">
-    <input type="hidden" name="batch_action" value="{{ dialog.action }}" />
+    <p>{{ action.dialogMessage|transchoice(ids|length,{},'LyraAdminBundle') }}</p>
+    <form id="ly-form" action="{{ path(form_action.routeName) }}" method="post">
+    <input type="hidden" name="batch_action" value="{{ action.name }}" />
     <input type="hidden" name="batch_confirm" value="1" />
     {% for id in ids %}
         <input type="hidden" name="ids[]" value="{{ id }}" />
@@ -10,6 +10,6 @@
     <input type="hidden" name="_token" value="{{ csrf }}" />
     <hr class="clear" />
     <input type="submit" name ="action[batch]" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
-    <a href="{{ path(dialog.routePrefix~'_index') }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
+    <a href="{{ path(cancel.routeName) }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
     </form>
 {% endblock %}

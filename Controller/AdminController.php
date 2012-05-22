@@ -125,14 +125,14 @@ class AdminController extends ContainerAware
             return $this->getRedirectToListResponse();
         }
 
-        $dialog = $this->getDialogRenderer();
-        $dialog->setRouteParams(array('id' => $object->getId()));
+        $actions = $this->getActions();
 
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Dialog:delete.html.twig', array(
                 'object' => $object,
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('delete'),
-                'dialog' => $dialog
+                'action' => $actions->get('delete'),
+                'cancel' => $actions->get('index')
             ));
     }
 
@@ -243,18 +243,15 @@ class AdminController extends ContainerAware
     }
 
     /**
-     * Gets a dialog renderer service.
+     * Gets action collection configured for the model.
      *
      * @param string $name model name
      *
-     * @return \Lyra\AdminBundle\Renderer\DialogRenderer
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
-    public function getDialogRenderer($name = null)
+    public function getActions($name = null)
     {
-        $renderer = $this->container->get(sprintf('lyra_admin.%s.dialog_renderer', $name ?: $this->getModelName()));
-        $renderer->setAction($this->getRequest()->get('lyra_admin_action'));
-
-        return $renderer;
+       return $this->container->get(sprintf('lyra_admin.%s.actions', $name ?: $this->getModelName()));
     }
 
     /**
@@ -337,13 +334,14 @@ class AdminController extends ContainerAware
             return $this->getRedirectToListResponse();
         }
 
-        $dialog = $this->getDialogRenderer();
-        $dialog->setAction('delete');
+        $actions = $this->getActions();
 
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Dialog:batch_dialog.html.twig', array(
                 'ids' => $ids,
-                'dialog' => $dialog,
+                'action' => $actions->get('delete'),
+                'form_action' => $actions->get('object'),
+                'cancel' => $actions->get('index'),
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('batch_delete'),
             ));
     }
