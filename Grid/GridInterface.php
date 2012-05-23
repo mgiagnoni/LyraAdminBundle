@@ -9,12 +9,12 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Grid;
 
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
-interface ListRendererInterface
+interface GridInterface
 {
     /**
      * Sets the model name.

@@ -521,7 +521,7 @@ class LyraAdminExtension extends Extension
             $this->createCollectionDefinition($model, $type, $options[$type], $container);
         }
 
-        $container->setDefinition(sprintf('lyra_admin.%s.list_renderer', $model), new DefinitionDecorator('lyra_admin.list_renderer.abstract'))
+        $container->setDefinition(sprintf('lyra_admin.%s.grid', $model), new DefinitionDecorator('lyra_admin.grid.abstract'))
             ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
             ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.security_manager', $model)))
             ->addMethodCall('setModelName', array($model))
@@ -595,7 +595,7 @@ class LyraAdminExtension extends Extension
     private function updateServiceDefinitions(ContainerBuilder $container)
     {
         foreach ($this->config['models'] as $model => $options) {
-            $container->getDefinition(sprintf('lyra_admin.%s.list_renderer', $model))
+            $container->getDefinition(sprintf('lyra_admin.%s.grid', $model))
                 ->addMethodCall('setColumns', array($options['list']['columns']));
 
             $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model))

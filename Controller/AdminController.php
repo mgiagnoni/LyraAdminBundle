@@ -26,7 +26,7 @@ class AdminController extends ContainerAware
      */
     public function indexAction()
     {
-        $list = $this->getListRenderer();
+        $list = $this->getGrid();
         // Initializes list persistent states (page, sort, criteria)
         $list->getState()->initFromRequest($this->getRequest());
 
@@ -204,15 +204,15 @@ class AdminController extends ContainerAware
     }
 
     /**
-     * Gets a list renderer service.
+     * Gets a grid instance configured for a given model.
      *
-     * @param string $name model name
+     * @param null|string $name model name, if null model name is taken from Request
      *
-     * @return \Lyra\AdminBundle\Renderer\ListRenderer
+     * @return \Lyra\AdminBundle\Grid\Grid
      */
-    public function getListRenderer($name = null)
+    public function getGrid($name = null)
     {
-        return $this->container->get(sprintf('lyra_admin.%s.list_renderer', $name ?: $this->getModelName()));
+        return $this->container->get(sprintf('lyra_admin.%s.grid', $name ?: $this->getModelName()));
     }
 
     /**

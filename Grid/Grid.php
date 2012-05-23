@@ -9,7 +9,7 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Grid;
 
 use Lyra\AdminBundle\Pager\PagerInterface;
 use Lyra\AdminBundle\UserState\UserStateInterface;
@@ -17,9 +17,12 @@ use Lyra\AdminBundle\Action\ActionCollectionInterface;
 use Lyra\AdminBundle\Security\SecurityManagerInterface;
 
 /**
- * List renderer class.
+ * Grid.
+ *
+ * Displays a list of records in a grid with sortable columns
+ * and pagination links.
  */
-class ListRenderer implements ListRendererInterface
+class Grid implements GridInterface
 {
     /**
      * @var \Lyra\AdminBundle\Pager\PagerInterface
