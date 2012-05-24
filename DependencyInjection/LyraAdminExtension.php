@@ -539,7 +539,7 @@ class LyraAdminExtension extends Extension
     {
         $this->createCollectionDefinition($model, 'form_actions', $options['actions'], $container);
 
-        $container->setDefinition(sprintf('lyra_admin.%s.form_renderer', $model), new DefinitionDecorator('lyra_admin.form_renderer.abstract'))
+        $container->setDefinition(sprintf('lyra_admin.%s.form', $model), new DefinitionDecorator('lyra_admin.form.abstract'))
             ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setTemplate', array($options['template']))
             ->addMethodCall('setTitle', array($options['new']['title'], $options['edit']['title']))
@@ -602,7 +602,7 @@ class LyraAdminExtension extends Extension
             $container->getDefinition(sprintf('lyra_admin.%s.filter', $model))
                 ->addMethodCall('setFields', array($options['filter']['fields']));
 
-            $container->getDefinition(sprintf('lyra_admin.%s.form_renderer', $model))
+            $container->getDefinition(sprintf('lyra_admin.%s.form', $model))
                 ->addMethodCall('setFields', array($options['fields']));
 
             $container->getDefinition(sprintf('lyra_admin.%s.show_renderer', $model))

@@ -9,11 +9,11 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Form;
 
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
-interface FormRendererInterface
+interface FormInterface
 {
     /**
      * Sets the model name.
@@ -121,13 +121,27 @@ interface FormRendererInterface
     function getDataClass();
 
     /**
+     * Sets the data/object associated to the form.
+     *
+     * @param mixed $data
+     */
+    function setData($data);
+
+    /**
+     * Gets the data/object associated to the form.
+     *
+     * @return mixed
+     */
+    function getData();
+
+    /**
      * Gets the form object.
      *
      * @param array $data data passed to the form
      *
      * @return \Symfony\Component\Form\Form
      */
-    function getForm($data);
+    function create();
 
     /**
      * Gets the form view object.

@@ -9,16 +9,16 @@
   * information are in the LICENSE file distributed with this source code.
   */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Form;
 
 use Symfony\Component\HttpFoundation\Request;
 use Lyra\AdminBundle\FormFactory\AdminFormFactory as FormFactory;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
 /**
- * Form renderer class.
+ * Form class.
  */
-class FormRenderer implements FormRendererInterface
+class Form implements FormInterface
 {
     /**
      * @var \Lyra\AdminBundle\FormFactory\AdminFormFactory
@@ -89,6 +89,8 @@ class FormRenderer implements FormRendererInterface
      * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
     protected $actions;
+
+    protected $data;
 
     public function __construct(FormFactory $factory)
     {
@@ -168,10 +170,20 @@ class FormRenderer implements FormRendererInterface
         return $this->dataClass;
     }
 
-    public function getForm($data = null)
+    public function setData($data)
+    {
+        $this->data = $data;
+    }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    public function create()
     {
         if (null === $this->form) {
-            $this->form = $this->createForm($data);
+            $this->form = $this->createForm();
         }
 
         return $this->form;
@@ -253,7 +265,21 @@ class FormRenderer implements FormRendererInterface
         return false;
     }
 
-    protected function createForm($data = null)
+    public function handleRequest($request)
+    {
+        $form = $this->create();
+
+        if ('POST' == $request->getMethod()) {
+            $form->bindRequest($request);
+            if ($form->isValid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function createForm()
     {
         $fields = $this->getFields();
         $existing = array();
@@ -273,7 +299,7 @@ class FormRenderer implements FormRendererInterface
         $typeClass = $this->class;
         $type = new $typeClass($this->getModelName(), $fields);
 
-        return $this->factory->createForm($type, $this->getModelName(), $data, array('data_class' => $this->dataClass));
+        return $this->factory->createForm($type, $this->getModelName(), $this->data, array('data_class' => $this->dataClass));
     }
 
     protected function createFormView()

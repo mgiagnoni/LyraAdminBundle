@@ -13,6 +13,7 @@ namespace Lyra\AdminBundle\Controller;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Lyra\AdminBundle\Form\FormInterface;
 
 /**
  * Base controller to manage CRUD actions.
@@ -46,15 +47,14 @@ class AdminController extends ContainerAware
     public function newAction()
     {
         $this->getSecurityManager()->allowOr403('new');
-        $object = $this->getModelManager()->create();
-        $form = $this->getFormRenderer()->getForm($object);
 
-        $request = $this->getRequest();
-        if ('POST' == $request->getMethod()) {
-            $form->bindRequest($request);
-            if ($form->isValid() && $this->getModelManager()->save($object)) {
-                return $this->getRedirectToListResponse();
-            }
+        $object = $this->getModelManager()->create();
+        $form = $this->getForm($object);
+
+        if ($form->handleRequest($this->getRequest())) {
+            $this->getModelManager()->save($object);
+
+            return $this->getRedirectToListResponse();
         }
 
         return $this->getRenderFormResponse($form);
@@ -70,15 +70,14 @@ class AdminController extends ContainerAware
     public function editAction($id)
     {
         $this->getSecurityManager()->allowOr403('edit');
-        $object = $this->getModelManager()->find($id);
-        $form = $this->getFormRenderer()->getForm($object);
 
-        $request = $this->getRequest();
-        if ('POST' == $request->getMethod()) {
-            $form->bindRequest($request);
-            if ($form->isValid() && $this->getModelManager()->save($object)) {
-                return $this->getRedirectToListResponse();
-            }
+        $object = $this->getModelManager()->find($id);
+        $form = $this->getForm($object);
+
+        if ($form->handleRequest($this->getRequest())) {
+            $this->getModelManager()->save($object);
+
+            return $this->getRedirectToListResponse();
         }
 
         return $this->getRenderFormResponse($form);
@@ -228,18 +227,19 @@ class AdminController extends ContainerAware
     }
 
     /**
-     * Gets a form renderer service.
+     * Gets an admin form configured for a given model.
      *
      * @param string $name model name
      *
-     * @return \Lyra\AdminBundle\Renderer\FormRenderer
+     * @return \Lyra\AdminBundle\Form\Form
      */
-    public function getFormRenderer($name = null)
+    public function getForm($data = null, $name = null)
     {
-        $renderer = $this->container->get(sprintf('lyra_admin.%s.form_renderer', $name ?: $this->getModelName()));
-        $renderer->setAction($this->getRequest()->get('lyra_admin_action'));
+        $form = $this->container->get(sprintf('lyra_admin.%s.form', $name ?: $this->getModelName()));
+        $form->setAction($this->getRequest()->get('lyra_admin_action'));
+        $form->setData($data);
 
-        return $renderer;
+        return $form;
     }
 
     /**
@@ -301,18 +301,15 @@ class AdminController extends ContainerAware
     /**
      * Returns the response to render the form.
      *
-     * @param \Symfony\Component\Form\Form $form
+     * @param \Lyra\AdminBundle\Form\FormInterface $form
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function getRenderFormResponse($form)
+    protected function getRenderFormResponse(FormInterface $form)
     {
-        $object = $form->getData();
-        $form = $this->getFormRenderer();
-
         return $this->container->get('templating')
             ->renderResponse($form->getTemplate(), array(
                 'form' => $form,
-                'object' => $object
+                'object' => $form->getData()
             ));
     }
 
