@@ -253,64 +253,6 @@ class Grid implements GridInterface
         return $this->sort;
     }
 
-    public function getColValue($colName, $object)
-    {
-        $methods = $this->getColOption($colName, 'get_methods');
-
-        foreach ($methods as $method) {
-            $value = $object->$method();
-            if (is_object($value)) {
-                $object = $value;
-            }
-        }
-
-        $function = $this->getColOption($colName, 'format_function');
-        $format = $this->getColOption($colName, 'format');
-        $type = $this->getColOption($colName, 'type');
-
-        if ($function) {
-            $value = call_user_func($function, $value, $format, $object);
-        } else if(null !== $value && $format) {
-            if ('date' == $type || 'datetime' == $type) {
-                $value = $value->format($format);
-            } else {
-                $value = sprintf($format, $value);
-            }
-        }
-
-        return $value;
-    }
-
-    public function hasBooleanActions($colName)
-    {
-        return 'boolean' == $this->getColOption($colName, 'type') && $this->getColOption($colName, 'boolean_actions');
-    }
-
-    public function getBooleanIcon($colName, $object)
-    {
-        return $this->getColValue($colName, $object) ? 'ui-icon-circle-check' : 'ui-icon-circle-close';
-    }
-
-    public function getBooleanText($colName, $object)
-    {
-        // TODO: make text configurable
-        return $this->getColValue($colName, $object) ? 'on' : 'off';
-    }
-
-    public function getColFormat($colName)
-    {
-        return $this->getColOption($colName,'format');
-    }
-
-    public function getColOption($colName, $key)
-    {
-        if (!array_key_exists($key, $this->columns[$colName])) {
-           throw new \InvalidArgumentException(sprintf('Column option %s does not exist', $key));
-        }
-
-        return $this->columns[$colName][$key];
-    }
-
     protected function filterAllowedActions($actions)
     {
         $allowed = array();
