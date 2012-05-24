@@ -565,7 +565,7 @@ class LyraAdminExtension extends Extension
 
         $this->createCollectionDefinition($model, 'filter_actions', $options['actions'], $container);
 
-        $container->setDefinition(sprintf('lyra_admin.%s.filter_renderer', $model), new DefinitionDecorator('lyra_admin.filter_renderer.abstract'))
+        $container->setDefinition(sprintf('lyra_admin.%s.filter', $model), new DefinitionDecorator('lyra_admin.filter.abstract'))
             ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.model_manager', $model)))
             ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setTitle', array($options['title']))
@@ -599,7 +599,7 @@ class LyraAdminExtension extends Extension
             $container->getDefinition(sprintf('lyra_admin.%s.grid_columns', $model))
                 ->setArguments(array($options['list']['columns']));
 
-            $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model))
+            $container->getDefinition(sprintf('lyra_admin.%s.filter', $model))
                 ->addMethodCall('setFields', array($options['filter']['fields']));
 
             $container->getDefinition(sprintf('lyra_admin.%s.form_renderer', $model))

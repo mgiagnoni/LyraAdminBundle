@@ -9,12 +9,12 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Filter;
 
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
 
-interface FilterRendererInterface
+interface FilterInterface
 {
     /**
      * Sets the model name.

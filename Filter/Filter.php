@@ -9,7 +9,7 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Filter;
 
 use Lyra\AdminBundle\FormFactory\AdminFormFactory as FormFactory;
 use Lyra\AdminBundle\Form\AdminFilterFormType;
@@ -20,7 +20,7 @@ use Lyra\AdminBundle\Action\ActionCollectionInterface;
 /**
  * Filter renderer.
  */
-class FilterRenderer implements FilterRendererInterface
+class Filter implements FilterInterface
 {
     /**
      * @var \Lyra\AdminBundle\FormFactory\AdminFormFactory

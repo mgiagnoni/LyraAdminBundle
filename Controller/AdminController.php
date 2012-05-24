@@ -33,7 +33,7 @@ class AdminController extends ContainerAware
         return $this->container->get('templating')
             ->renderResponse($grid->getTemplate(), array(
                 'grid' => $grid,
-                'filter' => $this->getFilterRenderer(),
+                'filter' => $this->getFilter(),
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
             ));
     }
@@ -168,7 +168,7 @@ class AdminController extends ContainerAware
                 }
                 break;
             case 'reset':
-                $this->getFilterRenderer()->resetCriteria();
+                $this->getFilter()->resetCriteria();
                 break;
             case 'criteria':
                 $response = $this->showFilterCriteria();
@@ -261,9 +261,9 @@ class AdminController extends ContainerAware
      *
      * @return \Lyra\AdminBundle\Renderer\FilterRenderer
      */
-    public function getFilterRenderer($name = null)
+    public function getFilter($name = null)
     {
-        return $this->container->get(sprintf('lyra_admin.%s.filter_renderer', $name ?: $this->getModelName()));
+        return $this->container->get(sprintf('lyra_admin.%s.filter', $name ?: $this->getModelName()));
     }
 
     /**
@@ -389,7 +389,7 @@ class AdminController extends ContainerAware
 
     protected function saveFilterCriteria()
     {
-        $filter = $this->getFilterRenderer();
+        $filter = $this->getFilter();
         $form = $filter->getForm();
         $form->bindRequest($this->getRequest());
 
@@ -400,7 +400,7 @@ class AdminController extends ContainerAware
     {
         return $this->container->get('templating')
             ->renderResponse('LyraAdminBundle:Filter:dialog.html.twig', array(
-                'filter' => $this->getFilterRenderer(),
+                'filter' => $this->getFilter(),
             ));
     }
 

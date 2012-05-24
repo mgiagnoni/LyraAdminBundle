@@ -9,7 +9,7 @@
         <parameter key="lyra_admin.configuration.class">Lyra\AdminBundle\Configuration\AdminConfiguration</parameter>
         <parameter key="lyra_admin.grid.class">Lyra\AdminBundle\Grid\Grid</parameter>
         <parameter key="lyra_admin.form_renderer.class">Lyra\AdminBundle\Renderer\FormRenderer</parameter>
-        <parameter key="lyra_admin.filter_renderer.class">Lyra\AdminBundle\Renderer\FilterRenderer</parameter>
+        <parameter key="lyra_admin.filter.class">Lyra\AdminBundle\Filter\Filter</parameter>
         <parameter key="lyra_admin.show_renderer.class">Lyra\AdminBundle\Renderer\ShowRenderer</parameter>
         <parameter key="lyra_admin.pager.class">Lyra\AdminBundle\Pager\Pager</parameter>
         <parameter key="lyra_admin.query_builder.class">Lyra\AdminBundle\QueryBuilder\QueryBuilder</parameter>
@@ -37,7 +37,7 @@
             <argument type="service" id="lyra_admin.form_factory" />
         </service>
 
-        <service id="lyra_admin.filter_renderer.abstract" class="%lyra_admin.filter_renderer.class%" abstract="true">
+        <service id="lyra_admin.filter.abstract" class="%lyra_admin.filter.class%" abstract="true">
             <argument type="service" id="lyra_admin.form_factory" />
             <argument /> <!-- Model manager -->
         </service>
