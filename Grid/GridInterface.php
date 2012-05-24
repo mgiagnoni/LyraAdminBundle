@@ -103,6 +103,15 @@ interface GridInterface
     function getColumns();
 
     /**
+     * Gets a list column.
+     *
+     * @param string $columnName
+     *
+     * @return \Lyra\AdminBundle\Grid\ColumnInterface
+     */
+    function getColumn($columnName);
+
+    /**
      * Sets list batch actions names.
      *
      * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions

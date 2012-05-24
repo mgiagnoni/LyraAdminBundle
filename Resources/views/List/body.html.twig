@@ -1,21 +1,21 @@
-{% for object in list.pager.results %}
+{% for object in grid.pager.results %}
     <tr>
-        {% if list.hasBatchActions %}
+        {% if grid.hasBatchActions %}
             <td>
                 {% block table_data_batch %}
                     <input class="batch-select" type="checkbox" name="ids[]" value="{{ object.id }}" />
                 {% endblock %}
             </td>
         {% endif %}
-        {% for col in list.columns %}
-            <td {{ col.class|raw }}>
+        {% for col in grid.columns %}
+            <td class="{{ col.type }}">
                 {% block table_data_field %}
                     {% if col.type == 'boolean' %}
-                        <input class="button icon-only {{ list.booleanIcon(col.name, object) }}" type="submit" name="action[_boolean][{{ list.colValue(col.name, object) ? '0' : '1' }}][{{ col.name }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~list.booleanText(col.name, object))|trans({}, 'LyraAdminBundle') }}" />
+                        <input class="button icon-only {{ col.value(object) ? 'ui-icon-circle-check' : 'ui-icon-circle-close' }}" type="submit" name="action[_boolean][{{ col.value(object) ? '0' : '1' }}][{{ col.name }}][{{ object.id }}]" value="{{ ('list.action.boolean.'~(col.value(object) ? 'on' : 'off'))|trans({}, 'LyraAdminBundle') }}" />
                     {% elseif col.type == 'template' %}
                         {% include col.template %}
                     {% else %}
-                        {{ list.colValue(col.name, object) }}
+                        {{ col.value(object) }}
                     {% endif %}
                 {% endblock %}
             </td>
@@ -23,7 +23,7 @@
         {# Object actions #}
         <td>
             {% block table_object_actions %}
-                {% for action in list.objectActions %}
+                {% for action in grid.objectActions %}
                     {% include action.template|default('LyraAdminBundle:List:action.html.twig') %}
                 {% endfor %}
             {% endblock %}
@@ -31,6 +31,6 @@
     </tr>
 {% else %}
     <tr>
-        <td class="no-records" colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">{{ 'list.message.no_records'|trans({}, 'LyraAdminBundle') }}</td>
+        <td class="no-records" colspan="{{ grid.columns|length + (grid.hasBatchActions ? 1 : 0) + 1 }}">{{ 'list.message.no_records'|trans({}, 'LyraAdminBundle') }}</td>
     </tr>
 {% endfor %}

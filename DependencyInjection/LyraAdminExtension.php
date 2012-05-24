@@ -249,11 +249,6 @@ class LyraAdminExtension extends Extension
                     $columns[$key]['format'] = 'j/M/Y';
                 }
 
-                $columns[$key]['class'] = 'class="'.$type.'"';;
-                $class = $columns[$key]['sortable'] ? 'sortable' : '';
-                $class .= ' col-'.$key.' '.$type;
-                $columns[$key]['th_class'] = 'class="'.trim($class).'"';
-
                 $getMethods = array();
                 $colFields = explode('.', $columns[$key]['field']);
                 $field = array_shift($colFields);
@@ -516,6 +511,10 @@ class LyraAdminExtension extends Extension
             ->setPublic(false);
         $container->setDefinition(sprintf('lyra_admin.%s.security_manager', $model), $manager);
 
+        $columns = new DefinitionDecorator('lyra_admin.column_collection');
+        $columns->setPublic(false);
+        $container->setDefinition(sprintf('lyra_admin.%s.grid_columns', $model), $columns);
+
         $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
         foreach ($types as $type) {
             $this->createCollectionDefinition($model, $type, $options[$type], $container);
@@ -529,6 +528,7 @@ class LyraAdminExtension extends Extension
             ->addMethodCall('setTitle', array($options['title']))
             ->addMethodCall('setTemplate', array($options['template']))
             ->addMethodCall('setTransDomain', array($options['trans_domain']))
+            ->addMethodCall('setColumns', array(new Reference(sprintf('lyra_admin.%s.grid_columns', $model))))
             ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.other_actions.collection', $model))))
             ->addMethodCall('setListActions', array(new Reference(sprintf('lyra_admin.%s.list_actions.collection', $model))))
             ->addMethodCall('setObjectActions', array(new Reference(sprintf('lyra_admin.%s.object_actions.collection', $model))))
@@ -595,8 +595,9 @@ class LyraAdminExtension extends Extension
     private function updateServiceDefinitions(ContainerBuilder $container)
     {
         foreach ($this->config['models'] as $model => $options) {
-            $container->getDefinition(sprintf('lyra_admin.%s.grid', $model))
-                ->addMethodCall('setColumns', array($options['list']['columns']));
+
+            $container->getDefinition(sprintf('lyra_admin.%s.grid_columns', $model))
+                ->setArguments(array($options['list']['columns']));
 
             $container->getDefinition(sprintf('lyra_admin.%s.filter_renderer', $model))
                 ->addMethodCall('setFields', array($options['filter']['fields']));

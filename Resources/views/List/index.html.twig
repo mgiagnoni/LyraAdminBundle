@@ -2,12 +2,12 @@
 {% block content %}
 <div id="ly-list-wrapper">
     {% block list_title %}
-        <h1>{{ list.title|trans({}, list.transDomain) }}</h1>
+        <h1>{{ grid.title|trans({}, grid.transDomain) }}</h1>
     {% endblock %}
     {% include 'LyraAdminBundle:List:list_actions.html.twig' %}
-        <form action="{{ path(list.actions.object.routeName) }}" method="post">
+        <form action="{{ path(grid.actions.object.routeName) }}" method="post">
         {% include 'LyraAdminBundle:List:flash_messages.html.twig' %}
-        <table class="ly-list {{ list.modelName }}">
+        <table class="ly-list {{ grid.modelName }}">
             <thead>
                 {% block list_header %}{% include 'LyraAdminBundle:List:header.html.twig' %}{% endblock %}
             </thead>
@@ -30,7 +30,7 @@
 {% block stylesheets %}
 {{ parent() }}
 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/list.css') }}" />
-{% if list.hasBatchActions %}
+{% if grid.hasBatchActions %}
     <link rel="stylesheet" type="text/css" href="{{ asset('bundles/lyraadmin/css/lyra_select.css') }}" />
 {% endif %}
 {% if filter.hasWidget('datetime_picker') %}
@@ -40,7 +40,7 @@
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/list.js') }}"></script>
-{% if list.hasBatchActions %}
+{% if grid.hasBatchActions %}
     <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_select.js') }}"></script>
 {% endif %}
 {% include 'LyraAdminBundle:Admin:datepicker_js.html.twig' with { 'renderer' : filter } %}

@@ -8,7 +8,7 @@
 {% endblock %}
 {% block list_actions %}
     <div class="list-actions">
-    {% for action in list.listActions %}
+    {% for action in grid.listActions %}
         {% include action.template|default('LyraAdminBundle:List:action.html.twig') %}
     {% endfor %}
     </div>

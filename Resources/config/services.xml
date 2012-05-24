@@ -16,6 +16,7 @@
         <parameter key="lyra_admin.user_state.class">Lyra\AdminBundle\UserState\UserState</parameter>
         <parameter key="lyra_admin.action_collection.class">Lyra\AdminBundle\Action\ActionCollection</parameter>
         <parameter key="lyra_admin.security_manager.class">Lyra\AdminBundle\Security\SecurityManager</parameter>
+        <parameter key="lyra_admin.column_collection.class">Lyra\AdminBundle\Grid\ColumnCollection</parameter>
     </parameters>
 
     <services>
@@ -29,6 +30,8 @@
             <argument /> <!-- Pager -->
             <argument /> <!-- Security manager -->
         </service>
+
+        <service id="lyra_admin.column_collection" class="%lyra_admin.column_collection.class%" />
 
         <service id="lyra_admin.form_renderer.abstract" class="%lyra_admin.form_renderer.class%" abstract="true">
             <argument type="service" id="lyra_admin.form_factory" />

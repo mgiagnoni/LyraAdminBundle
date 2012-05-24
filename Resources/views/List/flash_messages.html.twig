@@ -2,7 +2,7 @@
     <div class="flash-messages">
         {% for key, message in app.session.getFlashes() %}
         <div class="{{ key }}">
-            {{ message|trans({}, list.transDomain) }}
+            {{ message|trans({}, grid.transDomain) }}
         </div>
         {% endfor %}
     </div>

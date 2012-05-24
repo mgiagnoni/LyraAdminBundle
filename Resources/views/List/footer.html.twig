@@ -1,7 +1,7 @@
 {% from 'LyraAdminBundle:Admin:macros.html.twig' import page_link %}
-{% set pager = list.pager %}
+{% set pager = grid.pager %}
 <tr>
-    <td colspan="{{ list.columns|length + (list.hasBatchActions ? 1 : 0) + 1 }}">
+    <td colspan="{{ grid.columns|length + (grid.hasBatchActions ? 1 : 0) + 1 }}">
         <span class="pagination">      
             <span class="info">
             {% if pager.total > 0 %}
@@ -16,7 +16,7 @@
             {% endif %}
             </span>
             {% if pager.nbPages > 1 %}
-                {% set route = list.actions.index.routeName  %}
+                {% set route = grid.actions.index.routeName  %}
                 {{ page_link(pager, 'first', 1, route) }}
                 {{ page_link(pager, 'prev', pager.prevPage, route) }}
                 {% for p in pager.pageLinks %}

@@ -159,9 +159,12 @@ class Grid implements GridInterface
 
     public function getColumns()
     {
-        $this->initColumns();
-
         return $this->columns;
+    }
+
+    public function getColumn($columnName)
+    {
+        return $this->columns[$columnName];
     }
 
     public function setBatchActions(ActionCollectionInterface $actions)
@@ -306,18 +309,6 @@ class Grid implements GridInterface
         }
 
         return $this->columns[$colName][$key];
-    }
-
-    protected function initColumns()
-    {
-        $sort = $this->getSort();
-        $sorted = $sort['column'];
-
-        if ($sorted && isset($this->columns[$sorted])) {
-            $this->columns[$sorted]['sorted'] = true;
-            $this->columns[$sorted]['sort'] = $sort['order'];
-            $this->columns[$sorted]['th_class'] = str_replace('sortable', 'sorted-'.$sort['order'], $this->columns[$sorted]['th_class']);
-        }
     }
 
     protected function filterAllowedActions($actions)

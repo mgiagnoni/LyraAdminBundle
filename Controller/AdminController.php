@@ -26,13 +26,13 @@ class AdminController extends ContainerAware
      */
     public function indexAction()
     {
-        $list = $this->getGrid();
-        // Initializes list persistent states (page, sort, criteria)
-        $list->getState()->initFromRequest($this->getRequest());
+        $grid = $this->getGrid();
+        // Initializes grid persistent states (page, sort, criteria)
+        $grid->getState()->initFromRequest($this->getRequest());
 
         return $this->container->get('templating')
-            ->renderResponse($list->getTemplate(), array(
-                'list' => $list,
+            ->renderResponse($grid->getTemplate(), array(
+                'grid' => $grid,
                 'filter' => $this->getFilterRenderer(),
                 'csrf' => $this->container->get('form.csrf_provider')->generateCsrfToken('list'),
             ));
@@ -293,10 +293,8 @@ class AdminController extends ContainerAware
      */
     protected function getRedirectToListResponse()
     {
-        $renderer = $this->getListrenderer();
-
         return new RedirectResponse(
-            $this->container->get('router')->generate($renderer->getActions()->get('index')->getRouteName())
+            $this->container->get('router')->generate($this->getActions()->get('index')->getRouteName())
         );
     }
 
@@ -370,7 +368,7 @@ class AdminController extends ContainerAware
 
     protected function executeBoolean($id, $colName, $colValue)
     {
-        if ($this->getListRenderer()->hasBooleanActions($colName)) {
+        if ($this->getGrid()->getColumn($colName)->hasBooleanActions()) {
             if ($this->container->get('form.csrf_provider')->isCsrfTokenValid('list', $this->getRequest()->get('_token'))) {
                 $object = $this->getModelManager()->find($id);
                 $method = 'set'.ucfirst($colName);
