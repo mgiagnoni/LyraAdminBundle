@@ -9,7 +9,7 @@
   * information are in the LICENSE file distributed with this source code.
   */
 
-namespace Lyra\AdminBundle\Form;
+namespace Lyra\AdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilder;

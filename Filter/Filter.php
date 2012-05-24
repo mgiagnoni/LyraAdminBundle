@@ -12,7 +12,7 @@
 namespace Lyra\AdminBundle\Filter;
 
 use Lyra\AdminBundle\FormFactory\AdminFormFactory as FormFactory;
-use Lyra\AdminBundle\Form\AdminFilterFormType;
+use Lyra\AdminBundle\Form\Type\AdminFilterFormType;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Model\ModelManagerInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;

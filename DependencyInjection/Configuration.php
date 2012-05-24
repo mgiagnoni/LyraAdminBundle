@@ -349,7 +349,7 @@ class Configuration implements ConfigurationInterface
                 ->addDefaultsIfNotSet()
                  ->children()
                     ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Form:form.html.twig')->end()
-                    ->scalarNode('class')->cannotBeEmpty()->defaultValue('Lyra\AdminBundle\Form\AdminFormType')->end()
+                    ->scalarNode('class')->cannotBeEmpty()->defaultValue('Lyra\AdminBundle\Form\Type\AdminFormType')->end()
                 ->end();
     }
 

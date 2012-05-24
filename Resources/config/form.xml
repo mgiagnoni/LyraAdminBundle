@@ -5,13 +5,13 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="form.type.date_range" class="Lyra\AdminBundle\Form\DateRangeType">
+        <service id="form.type.date_range" class="Lyra\AdminBundle\Form\Type\DateRangeType">
             <tag name="form.type" alias="daterange" />
         </service>
-        <service id="form.type.date_picker" class="Lyra\AdminBundle\Form\DatePickerType">
+        <service id="form.type.date_picker" class="Lyra\AdminBundle\Form\Type\DatePickerType">
             <tag name="form.type" alias="date_picker" />
         </service>
-        <service id="form.type.datetime_picker" class="Lyra\AdminBundle\Form\DateTimePickerType">
+        <service id="form.type.datetime_picker" class="Lyra\AdminBundle\Form\Type\DateTimePickerType">
             <tag name="form.type" alias="datetime_picker" />
         </service>
     </services>
