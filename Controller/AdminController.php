@@ -92,7 +92,7 @@ class AdminController extends ContainerAware
      */
     public function showAction($id)
     {
-        $renderer = $this->getShowRenderer();
+        $renderer = $this->getViewer();
         $object = $this->getModelManager()->find($id);
         $renderer->setObject($object);
 
@@ -215,15 +215,15 @@ class AdminController extends ContainerAware
     }
 
     /**
-     * Gets a show renderer service.
+     * Gets a viewer instance configured for a given model.
      *
      * @param string $name model name
      *
-     * @return \Lyra\AdminBundle\Renderer\ShowRenderer
+     * @return \Lyra\AdminBundle\Viewer\Viewer
      */
-    public function getShowRenderer($name = null)
+    public function getViewer($name = null)
     {
-        return $this->container->get(sprintf('lyra_admin.%s.show_renderer', $name ?: $this->getModelName()));
+        return $this->container->get(sprintf('lyra_admin.%s.viewer', $name ?: $this->getModelName()));
     }
 
     /**

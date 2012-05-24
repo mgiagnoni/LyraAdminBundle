@@ -9,9 +9,9 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Viewer;
 
-interface ShowRendererInterface
+interface ViewerInterface
 {
     /**
      * Sets the model name.

@@ -452,7 +452,7 @@ class LyraAdminExtension extends Extension
             $this->createListDefinition($model, $options['list'], $container);
             $this->createFormDefinition($model, $options['form'], $container);
             $this->createFilterDefinition($model, $options['filter'], $container);
-            $this->createShowDefinition($model, $options['show'], $container);
+            $this->createViewerDefinition($model, $options['show'], $container);
         }
     }
 
@@ -574,10 +574,9 @@ class LyraAdminExtension extends Extension
             ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.filter_actions.collection', $model))));
     }
 
-    private function createShowDefinition($model, $options, ContainerBuilder $container)
+    private function createViewerDefinition($model, $options, ContainerBuilder $container)
     {
-        $container->setDefinition(sprintf('lyra_admin.%s.show_renderer', $model), new DefinitionDecorator('lyra_admin.show_renderer.abstract'))
-            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.configuration', $model))))
+        $container->setDefinition(sprintf('lyra_admin.%s.viewer', $model), new DefinitionDecorator('lyra_admin.viewer.abstract'))
             ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setTitle', array($options['title']));
     }
@@ -605,7 +604,7 @@ class LyraAdminExtension extends Extension
             $container->getDefinition(sprintf('lyra_admin.%s.form', $model))
                 ->addMethodCall('setFields', array($options['fields']));
 
-            $container->getDefinition(sprintf('lyra_admin.%s.show_renderer', $model))
+            $container->getDefinition(sprintf('lyra_admin.%s.viewer', $model))
                 ->addMethodCall('setFields', array($options['show']['fields']));
         }
 

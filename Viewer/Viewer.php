@@ -9,14 +9,14 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-namespace Lyra\AdminBundle\Renderer;
+namespace Lyra\AdminBundle\Viewer;
 
 /**
- * Show renderer class.
+ * Object viewer.
  *
  * Displays a single record in a dialog window.
  */
-class ShowRenderer implements ShowRendererInterface
+class Viewer implements ViewerInterface
 {
     /**
      * @var string
