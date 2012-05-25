@@ -493,15 +493,13 @@ class LyraAdminExtension extends Extension
 
         $queryBuilder = new DefinitionDecorator('lyra_admin.query_builder');
         $queryBuilder
-            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.model_manager', $model)), new Reference(sprintf('lyra_admin.%s.configuration', $model))))
-            ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
+            ->setArguments(array(new Reference(sprintf('lyra_admin.%s.model_manager', $model))))
             ->setPublic(false);
         $container->setDefinition(sprintf('lyra_admin.%s.query_builder', $model), $queryBuilder);
 
         $pager = new DefinitionDecorator('lyra_admin.pager');
         $pager
             ->addMethodCall('setMaxRows', array($options['max_page_rows']))
-            ->addMethodCall('setQueryBuilder', array(new Reference(sprintf('lyra_admin.%s.query_builder', $model))))
             ->setPublic(false);
         $container->setDefinition(sprintf('lyra_admin.%s.pager', $model), $pager);
 
@@ -522,12 +520,14 @@ class LyraAdminExtension extends Extension
 
         $container->setDefinition(sprintf('lyra_admin.%s.grid', $model), new DefinitionDecorator('lyra_admin.grid.abstract'))
             ->replaceArgument(0, new Reference(sprintf('lyra_admin.%s.pager', $model)))
-            ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.security_manager', $model)))
+            ->replaceArgument(1, new Reference(sprintf('lyra_admin.%s.query_builder', $model)))
+            ->replaceArgument(2, new Reference(sprintf('lyra_admin.%s.security_manager', $model)))
             ->addMethodCall('setModelName', array($model))
             ->addMethodCall('setState', array(new Reference(sprintf('lyra_admin.%s.user_state', $model))))
             ->addMethodCall('setTitle', array($options['title']))
             ->addMethodCall('setTemplate', array($options['template']))
             ->addMethodCall('setTransDomain', array($options['trans_domain']))
+            ->addMethodCall('setDefaultSort', array($options['default_sort']))
             ->addMethodCall('setColumns', array(new Reference(sprintf('lyra_admin.%s.grid_columns', $model))))
             ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.other_actions.collection', $model))))
             ->addMethodCall('setListActions', array(new Reference(sprintf('lyra_admin.%s.list_actions.collection', $model))))
@@ -602,6 +602,9 @@ class LyraAdminExtension extends Extension
                 ->addMethodCall('setFields', array($options['filter']['fields']));
 
             $container->getDefinition(sprintf('lyra_admin.%s.form', $model))
+                ->addMethodCall('setFields', array($options['fields']));
+
+            $container->getDefinition(sprintf('lyra_admin.%s.query_builder', $model))
                 ->addMethodCall('setFields', array($options['fields']));
 
             $container->getDefinition(sprintf('lyra_admin.%s.viewer', $model))

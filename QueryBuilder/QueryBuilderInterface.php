@@ -16,20 +16,6 @@ use Lyra\AdminBundle\UserState\UserStateInterface;
 interface QueryBuilderInterface
 {
     /**
-     * Sets user state service.
-     *
-     * @param \Lyra\AdminBundle\UserState\UserStateInterface $state
-     */
-    function setState(UserStateInterface $state);
-
-    /**
-     * Gets user state service.
-     *
-     * @return \Lyra\AdminBundle\UserState\UserStateInterface
-     */
-    function getState();
-
-    /**
      * Sets the base query builder.
      *
      * @param mixed $queryBuilder
@@ -44,9 +30,52 @@ interface QueryBuilderInterface
     function getBaseQueryBuilder();
 
     /**
+     * Sets sort field / sort order.
+     *
+     * @param array $sort array('field' => $fieldName, 'order' => $sortOrder)
+     */
+    function setSort(array $sort);
+
+    /**
+     * Gets sort field / order.
+     *
+     * @return array
+     */
+    function getSort();
+
+    /**
+     * Sets search criteria.
+     *
+     * @param array $criteria
+     */
+    function setCriteria(array $criteria);
+
+    /**
+     * Gets search criteria.
+     *
+     * @return array
+     */
+    function getCriteria();
+
+    /**
+     * Sets fields options.
+     *
+     * @param array $fields
+     */
+    function setFields(array $fields);
+
+    /**
+     * Gets fields options.
+     *
+     * @return array
+     */
+    function getFields();
+
+    /**
      * Returns a query builder to extract an ordered list of records
      * filtered by given search criteria.
      *
+     * @return mixed
      */
     function buildQuery();
 }

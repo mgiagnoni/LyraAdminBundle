@@ -11,9 +11,7 @@
 
 namespace Lyra\AdminBundle\QueryBuilder;
 
-use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Lyra\AdminBundle\Model\ModelManagerInterface;
-use Lyra\AdminBundle\UserState\UserStateInterface;
 
 /**
  * Query builder
@@ -21,34 +19,19 @@ use Lyra\AdminBundle\UserState\UserStateInterface;
 class QueryBuilder implements QueryBuilderInterface
 {
     /**
-     * @var \Lyra\AdminBundle\Configuration\AdminConfigurationInterface
-     */
-    protected $configuration;
-
-    /**
-     * @var \Lyra\AdminBundle\UserState\UserStateInterface
-     */
-    protected $state;
-
-    /**
      * @var mixed
      */
     protected $baseQueryBuilder;
 
-    public function __construct(ModelManagerInterface $manager, AdminConfigurationInterface $configuration)
+    protected $sort;
+
+    protected $criteria;
+
+    protected $fields;
+
+    public function __construct(ModelManagerInterface $manager)
     {
-        $this->configuration = $configuration;
         $this->setBaseQueryBuilder($manager->getBaseListQueryBuilder());
-    }
-
-    public function setState(UserStateInterface $state)
-    {
-        $this->state = $state;
-    }
-
-    public function getState()
-    {
-        return $this->state;
     }
 
     public function setBaseQueryBuilder($queryBuilder)
@@ -61,33 +44,48 @@ class QueryBuilder implements QueryBuilderInterface
         return $this->baseQueryBuilder;
     }
 
+    public function setSort(array $sort)
+    {
+        $this->sort = $sort;
+    }
+
+    public function getSort()
+    {
+        return $this->sort;
+    }
+
+    public function setCriteria(array $criteria)
+    {
+        $this->criteria = $criteria;
+    }
+
+    public function getCriteria()
+    {
+        return $this->criteria;
+    }
+
+    public function setFields(array $fields)
+    {
+        $this->fields = $fields;
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
+    }
+
     public function buildQuery()
     {
-        $sort = array(
-            'column' => $this->state->get('column'),
-            'order' => $this->state->get('order')
-        );
-
-        if (null !== $sort['column']) {
-            $sort['field'] = $this->configuration->getListColumnOption($sort['column'], 'field');
-        } else {
-            $default = $this->configuration->getListOption('default_sort');
-            $sort['field'] = $default['field'];
-        }
-
-        $criteria = $this->state->get('criteria');
-
         $qb = $this->getBaseQueryBuilder();
 
-        $this->addFilterCriteria($qb, $criteria);
-        $this->addSort($qb, $sort);
+        $this->addFilterCriteria($qb, $this->criteria);
+        $this->addSort($qb, $this->sort);
 
         return $qb;
     }
 
     protected function addFilterCriteria($qb, $criteria)
     {
-        $fields = $this->configuration->getOption('fields');
         $alias = $qb->getRootAlias();
 
         foreach ($criteria as $field => $value) {
@@ -95,8 +93,8 @@ class QueryBuilder implements QueryBuilderInterface
                 continue;
             }
 
-            if (isset($fields[$field])) {
-                switch ($fields[$field]['type']) {
+            if (isset($this->fields[$field])) {
+                switch ($this->fields[$field]['type']) {
                     case 'string':
                     case 'text':
                         $qb->andWhere(

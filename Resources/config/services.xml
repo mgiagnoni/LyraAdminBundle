@@ -28,6 +28,7 @@
 
         <service id="lyra_admin.grid.abstract" class="%lyra_admin.grid.class%" abstract="true">
             <argument /> <!-- Pager -->
+            <argument /> <!-- QueryBuilder -->
             <argument /> <!-- Security manager -->
         </service>
 

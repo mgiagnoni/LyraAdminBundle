@@ -14,6 +14,7 @@ namespace Lyra\AdminBundle\Grid;
 use Lyra\AdminBundle\Pager\PagerInterface;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
+use Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface;
 use Lyra\AdminBundle\Security\SecurityManagerInterface;
 
 /**
@@ -48,6 +49,11 @@ class Grid implements GridInterface
      * @var array
      */
     protected $sort;
+
+    /**
+     * @var array
+     */
+    protected $defaultSort;
 
     /**
      * @var string
@@ -89,9 +95,15 @@ class Grid implements GridInterface
      */
     protected $securityManager;
 
-    public function __construct(PagerInterface $pager, SecurityManagerInterface $securityManager)
+    /**
+     * @var \Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface
+     */
+    protected $queryBuilder;
+
+    public function __construct(PagerInterface $pager, QueryBuilderInterface $queryBuilder, SecurityManagerInterface $securityManager)
     {
         $this->pager = $pager;
+        $this->queryBuilder = $queryBuilder;
         $this->securityManager = $securityManager;
     }
 
@@ -147,9 +159,20 @@ class Grid implements GridInterface
 
     public function getPager()
     {
+        $sort = $this->getSort();
+        unset($sort['column']);
+
+        $this->queryBuilder->setSort($sort);
+        $this->queryBuilder->setCriteria($this->state->get('criteria'));
         $this->pager->setPage($this->state->get('page'));
+        $this->pager->setQueryBuilder($this->queryBuilder);
 
         return $this->pager;
+    }
+
+    public function getQueryBuilder()
+    {
+        return $this->queryBuilder;
     }
 
     public function setColumns($columns)
@@ -234,6 +257,16 @@ class Grid implements GridInterface
         return $this->actions;
     }
 
+    public function setDefaultSort(array $sort)
+    {
+        $this->defaultSort = $sort;
+    }
+
+    public function getDefaultSort()
+    {
+        return $this->defaultSort;
+    }
+
     public function setSort(array $sort)
     {
         $this->sort = $sort;
@@ -246,6 +279,12 @@ class Grid implements GridInterface
                 'column' => $this->state->get('column'),
                 'order' => $this->state->get('order')
             );
+
+            if (null !== $sort['column']) {
+                $sort['field'] = $this->getColumn($sort['column'])->getFieldName();
+            } else {
+                $sort['field'] = $this->defaultSort['field'];
+            }
 
             $this->sort = $sort;
         }
