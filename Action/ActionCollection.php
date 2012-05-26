@@ -19,7 +19,7 @@ class ActionCollection implements ActionCollectionInterface
     /**
      * @var array
      */
-    protected $actions;
+    protected $actions = array();
 
     public function __construct($options = array())
     {
