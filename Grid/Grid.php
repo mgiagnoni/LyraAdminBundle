@@ -14,6 +14,7 @@ namespace Lyra\AdminBundle\Grid;
 use Lyra\AdminBundle\Pager\PagerInterface;
 use Lyra\AdminBundle\UserState\UserStateInterface;
 use Lyra\AdminBundle\Action\ActionCollectionInterface;
+use Lyra\AdminBundle\Action\ActionCollection;
 use Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface;
 use Lyra\AdminBundle\Security\SecurityManagerInterface;
 
@@ -41,7 +42,7 @@ class Grid implements GridInterface
     protected $state;
 
     /**
-     * @var array
+     * @var \Lyra\AdminBundle\Grid\ColumnCollectionInterface
      */
     protected $columns;
 
@@ -175,7 +176,7 @@ class Grid implements GridInterface
         return $this->queryBuilder;
     }
 
-    public function setColumns($columns)
+    public function setColumns(ColumnCollectionInterface $columns)
     {
         $this->columns = $columns;
     }
@@ -244,7 +245,6 @@ class Grid implements GridInterface
         if ($this->listActions->has($actionName)) {
             return $this->listActions->get($actionName);
         }
-
     }
 
     public function setActions(ActionCollectionInterface $actions)
@@ -284,6 +284,7 @@ class Grid implements GridInterface
                 $sort['field'] = $this->getColumn($sort['column'])->getFieldName();
             } else {
                 $sort['field'] = $this->defaultSort['field'];
+                $sort['order'] = $this->defaultSort['order'];
             }
 
             $this->sort = $sort;
@@ -294,10 +295,10 @@ class Grid implements GridInterface
 
     protected function filterAllowedActions($actions)
     {
-        $allowed = array();
+        $allowed = new ActionCollection();
         foreach ($actions as $action) {
             if ($this->securityManager->isActionAllowed($action->getName())) {
-                $allowed[] = $action;
+                $allowed->add($action);
             }
         }
 

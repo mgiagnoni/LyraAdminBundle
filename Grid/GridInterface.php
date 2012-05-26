@@ -89,14 +89,14 @@ interface GridInterface
     function getTransDomain();
 
     /**
-     * Sets list columns configuration options.
+     * Sets list column collection.
      *
-     * @param array $columns
+     * @param \Lyra\AdminBundle\Grid\ColumnCollectionInterface $columns
      */
-    function setColumns($columns);
+    function setColumns(ColumnCollectionInterface $columns);
 
     /**
-     * Gets list columns configuration options.
+     * Gets list column collection.
      *
      * @return array
      */
