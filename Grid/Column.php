@@ -142,9 +142,10 @@ class Column implements ColumnInterface
     {
         foreach ($this->methods as $method) {
             $value = $object->$method();
-            if (is_object($value)) {
-                $object = $value;
+            if (!is_object($value)) {
+                break;
             }
+            $object = $value;
         }
 
         if ($this->formatFunction) {
