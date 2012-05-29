@@ -52,11 +52,9 @@ actions:
 EOF;
 
         $config = $this->getConfiguration($yaml);
-        $defaults = $this->getActionDefaults();
-        $defaults['edit']['icon'] = 'dummy';
-
         $options = $config->getParameter('lyra_admin.options');
-        $this->assertEquals($options['actions'], $defaults);
+
+        $this->assertEquals('dummy', $options['actions']['edit']['icon']);
     }
 
     public function testOverrideModelAction()
@@ -106,32 +104,39 @@ EOF;
     {
         return array(
             'index' => array(
+
                 'route_pattern' => 'list/{page}/{column}/{order}',
                 'route_defaults' => array(
                     'page' => null,
                     'column' => null,
                     'order' => null
                 ),
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_index'
             ),
             'new' => array(
                 'route_pattern' => 'new',
+
                 'route_defaults' => array(),
                 'icon' => 'document',
                 'text' => 'list.action.new',
                 'trans_domain' => 'LyraAdminBundle',
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_new'
             ),
             'edit' => array(
+
                 'route_pattern' => '{id}/edit',
                 'route_defaults' => array(),
                 'icon' => 'pencil',
                 'text' => 'list.action.edit',
                 'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_edit'
             ),
             'delete' => array(
+
                 'route_pattern' => '{id}/delete',
                 'route_defaults' => array(),
                 'icon' => 'trash',
@@ -139,28 +144,33 @@ EOF;
                 'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
                 'dialog' => array('title' => 'dialog.title.delete', 'message' => 'dialog.message.delete'),
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_delete'
             ),
             'show' => array(
+
                 'route_pattern' => '{id}/show',
                 'route_defaults' => array(),
                 'icon' => 'document',
                 'text' => 'list.action.show',
                 'style' => 'icon-only',
                 'trans_domain' => 'LyraAdminBundle',
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_show'
             ),
             'object' => array(
                 'route_pattern' => 'object',
                 'route_defaults' => array(),
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_object'
             ),
             'filter' => array(
                 'route_pattern' => 'filter/{action}',
                 'route_defaults' => array(
                     'action' => null
                 ),
-                'roles' => array()
+                'roles' => array(),
+                'route_name' => 'lyra_admin_test_filter'
             )
         );
     }
