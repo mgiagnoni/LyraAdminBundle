@@ -362,7 +362,6 @@ and in what order::
                 # show dialog title
                 title: Listing
                 fields:
-                    category: ~
                     ad_title: ~
                     posted_at: ~
                     published: ~
@@ -400,9 +399,9 @@ datetime and boolean fields.
 jQuery UI Datepicker in filter form
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To select date ranges standard Symfony date/datetime widgets are used by default,
-to replace them with jQuery UI datepicker use this configuration for the filter
-form::
+Standard Symfony date/datetime widgets are used by default to select date
+ranges. If you prefer the jQuery UI datepicker use this configuration for the
+filter form::
 
      # app/config/config.yml
 
@@ -499,6 +498,7 @@ listings, you can configure a custom **list action**::
                         route_pattern: expired
                         text: 'Delete expired'
                         icon: trash
+                        # action requires a confirmation dialog
                         dialog:
                             title: 'Confirm delete expired'
                             message: 'Do you really want to delete all expired listings?'
@@ -536,11 +536,16 @@ goes in the controller class you have already created for custom batch actions::
                 return $this->getRedirectToListResponse();
             }
 
-            $renderer = $this->getDialogRenderer();
+            // Retrieves all actions configured for the model
+            $actions = $this->getActions();
 
             return $this->container->get('templating')
-                ->renderResponse('LyraAdminBundle:Form:dialog.html.twig', array(
-                    'renderer' => $renderer
+                ->renderResponse('LyraAdminBundle:Dialog:dialog.html.twig', array(
+                    // action to execute when the dialog is confirmed
+                    'action' => $actions->get('expired'),
+                    // action to execute when the dialog is aborted
+                    // index = default action to display the list of listings
+                    'cancel' => $actions->get('index')
             ));
         }
 
@@ -590,6 +595,39 @@ columns (see the ``break_after`` option). You will notice that the ``posted_at``
 field is not present in any panel: this field will not be visible and not
 editable through the form. This can be useful for fields you want to automatically
 update via a Doctrine *lifecycle callback* and that cannot be changed by users.
+
+If you leave the ``Listing`` entity unchanged you now get an exception while
+saving a new listing because the value of ``posted_at`` is no longer set by
+the form and cannot be NULL. Let's add a ``prePersist`` event to the entity
+to solve this issue::
+
+    // Acme/ClassifiedsBundle/Entity/Listing.php
+
+    namespace Acme\ClassifiedsBundle\Entity;
+
+    use Doctrine\ORM\Mapping as ORM;
+
+    /**
+     * Acme\ClassifiedsBundle\Entity\Listing
+     *
+     * @ORM\Table()
+     * @ORM\Entity(repositoryClass="Acme\ClassifiedsBundle\Entity\ListingRepository")
+     * Activates lyfecycle callbacks
+     * @ORM\HasLifecycleCallbacks()
+     */
+    class Listing
+    {
+        // No changes to properties
+        // No changes to getters/setters
+
+        /**
+         * @ORM\prePersist
+         */
+        public function createPostedAtValue()
+        {
+            $this->posted_at = new \DateTime();
+        }
+    }
 
 jQuery UI Datepicker in new/edit form
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
