@@ -152,6 +152,15 @@ class AdminController extends ContainerAware
             case 'batch':
                 $response = $this->processBatchAction();
                 break;
+            default:
+                $data = array();
+                $this->extractActionData($action, $data);
+
+                if (count($data) > 0 && $this->getActions()->has($data[0])) {
+                    $this->getSecurityManager()->allowOr403($data[0]);
+                    $method = 'execute'.$data[0];
+                    $this->$method(count($data) > 1 ? $data[1] : null);
+                }
         }
 
         return null !== $response ? $response : $this->getRedirectToListResponse();
