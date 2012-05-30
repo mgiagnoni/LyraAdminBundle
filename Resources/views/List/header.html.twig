@@ -4,7 +4,7 @@
     {% endif %}
     {% set sort = grid.sort %}
     {% for col in grid.columns %}
-        <th class="{{ (col.isSortable ? (col.name == sort.column ? 'sorted-'~sort.order: 'sortable') : '')~' col-'~col.name~' '~col.type }}">
+        <th class="{{ (col.isSortable ? (col.name == sort.column ? 'sorted-'~sort.order : 'sortable')~' ' : '')~'col-'~col.name~' '~col.type }}">
             {% block table_head_sort %}
                 {% if col.sortable %}
                     <a href="{{ path(grid.actions.index.routeName, {'page': 1, 'column': col.name, 'order': col.name == sort.column ? (sort.order == 'asc' ? 'desc' : 'asc') : 'asc' }) }}">
