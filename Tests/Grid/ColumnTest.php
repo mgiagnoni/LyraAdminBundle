@@ -12,6 +12,7 @@
 namespace Lyra\AdminBundle\Tests\Grid;
 
 use Lyra\AdminBundle\Grid\Column;
+use Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
 
 class ColumnTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,9 +20,22 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
     {
         $column = new Column('test');
         $column->setMethods(array('getField1'));
-        $object = new \Lyra\AdminBundle\Tests\Fixture\Entity\Dummy;
+        $object = new Dummy;
         $object->setField1('val1');
 
         $this->assertEquals('val1', $column->getValue($object));
     }
+
+    public function testGetValueWithFormat()
+    {
+        $column = new Column('test');
+        $column->setMethods(array('getField1'));
+        $column->setType('date');
+        $column->setFormat('F d Y');
+        $object = new Dummy;
+        $object->setField1(new \DateTime('21-12-2012'));
+
+        $this->assertEquals('December 21 2012', $column->getValue($object));
+    }
+
 }
