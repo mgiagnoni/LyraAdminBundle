@@ -36,6 +36,14 @@ class ColumnTest extends \PHPUnit_Framework_TestCase
         $object->setField1(new \DateTime('21-12-2012'));
 
         $this->assertEquals('December 21 2012', $column->getValue($object));
+
+        $column->setType('float');
+        $column->setFormat('%.2f');
+        $object = new Dummy;
+        $object->setField1(1.227);
+
+        $this->assertEquals(1.23, $column->getValue($object));
+
     }
 
 }
