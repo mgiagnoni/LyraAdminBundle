@@ -18,24 +18,54 @@ namespace Lyra\AdminBundle\Grid;
  */
 class Column implements ColumnInterface
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $fieldName;
 
+    /**
+     * @var string
+     */
     protected $type;
 
+    /**
+     * @var boolean
+     */
     protected $sortable;
 
+    /**
+     * @var string
+     */
     protected $label;
 
+    /**
+     * @var string
+     */
     protected $format;
 
+    /**
+     * @var string
+     */
     protected $formatFunction;
 
+    /**
+     * @var boolean
+     */
     protected $booleanActions;
 
+    /**
+     * @var string
+     */
     protected $template;
 
+    /**
+     * @var array
+     */
     protected $methods;
 
     public function __construct($name)
