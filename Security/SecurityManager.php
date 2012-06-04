@@ -29,6 +29,10 @@ class SecurityManager implements SecurityManagerInterface
      */
     protected $actions;
 
+    /**
+     * @param \Symfony\Component\Security\Core\SecurityContextInterface $securityContext
+     * @param array $actions
+     */
     public function __construct(SecurityContextInterface $securityContext, $actions)
     {
         $this->securityContext = $securityContext;

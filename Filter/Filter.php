@@ -72,6 +72,10 @@ class Filter implements FilterInterface
      */
     protected $fields;
 
+    /**
+     * @param \Lyra\AdminBundle\FormFactory\AdminFormFactory $factory
+     * @param \Lyra\AdminBundle\Model\ModelManagerInterface $modelManager
+     */
     public function __construct(FormFactory $factory, ModelManagerInterface $modelManager)
     {
         $this->factory = $factory;

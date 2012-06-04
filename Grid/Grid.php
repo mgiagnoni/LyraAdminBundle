@@ -101,6 +101,11 @@ class Grid implements GridInterface
      */
     protected $queryBuilder;
 
+    /**
+     * @param \Lyra\AdminBundle\Pager\PagerInterface $pager
+     * @param \Lyra\AdminBundle\QueryBuilder\QueryBuilderInterface $queryBuilder
+     * @param \Lyra\AdminBundle\Security\SecurityManagerInterface $securityManager
+     */
     public function __construct(PagerInterface $pager, QueryBuilderInterface $queryBuilder, SecurityManagerInterface $securityManager)
     {
         $this->pager = $pager;

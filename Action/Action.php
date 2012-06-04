@@ -76,6 +76,9 @@ class Action implements ActionInterface
      */
     protected $roles;
 
+    /**
+     * @param string $name action name
+     */
     public function __construct($name)
     {
         $this->name = $name;

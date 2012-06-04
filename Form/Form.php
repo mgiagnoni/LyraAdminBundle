@@ -92,6 +92,9 @@ class Form implements FormInterface
 
     protected $data;
 
+    /**
+     * @param \Lyra\AdminBundle\FormFactory\AdminFormFactory $factory
+     */
     public function __construct(FormFactory $factory)
     {
         $this->factory = $factory;

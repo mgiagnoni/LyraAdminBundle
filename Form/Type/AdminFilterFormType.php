@@ -17,10 +17,20 @@ use Lyra\AdminBundle\Util\Util;
 
 class AdminFilterFormType extends AbstractType
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var array
+     */
     protected $fields;
 
+    /**
+     * @param string $name
+     * @param array $fields
+     */
     public function __construct($name, $fields)
     {
         $this->name = $name;

@@ -21,6 +21,9 @@ class ColumnCollection implements ColumnCollectionInterface
      */
     protected $columns;
 
+    /**
+     * @param array $options
+     */
     public function __construct($options = array())
     {
         $this->populateFromOptions($options);

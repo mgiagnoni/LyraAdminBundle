@@ -23,12 +23,24 @@ class QueryBuilder implements QueryBuilderInterface
      */
     protected $baseQueryBuilder;
 
+    /**
+     * @var array
+     */
     protected $sort;
 
+    /**
+     * @var array
+     */
     protected $criteria;
 
+    /**
+     * @var array
+     */
     protected $fields;
 
+    /**
+     * @param \Lyra\AdminBundle\Model\ModelManagerInterface $manager
+     */
     public function __construct(ModelManagerInterface $manager)
     {
         $this->setBaseQueryBuilder($manager->getBaseListQueryBuilder());

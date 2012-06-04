@@ -68,6 +68,9 @@ class Column implements ColumnInterface
      */
     protected $methods;
 
+    /**
+     * @param string $name column name
+     */
     public function __construct($name)
     {
         $this->name = $name;

@@ -20,6 +20,9 @@ class AdminConfiguration implements AdminConfigurationInterface
 {
     protected $options;
 
+    /**
+     * @param array $options
+     */
     public function __construct($options)
     {
         $this->options = $options;

@@ -18,8 +18,14 @@ use Symfony\Component\Form\FormFactory;
  */
 class AdminFormFactory
 {
+    /**
+     * @var \Symfony\Component\Form\FormFactory $formFactory
+     */
     protected $formFactory;
 
+    /**
+     * @param \Symfony\Component\Form\FormFactory $formFactory
+     */
     public function __construct(FormFactory $formFactory)
     {
         $this->formFactory = $formFactory;

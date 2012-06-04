@@ -21,6 +21,9 @@ class ActionCollection implements ActionCollectionInterface
      */
     protected $actions = array();
 
+    /**
+     * @param array $options
+     */
     public function __construct($options = array())
     {
         $this->populateFromOptions($options);
