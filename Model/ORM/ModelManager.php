@@ -14,7 +14,6 @@ namespace Lyra\AdminBundle\Model\ORM;
 use Lyra\AdminBundle\Model\ModelManager as BaseManager;
 use Lyra\AdminBundle\Configuration\AdminConfigurationInterface;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * Generic model manager class (Doctrine ORM).
@@ -25,11 +24,11 @@ class ModelManager extends BaseManager
 
     protected $class;
 
-    public function __construct(RegistryInterface $registry, AdminConfigurationInterface $configuration)
+    public function __construct(EntityManager $em, AdminConfigurationInterface $configuration)
     {
-        $this->setClass($configuration->getOption('class'));
-        $this->em = $registry->getEntityManagerForClass($this->getClass());
+        $this->em = $em;
         $this->configuration = $configuration;
+        $this->setClass($configuration->getOption('class'));
     }
 
     public function find($id)

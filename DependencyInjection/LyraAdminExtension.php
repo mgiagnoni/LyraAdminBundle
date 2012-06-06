@@ -281,10 +281,13 @@ class LyraAdminExtension extends Extension
 
     private function setFieldsDefaultsFromMetadata()
     {
-        $classes = array();
+        $classes = $managers = array();
         foreach ($this->modelNames as $model) {
             $options = $this->config['models'][$model];
             $classes[$options['class']] = array('model' => $model, 'fields' => $options['fields']);
+            if (isset($options['entity_manager'])) {
+                $managers[$options['class']] = $options['entity_manager'];
+            }
         }
 
         foreach ($this->modelNames as $model) {
@@ -348,6 +351,10 @@ class LyraAdminExtension extends Extension
                         'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
                     );
 
+                    if (isset($managers[$class])) {
+                        $fields[$name]['options']['em'] = $managers[$class]['name'];
+                    }
+
                     if (isset($classes[$class])) {
                         $fields[$name]['assoc'] = $classes[$class];
                     }
@@ -399,10 +406,8 @@ class LyraAdminExtension extends Extension
                         break;
                     case 'entity':
                         $filters[$field]['options'] = array_merge(
-                            $filters[$field]['options'], array(
-                                'class' => $fields[$field]['options']['class'],
-                                'multiple' => $fields[$field]['options']['multiple']
-                            )
+                            $filters[$field]['options'],
+                            array_intersect_key($fields[$field]['options'], array_flip(array('class', 'multiple', 'em')))
                         );
                         break;
                 }
@@ -471,7 +476,7 @@ class LyraAdminExtension extends Extension
     private function createModelManagerDefinition($model, $options, ContainerBuilder $container)
     {
         $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
-            ->setArguments(array(new Reference('doctrine'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
+            ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
 
     }
 
@@ -595,6 +600,11 @@ class LyraAdminExtension extends Extension
     {
         foreach ($this->config['models'] as $model => $options) {
 
+            if(isset($options['entity_manager'])) {
+                $container->getDefinition(sprintf('lyra_admin.%s.model_manager', $model))
+                    ->replaceArgument(0, new Reference($options['entity_manager']['id']));
+            }
+
             $container->getDefinition(sprintf('lyra_admin.%s.grid_columns', $model))
                 ->setArguments(array($options['list']['columns']));
 
@@ -678,9 +688,23 @@ class LyraAdminExtension extends Extension
 
     private function readMetadata(ContainerBuilder $container)
     {
+        if (!$container->has('doctrine')) {
+            return;
+        }
+
+        $emNames = $container->get('doctrine')->getEntityManagerNames();
+
         foreach ($this->config['models'] as $model => $options) {
-            if ($em = $container->get('doctrine')->getEntityManagerForClass($options['class'])) {
-                $this->metadata[$model] = $em->getClassMetadata($options['class']);
+            foreach ($emNames as $name => $id) {
+                $em = $container->get($id);
+                if (!$em->getConfiguration()->getMetadataDriverImpl()->isTransient($options['class'])) {
+                    $this->metadata[$model] = $em->getClassMetadata($options['class']);
+                    $this->config['models'][$model]['entity_manager'] = array(
+                        'name' => $name,
+                        'id' => $id
+                    );
+                    break;
+                }
             }
         }
     }
