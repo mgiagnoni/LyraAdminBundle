@@ -471,7 +471,7 @@ class LyraAdminExtension extends Extension
     private function createModelManagerDefinition($model, $options, ContainerBuilder $container)
     {
         $container->setDefinition(sprintf('lyra_admin.%s.model_manager', $model), new DefinitionDecorator($options['services']['model_manager']))
-            ->setArguments(array(new Reference('doctrine.orm.entity_manager'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
+            ->setArguments(array(new Reference('doctrine'), new Reference(sprintf('lyra_admin.%s.configuration', $model))));
 
     }
 
@@ -679,101 +679,9 @@ class LyraAdminExtension extends Extension
     private function readMetadata(ContainerBuilder $container)
     {
         foreach ($this->config['models'] as $model => $options) {
-            if ($em = $this->createEntitymanager($container)) {
+            if ($em = $container->get('doctrine')->getEntityManagerForClass($options['class'])) {
                 $this->metadata[$model] = $em->getClassMetadata($options['class']);
             }
         }
-    }
-
-    private function createEntityManager(ContainerBuilder $container, $manager = 'default')
-    {
-        $id = sprintf('doctrine.orm.%s_entity_manager', $manager);
-        if (!$container->hasDefinition($id)) {
-            return false;
-        }
-
-        $definition = $container->getDefinition($id);
-        // Connection
-        $definition = $container->getDefinition($definition->getArgument(0));
-        $connectionOptions = $definition->getArgument(0);
-
-        $config = new ORMConfig();
-        $cache = new ArrayCache();
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
-
-        $definition = $container->getDefinition(sprintf('doctrine.orm.%s_configuration', $manager));
-        $methods = $definition->getMethodCalls();
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'setProxyDir':
-                    $config->setProxyDir($method[1][0]);
-                    break;
-                case 'setProxyNamespace':
-                    $config->setProxyNamespace($method[1][0]);
-                    break;
-            }
-        }
-
-        // Configure driver chain
-        $definition = $container->getDefinition(sprintf('doctrine.orm.%s_metadata_driver', $manager));
-        $class = $definition->getClass();
-        $methods = $definition->getMethodCalls();
-        $driverChain = new $class;
-
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'addDriver':
-                    $ref = $method[1][0];
-                    $nspace = $method[1][1];
-                    $driver = $this->createDriver($container, $ref);
-                    $driverChain->addDriver($driver, $nspace);
-                    break;
-            }
-        }
-
-        $config->setMetadataDriverImpl($driverChain);
-
-        return EntityManager::create($connectionOptions, $config);
-    }
-
-    private function createDriver(ContainerBuilder $container, $reference)
-    {
-        $definition = $container->getDefinition($reference);
-
-        if (false !== strpos($reference, 'annotation_metadata_driver')) {
-            return $this->createAnnotationDriver($definition);
-        }
-
-        return $this->createFileDriver($definition);
-    }
-
-    private function createFileDriver(Definition $definition)
-    {
-        $class = $definition->getClass();
-        $driver = new $class($definition->getArgument(0));
-        $methods = $definition->getMethodCalls();
-
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'setNamespacePrefixes':
-                    $driver->setNamespacePrefixes($method[1][0]);
-                    break;
-                case 'setGlobalBasename':
-                    $driver->setGlobalBasename($method[1][0]);
-                    break;
-            }
-        }
-
-        return $driver;
-    }
-
-    private function createAnnotationDriver(Definition $definition)
-    {
-        $driverClass = $definition->getClass();
-        $reader = new AnnotationReader();
-        $driver = new $driverClass($reader, $definition->getArgument(1));
-
-        return $driver;
     }
 }

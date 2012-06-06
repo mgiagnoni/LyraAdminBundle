@@ -86,7 +86,7 @@ table.ly-list td.no-records {
     padding: .2em .8em !important;
 }
 .pagination a.ui-button {
-    width: 1.8em !important;
+    /*width: 1.8em !important;*/
 }
 
 #ly-form-wrapper p {
