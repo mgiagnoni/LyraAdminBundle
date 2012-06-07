@@ -79,7 +79,7 @@ class LyraAdminExtension extends Extension
     public function configureFromMetadata(ContainerBuilder $container)
     {
         $this->readMetadata($container);
-        $this->setFieldsDefaultsFromMetadata();
+        $this->setFieldsDefaultsFromMetadata($container);
         $this->setFilterFieldsDefaults();
         $this->setShowFieldsDefaults();
         $this->updateColumnsDefaults();
@@ -279,15 +279,12 @@ class LyraAdminExtension extends Extension
         }
     }
 
-    private function setFieldsDefaultsFromMetadata()
+    private function setFieldsDefaultsFromMetadata(ContainerBuilder $container)
     {
-        $classes = $managers = array();
+        $classes = array();
         foreach ($this->modelNames as $model) {
             $options = $this->config['models'][$model];
             $classes[$options['class']] = array('model' => $model, 'fields' => $options['fields']);
-            if (isset($options['entity_manager'])) {
-                $managers[$options['class']] = $options['entity_manager'];
-            }
         }
 
         foreach ($this->modelNames as $model) {
@@ -346,14 +343,12 @@ class LyraAdminExtension extends Extension
                     $fields[$name]['type'] = 'entity';
                     $fields[$name]['widget'] = 'entity';
                     $class = $attrs['targetEntity'];
+                    $info = $this->getEntityManagerInfoForClass($container, $class);
                     $fields[$name]['options'] = array(
                         'class' => $class,
-                        'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
+                        'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type'],
+                        'em' => $info['name']
                     );
-
-                    if (isset($managers[$class])) {
-                        $fields[$name]['options']['em'] = $managers[$class]['name'];
-                    }
 
                     if (isset($classes[$class])) {
                         $fields[$name]['assoc'] = $classes[$class];
@@ -695,16 +690,22 @@ class LyraAdminExtension extends Extension
         $emNames = $container->get('doctrine')->getEntityManagerNames();
 
         foreach ($this->config['models'] as $model => $options) {
-            foreach ($emNames as $name => $id) {
-                $em = $container->get($id);
-                if (!$em->getConfiguration()->getMetadataDriverImpl()->isTransient($options['class'])) {
-                    $this->metadata[$model] = $em->getClassMetadata($options['class']);
-                    $this->config['models'][$model]['entity_manager'] = array(
-                        'name' => $name,
-                        'id' => $id
-                    );
-                    break;
-                }
+            if ($info = $this->getEntityManagerInfoForClass($container, $options['class'])) {
+                // Removes entity manager from info array, we need only name, id in model config
+                $em = array_shift($info);
+                $this->metadata[$model] = $em->getClassMetadata($options['class']);
+                $this->config['models'][$model]['entity_manager'] = $info;
+            }
+        }
+    }
+
+    private function getEntityManagerInfoForClass(ContainerBuilder $container, $class)
+    {
+        $emNames = $container->get('doctrine')->getEntityManagerNames();
+        foreach ($container->get('doctrine')->getEntityManagerNames() as $name => $id) {
+            $em = $container->get($id);
+            if (!$em->getConfiguration()->getMetadataDriverImpl()->isTransient($class)) {
+                return array('em' => $em, 'name' => $name, 'id' => $id);
             }
         }
     }
