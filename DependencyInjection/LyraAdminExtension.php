@@ -79,7 +79,7 @@ class LyraAdminExtension extends Extension
     public function configureFromMetadata(ContainerBuilder $container)
     {
         $this->readMetadata($container);
-        $this->setFieldsDefaultsFromMetadata();
+        $this->setFieldsDefaultsFromMetadata($container);
         $this->setFilterFieldsDefaults();
         $this->setShowFieldsDefaults();
         $this->updateColumnsDefaults();
@@ -279,7 +279,7 @@ class LyraAdminExtension extends Extension
         }
     }
 
-    private function setFieldsDefaultsFromMetadata()
+    private function setFieldsDefaultsFromMetadata(ContainerBuilder $container)
     {
         $classes = array();
         foreach ($this->modelNames as $model) {
@@ -343,9 +343,11 @@ class LyraAdminExtension extends Extension
                     $fields[$name]['type'] = 'entity';
                     $fields[$name]['widget'] = 'entity';
                     $class = $attrs['targetEntity'];
+                    $info = $this->getEntityManagerInfoForClass($container, $class);
                     $fields[$name]['options'] = array(
                         'class' => $class,
-                        'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type']
+                        'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type'],
+                        'em' => $info['name']
                     );
 
                     if (isset($classes[$class])) {
@@ -399,10 +401,8 @@ class LyraAdminExtension extends Extension
                         break;
                     case 'entity':
                         $filters[$field]['options'] = array_merge(
-                            $filters[$field]['options'], array(
-                                'class' => $fields[$field]['options']['class'],
-                                'multiple' => $fields[$field]['options']['multiple']
-                            )
+                            $filters[$field]['options'],
+                            array_intersect_key($fields[$field]['options'], array_flip(array('class', 'multiple', 'em')))
                         );
                         break;
                 }
@@ -595,6 +595,11 @@ class LyraAdminExtension extends Extension
     {
         foreach ($this->config['models'] as $model => $options) {
 
+            if(isset($options['entity_manager'])) {
+                $container->getDefinition(sprintf('lyra_admin.%s.model_manager', $model))
+                    ->replaceArgument(0, new Reference($options['entity_manager']['id']));
+            }
+
             $container->getDefinition(sprintf('lyra_admin.%s.grid_columns', $model))
                 ->setArguments(array($options['list']['columns']));
 
@@ -678,102 +683,30 @@ class LyraAdminExtension extends Extension
 
     private function readMetadata(ContainerBuilder $container)
     {
+        if (!$container->has('doctrine')) {
+            return;
+        }
+
+        $emNames = $container->get('doctrine')->getEntityManagerNames();
+
         foreach ($this->config['models'] as $model => $options) {
-            if ($em = $this->createEntitymanager($container)) {
+            if ($info = $this->getEntityManagerInfoForClass($container, $options['class'])) {
+                // Removes entity manager from info array, we need only name, id in model config
+                $em = array_shift($info);
                 $this->metadata[$model] = $em->getClassMetadata($options['class']);
+                $this->config['models'][$model]['entity_manager'] = $info;
             }
         }
     }
 
-    private function createEntityManager(ContainerBuilder $container, $manager = 'default')
+    private function getEntityManagerInfoForClass(ContainerBuilder $container, $class)
     {
-        $id = sprintf('doctrine.orm.%s_entity_manager', $manager);
-        if (!$container->hasDefinition($id)) {
-            return false;
-        }
-
-        $definition = $container->getDefinition($id);
-        // Connection
-        $definition = $container->getDefinition($definition->getArgument(0));
-        $connectionOptions = $definition->getArgument(0);
-
-        $config = new ORMConfig();
-        $cache = new ArrayCache();
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
-
-        $definition = $container->getDefinition(sprintf('doctrine.orm.%s_configuration', $manager));
-        $methods = $definition->getMethodCalls();
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'setProxyDir':
-                    $config->setProxyDir($method[1][0]);
-                    break;
-                case 'setProxyNamespace':
-                    $config->setProxyNamespace($method[1][0]);
-                    break;
+        $emNames = $container->get('doctrine')->getEntityManagerNames();
+        foreach ($container->get('doctrine')->getEntityManagerNames() as $name => $id) {
+            $em = $container->get($id);
+            if (!$em->getConfiguration()->getMetadataDriverImpl()->isTransient($class)) {
+                return array('em' => $em, 'name' => $name, 'id' => $id);
             }
         }
-
-        // Configure driver chain
-        $definition = $container->getDefinition(sprintf('doctrine.orm.%s_metadata_driver', $manager));
-        $class = $definition->getClass();
-        $methods = $definition->getMethodCalls();
-        $driverChain = new $class;
-
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'addDriver':
-                    $ref = $method[1][0];
-                    $nspace = $method[1][1];
-                    $driver = $this->createDriver($container, $ref);
-                    $driverChain->addDriver($driver, $nspace);
-                    break;
-            }
-        }
-
-        $config->setMetadataDriverImpl($driverChain);
-
-        return EntityManager::create($connectionOptions, $config);
-    }
-
-    private function createDriver(ContainerBuilder $container, $reference)
-    {
-        $definition = $container->getDefinition($reference);
-
-        if (false !== strpos($reference, 'annotation_metadata_driver')) {
-            return $this->createAnnotationDriver($definition);
-        }
-
-        return $this->createFileDriver($definition);
-    }
-
-    private function createFileDriver(Definition $definition)
-    {
-        $class = $definition->getClass();
-        $driver = new $class($definition->getArgument(0));
-        $methods = $definition->getMethodCalls();
-
-        foreach ($methods as $method) {
-            switch ($method[0]) {
-                case 'setNamespacePrefixes':
-                    $driver->setNamespacePrefixes($method[1][0]);
-                    break;
-                case 'setGlobalBasename':
-                    $driver->setGlobalBasename($method[1][0]);
-                    break;
-            }
-        }
-
-        return $driver;
-    }
-
-    private function createAnnotationDriver(Definition $definition)
-    {
-        $driverClass = $definition->getClass();
-        $reader = new AnnotationReader();
-        $driver = new $driverClass($reader, $definition->getArgument(1));
-
-        return $driver;
     }
 }
