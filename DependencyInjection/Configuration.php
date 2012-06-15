@@ -258,6 +258,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->scalarNode('template')->end()
                             ->scalarNode('style')->end()
+                            ->scalarNode('alias')->end()
                         ->end()
                     ->end()
                 ->end()

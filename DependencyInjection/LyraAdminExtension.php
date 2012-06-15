@@ -52,10 +52,11 @@ class LyraAdminExtension extends Extension
         $this->config = $config;
         $this->modelNames = array_keys($config['models']);
 
+        $this->setRouteDefaults();
+        $this->setActionsDefaults();
+
         foreach ($this->modelNames as $model)
         {
-            $this->setRouteDefaults($model);
-            $this->setActionsDefaults($model);
             $this->setListDefaults($model);
             $this->setFormDefaults($model);
             $this->setFilterDefaults($model);
@@ -88,38 +89,62 @@ class LyraAdminExtension extends Extension
     }
 
 
-    private function setActionsDefaults($model)
+    private function setActionsDefaults()
     {
-        $actions =& $this->config['models'][$model]['actions'];
+        foreach ($this->modelNames as $model) {
+            $actions =& $this->config['models'][$model]['actions'];
 
-        foreach ($this->config['actions'] as $action => $attrs) {
-            if (isset($actions[$action])) {
-                if (count($actions[$action]['route_defaults']) == 0) {
-                    unset($actions[$action]['route_defaults']);
+            foreach ($this->config['actions'] as $action => $attrs) {
+                if (isset($actions[$action])) {
+                    if (count($actions[$action]['route_defaults']) == 0) {
+                        unset($actions[$action]['route_defaults']);
+                    }
+                    $actions[$action] = array_merge($attrs, $actions[$action]);
+                } else {
+                    $actions[$action] = $attrs;
                 }
-                $actions[$action] = array_merge($attrs, $actions[$action]);
-            } else {
-                $actions[$action] = $attrs;
+            }
+
+            foreach ($actions as $action => $attrs) {
+                if (isset($attrs['route_pattern']) && !isset($attrs['route_name'])) {
+                    $actions[$action]['route_name'] = $this->config['models'][$model]['route_prefix'].'_'.$action;
+                }
             }
         }
 
-        foreach ($actions as $action => $attrs) {
-            if (isset($attrs['route_pattern']) && !isset($attrs['route_name'])) {
-                $actions[$action]['route_name'] = $this->config['models'][$model]['route_prefix'].'_'.$action;
+        // Action alias
+
+        foreach ($this->modelNames as $model) {
+            $actions =& $this->config['models'][$model]['actions'];
+
+            foreach ($actions as $action => $attrs) {
+                if (isset($attrs['alias'])) {
+                    if (false === strpos($attrs['alias'], '.')) {
+                        $attrs['alias'] = $model.'.'.$attrs['alias'];
+                    }
+
+                    list($aliasModel, $aliasAction) = explode('.', $attrs['alias']);
+
+                    if (isset($this->config['models'][$aliasModel]['actions'][$aliasAction])) {
+                        $actions[$action] = $this->config['models'][$aliasModel]['actions'][$aliasAction];
+                    }
+                }
             }
         }
     }
 
-    private function setRouteDefaults($model)
+    private function setRouteDefaults()
     {
-        $options =& $this->config['models'][$model];
+        foreach ($this->modelNames as $model) {
+            $options =& $this->config['models'][$model];
 
-        if (!isset($options['route_prefix'])) {
-            $options['route_prefix'] = 'lyra_admin_'.$model;
-        }
+            if (!isset($options['route_prefix'])) {
+                $options['route_prefix'] = 'lyra_admin_'.$model;
+            }
 
-        if (!isset($options['route_pattern_prefix'])) {
-            $options['route_pattern_prefix'] = $model;
+            if (!isset($options['route_pattern_prefix'])) {
+                $options['route_pattern_prefix'] = $model;
+            }
         }
     }
 
