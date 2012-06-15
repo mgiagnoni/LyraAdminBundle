@@ -196,5 +196,12 @@ interface ActionInterface
      * @return array
      */
     function getRoles();
+
+    /**
+     * Checks if action route pattern has an object id param.
+     *
+     * @return boolean
+     */
+    function hasIdParam();
 }
 

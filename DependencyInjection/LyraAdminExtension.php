@@ -104,7 +104,7 @@ class LyraAdminExtension extends Extension
         }
 
         foreach ($actions as $action => $attrs) {
-            if (!isset($attrs['route_name'])) {
+            if (isset($attrs['route_pattern']) && !isset($attrs['route_name'])) {
                 $actions[$action]['route_name'] = $this->config['models'][$model]['route_prefix'].'_'.$action;
             }
         }
@@ -125,17 +125,20 @@ class LyraAdminExtension extends Extension
 
     private function setListDefaults($model)
     {
-        $this->config['models'][$model]['list']['other_actions'] = array('index', 'object');
-        $types = array('list_actions', 'object_actions', 'batch_actions', 'other_actions');
-        foreach ($types as $type) {
-            $listActions =& $this->config['models'][$model]['list'][$type];
+        $modelOpts = $this->config['models'][$model];
+        $options =& $this->config['models'][$model]['list'];
+        $options['other_actions'] = array('index' => array(), 'object' => array());
+
+        foreach (array('list_actions', 'object_actions', 'batch_actions', 'other_actions') as $type) {
+            $listActions =& $options[$type];
             $actions = array();
-            foreach ($listActions as $action) {
-                $actions[$action] = $this->setActionOptions($action, $model);
+            foreach ($listActions as $action => $attrs) {
+                $actions[$action] = $this->setActionOptions($action, $modelOpts['actions'], $attrs);
             }
             $listActions = $actions;
         }
-        $this->config['models'][$model]['list']['trans_domain'] = $this->config['models'][$model]['trans_domain'];
+
+        $options['trans_domain'] = $modelOpts['trans_domain'];
     }
 
     private function setColumnsDefaults($model)
@@ -178,10 +181,17 @@ class LyraAdminExtension extends Extension
         }
 
         $options['groups'] = $groups;
+
+        foreach (array('new', 'edit') as $key) {
+            foreach ($options[$key]['actions'] as $action => $attrs) {
+                $options[$key]['actions'][$action] = $this->setActionOptions($action, $modelOpts['actions'], $attrs);
+            }
+        }
+
         $actions = array();
 
-        foreach (array('new', 'edit', 'index') as $action) {
-            $actions[$action] = $this->setActionOptions($action, $model);
+        foreach (array('new', 'edit') as $action) {
+            $actions[$action] = $this->setActionOptions($action, $modelOpts['actions']);
         }
 
         $options['actions'] = $actions;
@@ -194,24 +204,23 @@ class LyraAdminExtension extends Extension
         $options =& $this->config['models'][$model]['filter'];
         $actions = array();
         foreach (array('filter', 'index') as $action) {
-            $actions[$action] = $this->setActionOptions($action, $model);
+            $actions[$action] = $this->setActionOptions($action, $this->config['models'][$model]['actions']);
         }
 
         $options['actions'] = $actions;
         $options['trans_domain'] = $this->config['models'][$model]['trans_domain'];
     }
 
-    private function setActionOptions($action, $model)
+    private function setActionOptions($action, $actions, $curOpts = array())
     {
-        $actions = $this->config['models'][$model]['actions'];
-
         $options['name'] = $action;
         $keys = array('route_name', 'route_pattern', 'route_params', 'text', 'icon', 'style', 'dialog', 'trans_domain', 'template', 'roles');
         foreach ($keys as $key) {
-            if (!isset($actions[$action][$key])) {
-                continue;
+            if (isset($curOpts[$key])) {
+                $options[$key] = $curOpts[$key];
+            } elseif (isset($actions[$action][$key])) {
+                $options[$key] = $actions[$action][$key];
             }
-            $options[$key] = $actions[$action][$key];
         }
 
         return $options;
@@ -538,6 +547,8 @@ class LyraAdminExtension extends Extension
     private function createFormDefinition($model, $options, ContainerBuilder $container)
     {
         $this->createCollectionDefinition($model, 'form_actions', $options['actions'], $container);
+        $this->createCollectionDefinition($model, 'form_new_actions', $options['new']['actions'], $container);
+        $this->createCollectionDefinition($model, 'form_edit_actions', $options['edit']['actions'], $container);
 
         $container->setDefinition(sprintf('lyra_admin.%s.form', $model), new DefinitionDecorator('lyra_admin.form.abstract'))
             ->addMethodCall('setModelName', array($model))
@@ -547,7 +558,10 @@ class LyraAdminExtension extends Extension
             ->addMethodCall('setClass', array($options['class']))
             ->addMethodCall('setDataClass', array($options['data_class']))
             ->addMethodCall('setGroups', array($options['groups']))
-            ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.form_actions.collection', $model))));
+            ->addMethodCall('setActions', array(new Reference(sprintf('lyra_admin.%s.form_actions.collection', $model))))
+            ->addMethodCall('setNewActions', array(new Reference(sprintf('lyra_admin.%s.form_new_actions.collection', $model))))
+            ->addMethodCall('setEditActions', array(new Reference(sprintf('lyra_admin.%s.form_edit_actions.collection', $model))))
+        ;
     }
 
     private function createFilterDefinition($model, $options, ContainerBuilder $container)

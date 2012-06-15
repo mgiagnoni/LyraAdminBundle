@@ -1,0 +1,8 @@
+{% set params = object is defined and action.hasIdParam ? { 'id' : object.id } : {} %}
+{% set class = 'button action-'~action~(action.buttonIcon ? ' ui-icon-'~action.buttonIcon : '')~(action.hasDialog ? ' dialog' : '')~(action.buttonStyle is defined ? ' '~action.buttonStyle  : '') %}
+{% set text = (action.text|default(form.modelName~'.form.action.'~action))|trans({}, action.trans_domain|default(form.transDomain)) %}
+{% if action.routeName is empty %}
+    <button class="{{ class }}">{{ text }}</button>
+{% else %}
+    <a href="{{ path(action.routeName, params) }}" class="{{ class }}">{{ text }}</a>
+{% endif %}

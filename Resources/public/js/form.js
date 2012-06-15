@@ -25,16 +25,11 @@ jQuery().ready(function() {
             });
         });
 
-    $('<button></button>')
-        .text($(".ly-form input[type='submit']").attr('value'))
-        .button({
-            icons: {primary: 'ui-icon-disk'}
-        })
+    $('.action-save')
         .click(function(e) {
             e.preventDefault();
             $('.ly-form').submit();
         })
-        .appendTo($('.form-actions'));
 
     $(".ly-form legend").each(function() {
       $(this).parent().before(
@@ -72,4 +67,38 @@ jQuery().ready(function() {
             ampm : ampm == '1',
         })
     });
+
+    // Modal dialog for confirmation messages
+
+    $(".dialog")
+        .click(function(e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .appendTo("body")
+                .load(this.href, showDialog);
+        });
+
+    var showDialog = function() {
+        $(".buttons", this).hide()
+        var buttonOk = $("input[type='submit']", this);
+        var buttonsOpts = {};
+        buttonsOpts[buttonOk.hide().val()] = function() {
+            buttonOk.click();
+            $(this).dialog("close");
+        };
+        buttonsOpts[buttonOk.next().hide().text()] = function() {
+            $(this).dialog("close");
+        };
+        $(this).dialog({
+            modal: true,
+            autoOpen: true,
+            resizable: false,
+            minHeight: 90,
+            width: 450,
+            title: $("h1", this).hide().text(),
+            close: function() {$(this).remove()},
+            buttons: buttonsOpts
+        })
+    };
 });

@@ -79,6 +79,8 @@ class Configuration implements ConfigurationInterface
                     'column' => null,
                     'order' => null
                 ),
+                'icon' => 'arrowthick-1-w',
+                'text' => 'form.action.back',
                 'roles' => array()
             ),
             'new' => array(
@@ -127,6 +129,12 @@ class Configuration implements ConfigurationInterface
                 'route_defaults' => array(
                     'action' => null
                 ),
+                'roles' => array()
+            ),
+            'save' => array(
+                'icon' => 'disk',
+                'text' => 'form.button.submit',
+                'trans_domain' => 'LyraAdminBundle',
                 'roles' => array()
             )
         );
@@ -327,16 +335,47 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                 ->arrayNode('object_actions')
-                    ->defaultValue(array('show','edit','delete'))
-                    ->prototype('scalar')->end()
+                    ->useAttributeAskey('name')
+                    ->defaultValue(array('show' => array(),'edit' => array(),'delete' => array()))
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('text')->end()
+                            ->scalarNode('icon')->end()
+                            ->scalarNode('style')->end()
+                        ->end()
+                    ->end()
+                    ->beforeNormalization()
+                        ->always()
+                        ->then($this->getNormalizeActionsFunc())
+                    ->end()
                 ->end()
                 ->arrayNode('batch_actions')
-                    ->defaultValue(array('delete'))
-                    ->prototype('scalar')->end()
+                    ->useAttributeAskey('name')
+                    ->defaultValue(array('delete' => array()))
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('text')->end()
+                        ->end()
+                    ->end()
+                    ->beforeNormalization()
+                        ->always()
+                        ->then($this->getNormalizeActionsFunc())
+                    ->end()
                 ->end()
                 ->arrayNode('list_actions')
-                    ->defaultValue(array('new'))
-                    ->prototype('scalar')->end()
+                    ->useAttributeAskey('name')
+                    ->defaultValue(array('new' => array()))
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('text')->end()
+                            ->scalarNode('icon')->end()
+                            ->scalarNode('style')->end()
+                        ->end()
+                    ->end()
+                    ->beforeNormalization()
+                        ->always()
+                        ->then($this->getNormalizeActionsFunc())
+                    ->end()
                 ->end()
             ->end();
     }
@@ -347,7 +386,7 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('form')
                 ->addDefaultsIfNotSet()
-                 ->children()
+                ->children()
                     ->scalarNode('template')->cannotBeEmpty()->defaultValue('LyraAdminBundle:Form:form.html.twig')->end()
                     ->scalarNode('class')->cannotBeEmpty()->defaultValue('Lyra\AdminBundle\Form\Type\AdminFormType')->end()
                 ->end();
@@ -381,6 +420,21 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('title')->defaultValue('New')->end()
+                        ->arrayNode('actions')
+                            ->useAttributeAskey('name')
+                            ->defaultValue(array('index' => array(), 'save' => array()))
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('text')->end()
+                                    ->scalarNode('icon')->end()
+                                    ->scalarNode('style')->end()
+                                ->end()
+                            ->end()
+                            ->beforeNormalization()
+                                ->always()
+                                ->then($this->getNormalizeActionsFunc())
+                            ->end()
+                        ->end()
                     ->end();
         $this->addModelFormGroupsSection($new);
     }
@@ -393,6 +447,21 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('title')->defaultValue('Edit')->end()
+                        ->arrayNode('actions')
+                            ->useAttributeAskey('name')
+                            ->defaultValue(array('index' => array(), 'save' => array(), 'delete' => array()))
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('text')->end()
+                                    ->scalarNode('icon')->end()
+                                    ->scalarNode('style')->end()
+                                ->end()
+                            ->end()
+                            ->beforeNormalization()
+                                ->always()
+                                ->then($this->getNormalizeActionsFunc())
+                            ->end()
+                        ->end()
                     ->end();
         $this->addModelFormGroupsSection($edit);
     }
@@ -432,5 +501,22 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('model_manager')->defaultValue('lyra_admin.model_manager.abstract')->end()
                 ->end()
             ->end();
+    }
+
+    private function getNormalizeActionsFunc()
+    {
+        return function($v)
+        {
+            $norm = array();
+            foreach ($v as $key => $val) {
+                if (is_int($key) && is_string($val)) {
+                    $norm[$val] = array();
+                } else {
+                    $norm[$key] = $val;
+                }
+            }
+
+            return $norm;
+        };
     }
 }

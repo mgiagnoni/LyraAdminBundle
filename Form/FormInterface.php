@@ -32,6 +32,8 @@ interface FormInterface
     /**
      * Sets form actions.
      *
+     * These are the actions executed when the form is submitted (new, edit).
+     *
      * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
      */
     function setActions(ActionCollectionInterface $actions);
@@ -42,6 +44,40 @@ interface FormInterface
      * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
      */
     function getActions();
+
+    /**
+     * Sets new form actions.
+     *
+     * These are the actions users execute through buttons
+     * at the top of a new form (default:index, save).
+     *
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
+     */
+    function setNewActions(ActionCollectionInterface $actions);
+
+    /**
+     * Gets new form actions.
+     *
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    function getNewActions();
+
+    /**
+     * Sets edit form actions.
+     *
+     * These are the actions users execute through buttons
+     * at the top of an edit form (default:index, save, delete).
+     *
+     * @param \Lyra\AdminBundle\Action\ActionCollectionInterface $actions
+     */
+    function setEditActions(ActionCollectionInterface $actions);
+
+    /**
+     * Gets edit form actions.
+     *
+     * @return \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    function getEditActions();
 
     /**
      * Sets form action.

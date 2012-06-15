@@ -229,6 +229,11 @@ class Action implements ActionInterface
         return $this->roles;
     }
 
+    public function hasIdParam()
+    {
+        return false !== strpos($this->routePattern, '{id}');
+    }
+
     public function __toString()
     {
         return $this->name;

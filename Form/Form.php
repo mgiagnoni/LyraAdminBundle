@@ -90,6 +90,19 @@ class Form implements FormInterface
      */
     protected $actions;
 
+    /**
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    protected $newActions;
+
+    /**
+     * @var \Lyra\AdminBundle\Action\ActionCollectionInterface
+     */
+    protected $editActions;
+
+    /**
+     * @var mixed
+     */
     protected $data;
 
     /**
@@ -118,6 +131,26 @@ class Form implements FormInterface
     public function getActions()
     {
         return $this->actions;
+    }
+
+    public function setNewActions(ActionCollectionInterface $actions)
+    {
+        $this->newActions = $actions;
+    }
+
+    public function getNewActions()
+    {
+        return $this->newActions;
+    }
+
+    public function setEditActions(ActionCollectionInterface $actions)
+    {
+        $this->editActions = $actions;
+    }
+
+    public function getEditActions()
+    {
+        return $this->editActions;
     }
 
     public function setAction($actionName)

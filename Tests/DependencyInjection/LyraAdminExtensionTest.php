@@ -111,6 +111,8 @@ EOF;
                     'column' => null,
                     'order' => null
                 ),
+                'icon' => 'arrowthick-1-w',
+                'text' => 'form.action.back',
                 'roles' => array(),
                 'route_name' => 'lyra_admin_test_index'
             ),
@@ -171,6 +173,12 @@ EOF;
                 ),
                 'roles' => array(),
                 'route_name' => 'lyra_admin_test_filter'
+            ),
+            'save' => array(
+                'icon' => 'disk',
+                'text' => 'form.button.submit',
+                'trans_domain' => 'LyraAdminBundle',
+                'roles' => array()
             )
         );
     }

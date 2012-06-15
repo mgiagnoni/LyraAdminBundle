@@ -7,8 +7,9 @@
     {% endblock %}
     {% block form_actions %}
     <div class="form-actions">
-        <a class="button ui-icon-arrowthick-1-w action-back" href="{{ path(form.actions.index.routeName) }}">{{ 'form.action.back'|trans({}, 'LyraAdminBundle') }}</a>
-    </div>
+        {% for action in (form.action.name == 'new' ? form.newActions : form.editActions) %}
+            {% include action.template|default('LyraAdminBundle:Form:action.html.twig') %}
+        {% endfor %}    </div>
     {% endblock %}
     {% block form %}
         {{ form_errors(form.view) }}
