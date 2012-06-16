@@ -127,6 +127,7 @@ class LyraAdminExtension extends Extension
 
                     if (isset($this->config['models'][$aliasModel]['actions'][$aliasAction])) {
                         $actions[$action] = $this->config['models'][$aliasModel]['actions'][$aliasAction];
+                        $actions[$action]['alias'] = $attrs['alias'];
                     }
                 }
             }
@@ -674,7 +675,7 @@ class LyraAdminExtension extends Extension
             );
 
             foreach ($options['actions'] as $action => $attrs) {
-                if (isset($attrs['route_pattern'])) {
+                if (isset($attrs['route_pattern']) && !isset($attrs['alias'])) {
                     $routes['models'][$model]['actions'][$action] = array(
                         'route_pattern' => $attrs['route_pattern'],
                         'route_defaults' => $attrs['route_defaults']
