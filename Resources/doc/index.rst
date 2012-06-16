@@ -643,9 +643,15 @@ datepicker to edit date fields or the `Timepicker Addon`_ for datetime fields::
                 # ... #
                 fields:
                     expires_at:
-                        widget: datetime_picker
+                        widget: date_picker
+                        options:
+                            format: MMM d, yyy
                 form:
                     # ... #
+
+See `Date/Time Format Syntax`_ for possible values of ``format`` options.
+
+.. _Date/Time Format Syntax: http://userguide.icu-project.org/formatparse/datetime
 
 Changing admin theme
 --------------------
