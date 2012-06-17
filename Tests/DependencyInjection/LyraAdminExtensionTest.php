@@ -63,7 +63,6 @@ EOF;
 models:
     test:
         class: Lyra\AdminBundle\Tests\Fixture\Entity\Dummy
-        controller: AcmeMyBundle:Test
         actions:
             new:
                 icon: dummy
@@ -78,6 +77,33 @@ EOF;
 
         $options = $config->getParameter('lyra_admin.test.options');
         $this->assertEquals($options['actions'], $defaults);
+    }
+
+    public function testOverrideModelActionInList()
+    {
+        $yaml = <<<EOF
+models:
+    test:
+        class: Lyra\AdminBundle\Tests\Fixture\Entity\Dummy
+        actions:
+            new:
+                icon: act-new
+            delete:
+                icon: act-delete
+        list:
+            list_actions:
+                new:
+                    icon: list-new
+            object_actions:
+                delete:
+                    icon: list-delete
+EOF;
+
+        $config = $this->getConfiguration($yaml);
+        $options = $config->getParameter('lyra_admin.test.options');
+
+        $this->assertEquals('list-delete', $options['list']['object_actions']['delete']['icon']);
+        $this->assertEquals('list-new', $options['list']['list_actions']['new']['icon']);
     }
 
     public function testNormalizeThemeOption()
