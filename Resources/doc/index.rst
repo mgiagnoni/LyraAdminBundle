@@ -649,7 +649,19 @@ datepicker to edit date fields or the `Timepicker Addon`_ for datetime fields::
                 form:
                     # ... #
 
-See `Date/Time Format Syntax`_ for possible values of ``format`` options.
+See `Date/Time Format Syntax`_ for possible values of ``format`` option.
+
+The ``datetime_picker`` widget requires separate options for date and time
+format::
+
+    # app/config/config.yml
+
+            # ... #
+            expires_at:
+                widget: datetime_picker
+                options:
+                    date_format: MMM d, yyy
+                    time_format: HH:mm
 
 .. _Date/Time Format Syntax: http://userguide.icu-project.org/formatparse/datetime
 
