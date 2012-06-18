@@ -79,6 +79,40 @@ EOF;
         $this->assertEquals($options['actions'], $defaults);
     }
 
+    public function testDefaultActionsInList()
+    {
+        $yaml = <<<EOF
+models:
+    test:
+        class: Lyra\AdminBundle\Tests\Fixture\Entity\Dummy
+        actions:
+            new:
+                icon: new-icon
+                text: new-text
+                style: icon-text
+            edit:
+                icon: edit-icon
+                text: edit-text
+                style: icon-text
+            delete:
+                text: delete-text
+        list:
+            list_actions: [new]
+            object_actions: [edit]
+            batch_actions: [delete]
+EOF;
+        $config = $this->getConfiguration($yaml);
+        $options = $config->getParameter('lyra_admin.test.options');
+
+        $this->assertEquals('new-icon', $options['list']['list_actions']['new']['icon']);
+        $this->assertEquals('new-text', $options['list']['list_actions']['new']['text']);
+        $this->assertEquals('icon-text', $options['list']['list_actions']['new']['style']);
+        $this->assertEquals('edit-icon', $options['list']['object_actions']['edit']['icon']);
+        $this->assertEquals('edit-text', $options['list']['object_actions']['edit']['text']);
+        $this->assertEquals('icon-text', $options['list']['object_actions']['edit']['style']);
+        $this->assertEquals('delete-text', $options['list']['batch_actions']['delete']['text']);
+    }
+
     public function testOverrideModelActionInList()
     {
         $yaml = <<<EOF
