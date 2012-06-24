@@ -142,7 +142,6 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                 ->arrayNode('actions')
-                    ->addDefaultsIfNotSet()
                     ->useAttributeAskey('name')
                     ->beforeNormalization()
                         ->always()
@@ -212,7 +211,6 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                  ->arrayNode('fields')
-                    ->addDefaultsIfNotSet()
                     ->useAttributeAsKey('name')
                     ->prototype('array')
                         ->children()
@@ -235,7 +233,6 @@ class Configuration implements ConfigurationInterface
         $node
             ->children()
                 ->arrayNode('actions')
-                    ->addDefaultsIfNotSet()
                     ->useAttributeAskey('name')
                     ->prototype('array')
                         ->children()
