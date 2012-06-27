@@ -17,9 +17,9 @@ class JQueryExtension extends \Twig_Extension
 
     private $options;
 
-    public function __construct($session, $options = array())
+    public function __construct($container, $options = array())
     {
-        $this->locale = $session->getLocale();
+        $this->locale = $container->isScopeActive('request') ? $container->get('request')->getLocale() : 'en_US';
         $this->options = $options;
     }
 
