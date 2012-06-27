@@ -12,11 +12,12 @@
 namespace Lyra\AdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class DateRangeType extends AbstractType
 {
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $options['child_options'] = array_merge($options['child_options'], array('required' => false));
         $builder
@@ -29,11 +30,11 @@ class DateRangeType extends AbstractType
         return 'daterange';
     }
 
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return array(
+        $resolver->setDefaults(array(
             'child_widget' => 'datetime',
             'child_options' => array()
-        );
+        ));
     }
 }

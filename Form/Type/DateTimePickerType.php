@@ -12,9 +12,10 @@
 namespace Lyra\AdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormViewInterface;
 use Symfony\Component\Form\Exception\CreationException;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToArrayTransformer;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToStringTransformer;
@@ -23,9 +24,20 @@ use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStr
 use Symfony\Component\Form\ReversedTransformer;
 use Lyra\AdminBundle\Util\Util;
 
+/**
+ * Custom type to manage a datetime field with jQuery UI Timepicker addon.
+ *
+ * Code in part derived from DateTimeType of Symfony Form component.
+ *
+ * @see https://github.com/trentrichardson/jQuery-Timepicker-Addon
+ *
+ */
 class DateTimePickerType extends AbstractType
 {
-    public function buildForm(FormBuilder $builder, array $options)
+    const DEFAULT_DATE_FORMAT = \IntlDateFormatter::MEDIUM;
+    const DEFAULT_TIME_FORMAT = \IntlDateFormatter::SHORT;
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $dateFormat = $options['date_format'];
         $timeFormat = $options['time_format'];
@@ -39,11 +51,9 @@ class DateTimePickerType extends AbstractType
         );
 
         // If $format is not in the allowed options, it's considered as the pattern of the formatter if it is a string
-        $defaultOptions = $this->getDefaultOptions($options);
-
         if (!in_array($dateFormat, $allowedFormatOptionValues, true)) {
             if (is_string($dateFormat)) {
-                $dateFormat = $defaultOptions['date_format'];
+                $dateFormat = self::DEFAULT_DATE_FORMAT;
                 $pattern = $options['date_format'];
             } else {
                 throw new CreationException('The "date_format" option must be one of the IntlDateFormatter constants (FULL, LONG, MEDIUM, SHORT) or a string representing a custom pattern');
@@ -54,7 +64,7 @@ class DateTimePickerType extends AbstractType
             \Locale::getDefault(),
             $dateFormat,
             \IntlDateFormatter::NONE,
-            \DateTimeZone::UTC,
+            'UTC',
             \IntlDateFormatter::GREGORIAN,
             $pattern
         );
@@ -63,7 +73,7 @@ class DateTimePickerType extends AbstractType
 
         if (!in_array($timeFormat, $allowedFormatOptionValues, true)) {
             if (is_string($timeFormat)) {
-                $timeFormat = $defaultOptions['time_format'];
+                $timeFormat = self::DEFAULT_TIME_FORMAT;
                 $pattern = $options['time_format'];
             } else {
                 throw new CreationException('The "time_format" option must be one of the IntlDateFormatter constants (FULL, LONG, MEDIUM, SHORT) or a string representing a custom pattern');
@@ -74,7 +84,7 @@ class DateTimePickerType extends AbstractType
             \Locale::getDefault(),
             \IntlDateFormatter::NONE,
             $timeFormat,
-            \DateTimeZone::UTC,
+            'UTC',
             \IntlDateFormatter::GREGORIAN,
             $pattern
         );
@@ -85,19 +95,19 @@ class DateTimePickerType extends AbstractType
             $pattern = $datePattern . ' ' . $timePattern;
         }
 
-        $builder->appendClientTransformer(new DateTimeToLocalizedStringTransformer($options['data_timezone'], $options['user_timezone'], $dateFormat, $timeFormat, \IntlDateFormatter::GREGORIAN, $pattern));
+        $builder->addViewTransformer(new DateTimeToLocalizedStringTransformer($options['data_timezone'], $options['user_timezone'], $dateFormat, $timeFormat, \IntlDateFormatter::GREGORIAN, $pattern));
 
 
-        if ($options['input'] === 'string') {
-            $builder->appendNormTransformer(new ReversedTransformer(
+        if ('string' === $options['input']) {
+            $builder->addModelTransformer(new ReversedTransformer(
                 new DateTimeToStringTransformer($options['data_timezone'], $options['data_timezone'], 'Y-m-d')
             ));
-        } elseif ($options['input'] === 'timestamp') {
-            $builder->appendNormTransformer(new ReversedTransformer(
+        } elseif ('timestamp' === $options['input']) {
+            $builder->addModelTransformer(new ReversedTransformer(
                 new DateTimeToTimestampTransformer($options['data_timezone'], $options['data_timezone'])
             ));
-        } elseif ($options['input'] === 'array') {
-            $builder->appendNormTransformer(new ReversedTransformer(
+        } elseif ('array' === $options['input']) {
+            $builder->addModelTransformer(new ReversedTransformer(
                 new DateTimeToArrayTransformer($options['data_timezone'], $options['data_timezone'], array('year', 'month', 'day'))
             ));
         }
@@ -107,39 +117,35 @@ class DateTimePickerType extends AbstractType
             ->setAttribute('time_pattern', $timePattern);
     }
 
-    public function buildViewBottomUp(FormView $view, FormInterface $form)
+    public function finishView(FormViewInterface $view, FormInterface $form, array $options)
     {
         $view->setAttribute('data-date', Util::ICUTojQueryDate($form->getAttribute('date_pattern')));
         $timePattern = $form->getAttribute('time_pattern');
         $view->setAttribute('data-time', Util::ICUTojQueryDate($timePattern));
         $view->setAttribute('data-ampm', false !== strpos($timePattern, 'h') ? '1' : '0');
-
     }
 
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return array(
+        $resolver->setDefaults(array(
             'input'         => 'datetime',
             'data_timezone' => null,
             'user_timezone' => null,
-            'date_format'   => \IntlDateFormatter::MEDIUM,
-            'time_format'   => \IntlDateFormatter::SHORT,
+            'date_format'   => self::DEFAULT_DATE_FORMAT,
+            'time_format'   => self::DEFAULT_TIME_FORMAT,
             // Don't modify \DateTime classes by reference, we treat
             // them like immutable value objects
             'by_reference'  => false,
-        );
-    }
+        ));
 
-    public function getAllowedOptionValues(array $options)
-    {
-        return array(
+        $resolver->setAllowedValues(array(
             'input'       => array(
                 'datetime',
                 'string',
                 'timestamp',
                 'array',
             ),
-        );
+        ));
     }
 
     public function getName()
@@ -147,7 +153,7 @@ class DateTimePickerType extends AbstractType
         return 'datetime_picker';
     }
 
-    public function getParent(array $options)
+    public function getParent()
     {
         return 'field';
     }

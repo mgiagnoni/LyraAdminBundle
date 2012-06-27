@@ -12,7 +12,7 @@
 namespace Lyra\AdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
 use Lyra\AdminBundle\Util\Util;
 
 /**
@@ -40,7 +40,7 @@ class AdminFormType extends AbstractType
         $this->fields = $fields;
     }
 
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         foreach ($this->fields as $field => $attrs) {
             $builder->add($attrs['tag'], $attrs['widget'], $attrs['options']);
