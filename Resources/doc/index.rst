@@ -621,7 +621,7 @@ to solve this issue::
         // No changes to getters/setters
 
         /**
-         * @ORM\prePersist
+         * @ORM\PrePersist
          */
         public function createPostedAtValue()
         {
