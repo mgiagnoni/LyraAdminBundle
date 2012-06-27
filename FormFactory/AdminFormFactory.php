@@ -43,7 +43,7 @@ class AdminFormFactory
      */
     public function createForm($type, $name, $data = null, array $options = array())
     {
-        $builder = $this->formFactory->createNamedBuilder($type, $name, $data, $options);
+        $builder = $this->formFactory->createNamedBuilder($name, $type, $data, $options);
 
         return $builder->getForm();
     }
