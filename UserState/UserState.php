@@ -10,7 +10,8 @@
  */
 
 namespace Lyra\AdminBundle\UserState;
-use Symfony\Component\HttpFoundation\Session;
+
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -39,7 +40,7 @@ class UserState implements UserStateInterface
     protected $prefix;
 
     /**
-     * @param \Symfony\Component\HttpFoundation\Session $session
+     * @param \Symfony\Component\HttpFoundation\Session\Session $session
      * @param array $states key state id, value state default
      * @param string $prefix
      */
