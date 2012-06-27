@@ -128,7 +128,7 @@ class QueryBuilder implements QueryBuilderInterface
                         break;
                     case 'boolean':
                         $qb->andWhere(
-                            $qb->expr()->eq($alias.'.'.$field, $value)
+                            $qb->expr()->eq($alias.'.'.$field, $value === 'on' ? 1 : 0)
                         );
 
                          break;

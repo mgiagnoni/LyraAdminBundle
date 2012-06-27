@@ -228,14 +228,9 @@ class Filter implements FilterInterface
                         $value = null;
                     }
                     break;
-                case 'boolean':
-                    if ('' == $value) {
-                        $value = null;
-                    }
-                    break;
             }
 
-            if (null !== $value) {
+            if (!empty($value)) {
                 $filtered[$name] = $value;
             }
         }

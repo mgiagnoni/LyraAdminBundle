@@ -429,7 +429,7 @@ class LyraAdminExtension extends Extension
                     case 'choice':
                         $filters[$field]['options'] = array_merge(
                             $filters[$field]['options'], array(
-                                'choices' => array(1 => 'Yes', 0 => 'No', null => 'Both'),
+                                'choices' => array('on' => 'Yes', 'off' => 'No', null => 'Both'),
                                 'expanded' => true
                             )
                         );

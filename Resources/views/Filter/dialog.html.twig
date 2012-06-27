@@ -18,7 +18,7 @@
                             {{ (date.from is empty ? 'filter.date.upto' : 'filter.date.to')|trans({}, 'LyraAdminBundle')}} {{ date.to|date('j/M/Y') }}
                         {% endif %}
                     {% elseif field.type == 'boolean' %}
-                        {{ (criteria[field.name] ? 'show.boolean.true' : 'show.boolean.false')|trans({}, 'LyraAdminBundle') }}
+                        {{ (criteria[field.name] == 'on' ? 'show.boolean.true' : 'show.boolean.false')|trans({}, 'LyraAdminBundle') }}
                     {% else %}
                         {{ criteria[field.name] }}
                     {% endif %}
