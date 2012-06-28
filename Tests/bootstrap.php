@@ -9,7 +9,9 @@
  * information are in the LICENSE file distributed with this source code.
  */
 
-if (!@include __DIR__ . '/../vendor/autoload.php') {
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
+if (!$loader = @include __DIR__ . '/../vendor/autoload.php') {
     echo <<<EOF
 You must set up the project dependencies, run the following commands:
 
@@ -20,6 +22,8 @@ EOF;
 
     exit(1);
 }
+
+AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
 spl_autoload_register(function($class) {
     if (0 === strpos($class, 'Lyra\\AdminBundle\\')) {
