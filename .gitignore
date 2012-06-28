@@ -1,6 +1,4 @@
 phpunit.xml
-Tests/autoload.php
-vendor/doctrine
-vendor/doctrine-common
-vendor/doctrine-dbal
-vendor/symfony
+vendor
+composer.phar
+composer.lock
