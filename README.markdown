@@ -6,9 +6,10 @@ This bundle is being developed to provide a common backend interface to all
 bundles that make part of Lyra CMS, however it can also be used independently
 from the CMS as a standalone standard Symfony2 bundle.
 
-LyraAdminBundle is under development and currently works only with **Symfony 2.0.x**,
-the currently stable release of the framework.
-A version for **Symfony 2.1** will be developed as soon as possibile.
+LyraAdminBundle is under development .
+
+* branch `master` requires Symfony 2.1
+* branch `2.0` requires Symfony 2.0.x
 
 Installation instructions and a basic tutorial to get started are at:
 
