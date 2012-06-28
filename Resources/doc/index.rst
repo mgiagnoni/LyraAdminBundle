@@ -75,18 +75,43 @@ Install source code
 You can retrieve LyraAdminBundle source code from GitHub repository by editing the
 standard Symfony2 vendor script or directly utilizing git.
 
-Vendor script
-~~~~~~~~~~~~~
+Vendor script (Symfony 2.0.x only)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add the following lines to your ``deps`` file::
 
     [LyraAdminBundle]
         git=http://github.com/mgiagnoni/LyraAdminBundle.git
         target=/bundles/Lyra/AdminBundle
+        version=origin/2.0
 
 Run the vendors script::
 
     php bin/vendors install
+
+Composer (Symfony 2.1)
+~~~~~~~~~~~~~~~~~~~~~~
+
+Add the following line to your ``composer.json`` file::
+
+    {
+        //...
+
+        "require": {
+            //...
+            "lyra/admin-bundle" : "dev-master"
+        }
+
+        //...
+    }
+
+Get Composer, unless it's already present::
+
+    curl -s http://getcomposer.org/installer | php
+
+Install the bundle with::
+
+    php composer.phar update lyra/admin-bundle
 
 Git submodule
 ~~~~~~~~~~~~~
@@ -101,10 +126,14 @@ this case, you can simply clone the repository::
 
     git clone git://github.com/mgiagnoni/LyraAdminBundle.git vendor/bundles/Lyra/AdminBundle
 
+If you directly install the bundle with git do not forget to checkout the right
+branch of the repository: ``2.0`` for Symfony 2.0.x, ``master`` for Symfony 2.1
+
 Register namespace
 ------------------
 
-``Lyra`` namespace must be registered for use by the autoloader::
+``Lyra`` namespace must be registered for use by the autoloader. This step must
+be omitted if you install the bundle in Symfony 2.1 with Composer::
 
     // app/autoload.php
 
