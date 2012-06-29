@@ -4,5 +4,7 @@ php:
   - 5.3
 
 before_script:
+    - cp Tests/Functional/App/parameters.yml.dist Tests/Functional/App/parameters.yml
+    - mysql -e 'create database lyra_test;' -u root
     - curl -s http://getcomposer.org/installer | php
     - php composer.phar install

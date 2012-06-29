@@ -80,10 +80,10 @@ class AdminControllerTest extends WebTestCase
         $container = $client->getContainer();
         $em = $container->get('doctrine')->getEntityManager();
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
-        $schemaTool->dropDatabase('lyra_test');
-        $metadatas = $em->getMetadataFactory()->getAllMetadata();
-        if (!empty($metadatas)) {
-            $schemaTool->createSchema($metadatas);
+        $schemaTool->dropDatabase();
+        $metadata = $em->getMetadataFactory()->getAllMetadata();
+        if (!empty($metadata)) {
+            $schemaTool->createSchema($metadata);
         }
     }
 }
