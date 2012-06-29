@@ -1,4 +1,5 @@
 imports:
+    - { resource: parameters.yml }
     - { resource: security.yml }
 
 framework:
@@ -16,11 +17,11 @@ framework:
 
 doctrine:
     dbal:
-        driver:   pdo_mysql
-        host:     localhost
-        dbname:   lyra_test
-        user:     lyra_test
-        password: lyra
+        driver:   %database_driver%
+        host:     %database_host%
+        dbname:   %database_name%
+        user:     %database_user%
+        password: %database_password%
         charset:  UTF8
 
     orm:

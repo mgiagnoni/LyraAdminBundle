@@ -1,9 +1,10 @@
 phpunit.xml
-Tests/autoload.php
 vendor/doctrine
 vendor/doctrine-common
 vendor/doctrine-dbal
 vendor/symfony
+vendor/twig
 Tests/autoload.php
 Tests/Functional/App/cache
 Tests/Functional/App/logs
+Tests/Functional/App/parameters.yml

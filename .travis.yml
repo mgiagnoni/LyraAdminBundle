@@ -4,6 +4,9 @@ php:
   - 5.3
 
 env:
-  - SYMFONY_VERSION=v2.0.14
+  - SYMFONY_VERSION=v2.0.15
 
-before_script: php vendor/vendors.php
+before_script:
+    - cp Tests/Functional/App/parameters.yml.dist Tests/Functional/App/parameters.yml
+    - mysql -e 'create database lyra_test;' -u root
+    - php vendor/vendors.php

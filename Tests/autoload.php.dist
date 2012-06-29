@@ -13,6 +13,7 @@ $vendorDir = __DIR__.'/../vendor';
 require_once $vendorDir.'/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 
 $loader = new UniversalClassLoader();
 $loader->registerNamespaces(array(
@@ -21,7 +22,15 @@ $loader->registerNamespaces(array(
     'Doctrine\\DBAL' => $vendorDir.'/doctrine-dbal/lib',
     'Doctrine' => $vendorDir.'/doctrine/lib',
 ));
+
+$loader->registerPrefixes(array(
+    'Twig_' => $vendorDir.'/twig/lib',
+));
+
 $loader->register();
+
+AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+AnnotationRegistry::registerFile($vendorDir.'/doctrine/lib/Doctrine/ORM/Mapping/Driver/DoctrineAnnotations.php');
 
 spl_autoload_register(function($class) {
     if (0 === strpos($class, 'Lyra\\AdminBundle\\')) {
