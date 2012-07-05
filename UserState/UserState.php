@@ -54,7 +54,8 @@ class UserState implements UserStateInterface
     public function initFromRequest(Request $request)
     {
         foreach ($this->states as $state => $default) {
-            if (null !== $value = $request->get($state)) {
+            $value = $request->get($state);
+            if (!empty($value)) {
                 $this->session->set($this->prefix.'.'.$state, $value);
             }
         }
