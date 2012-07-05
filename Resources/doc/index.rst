@@ -222,21 +222,21 @@ simple bundle and create an admin area for it.
 Create a demo bundle
 --------------------
 
-Our example bundle will be named **AcmeClassifiedsBundle**: its purpose is
+Our example bundle will be named **MGIClassifiedsBundle**: its purpose is
 managing a simple advertising board where users and administrators of the
 site can post classified ads.
 
-`AcmeClassifiedsBundle source code`_ is available at GitHub.
+`MGIClassifiedsBundle source code`_ is available at GitHub.
 
 **SensioGeneratorBundle** (included in Symfony2 *Standard Edition*) is the ideal
 tool to quickly generate the basic structure of the bundle. From your project
 root folder run the following command::
 
-    app/console generate:bundle --namespace=Acme/ClassifiedsBundle --dir=src --format=yml --no-interaction
+    app/console generate:bundle --namespace=MGI/ClassifiedsBundle --dir=src --format=yml --no-interaction
 
 Generate a ``Listing`` entity::
 
-    app/console generate:doctrine:entity --entity=AcmeClassifiedsBundle:Listing --fields="ad_title:string(255) ad_text:text posted_at:datetime expires_at:datetime published:boolean" --with-repository --no-interaction
+    app/console generate:doctrine:entity --entity=MGIClassifiedsBundle:Listing --fields="ad_title:string(255) ad_text:text posted_at:datetime expires_at:datetime published:boolean" --with-repository --no-interaction
 
 Create the table in the database::
 
@@ -253,7 +253,7 @@ CRUD operations on the ``Listing`` entity::
     lyra_admin:
         models:
             listing:
-                class: 'Acme\ClassifiedsBundle\Entity\Listing'
+                class: 'MGI\ClassifiedsBundle\Entity\Listing'
                 list:
                     title: Listings
                     columns:
@@ -266,7 +266,7 @@ Do not forget to clear cache before proceeding::
 
     app/console cache:clear
 
-.. _AcmeClassifiedsBundle source code: https://github.com/mgiagnoni/AcmeClassifiedsBundle
+.. _MGIClassifiedsBundle source code: https://github.com/mgiagnoni/MGIClassifiedsBundle
 
 Access backend area
 -------------------
@@ -464,8 +464,8 @@ multiple listings::
     lyra_admin:
         models:
             listing:
-                class: 'Acme\ClassifiedsBundle\Entity\Listing'
-                controller: 'AcmeClassifiedsBundle:Admin'
+                class: 'MGI\ClassifiedsBundle\Entity\Listing'
+                controller: 'MGIClassifiedsBundle:Admin'
                 actions:
                     publish:
                         # text displayed in drop down list
@@ -480,9 +480,9 @@ With the ``controller`` option you can use your own controller in place of
 the default controller provided by the bundle. This is needed now because you
 will write custom php code to process your batch actions::
 
-    // Acme/ClassifiedsBundle/Controller/AdminController.php
+    // MGI/ClassifiedsBundle/Controller/AdminController.php
 
-    namespace Acme\ClassifiedsBundle\Controller;
+    namespace MGI\ClassifiedsBundle\Controller;
     use Lyra\AdminBundle\Controller\AdminController as BaseAdminController;
 
     class AdminController extends BaseAdminController
@@ -544,9 +544,9 @@ removed.
 The code that will be executed when the button is pressed and confirmation given
 goes in the controller class you have already created for custom batch actions::
 
-    // Acme/ClassifiedsBundle/Controller/AdminController.php
+    // MGI/ClassifiedsBundle/Controller/AdminController.php
 
-    namespace Acme\ClassifiedsBundle\Controller;
+    namespace MGI\ClassifiedsBundle\Controller;
     use Lyra\AdminBundle\Controller\AdminController as BaseAdminController;
 
     class AdminController extends BaseAdminController
@@ -560,7 +560,7 @@ goes in the controller class you have already created for custom batch actions::
                     ->setParameter('d', new \DateTime('now'))
                     ->getQuery()->execute();
 
-                $this->setFlash('acme_classifieds success', 'Expired ads have been successfully deleted');
+                $this->setFlash('mgi_classifieds success', 'Expired ads have been successfully deleted');
 
                 return $this->getRedirectToListResponse();
             }
@@ -604,7 +604,7 @@ them in panels or remove some fields from view. A simple example::
     lyra_admin:
         models:
             listing:
-                class: 'Acme\ClassifiedsBundle\Entity\Listing'
+                class: 'MGI\ClassifiedsBundle\Entity\Listing'
                 form:
                     groups:
                         listing:
@@ -630,17 +630,17 @@ saving a new listing because the value of ``posted_at`` is no longer set by
 the form and cannot be NULL. Let's add a ``prePersist`` event to the entity
 to solve this issue::
 
-    // Acme/ClassifiedsBundle/Entity/Listing.php
+    // MGI/ClassifiedsBundle/Entity/Listing.php
 
-    namespace Acme\ClassifiedsBundle\Entity;
+    namespace MGI\ClassifiedsBundle\Entity;
 
     use Doctrine\ORM\Mapping as ORM;
 
     /**
-     * Acme\ClassifiedsBundle\Entity\Listing
+     * MGI\ClassifiedsBundle\Entity\Listing
      *
      * @ORM\Table()
-     * @ORM\Entity(repositoryClass="Acme\ClassifiedsBundle\Entity\ListingRepository")
+     * @ORM\Entity(repositoryClass="MGI\ClassifiedsBundle\Entity\ListingRepository")
      * Activates lyfecycle callbacks
      * @ORM\HasLifecycleCallbacks()
      */
@@ -749,9 +749,9 @@ By definining a model manager for the ``Listing`` object you will be able
 to clean up the controller that executes the custom list action to delete
 expired listings. First create your service class::
 
-    // Acme/ClassifiedsBundle/Model/ListingManager.php
+    // MGI/ClassifiedsBundle/Model/ListingManager.php
 
-    namespace Acme\ClassifiedsBundle\Model;
+    namespace MGI\ClassifiedsBundle\Model;
 
     use Lyra\AdminBundle\Model\ORM\ModelManager as BaseManager;
 
@@ -776,9 +776,9 @@ default functionalities cannot be lost. Define your service in configuration::
 
     services:
         classifieds_listing_manager:
-            class: Acme\ClassifiedsBundle\Model\ListingManager
+            class: MGI\ClassifiedsBundle\Model\ListingManager
 
-See the file `Resources/config/services.yml`_ in AcmeClassifiedsBundle
+See the file `Resources/config/services.yml`_ in MGIClassifiedsBundle
 repository for an example of how to define this service in a bundle configuration
 file loaded by the bundle extension.
 
@@ -797,9 +797,9 @@ Change the configuration of the ``Listing`` model to use your custom manager::
 The controller used by the custom action to delete expired listings can now
 be cleaned up::
 
-    // Acme/ClassifiedsBundle/Controller/AdminController.php
+    // MGI/ClassifiedsBundle/Controller/AdminController.php
 
-    namespace Acme\ClassifiedsBundle\Controller;
+    namespace MGI\ClassifiedsBundle\Controller;
     use Lyra\AdminBundle\Controller\AdminController as BaseAdminController;
 
     class AdminController extends BaseAdminController
@@ -809,7 +809,7 @@ be cleaned up::
         {
             if ('POST' === $this->getRequest()->getMethod()) {
                 if ($this->getModelManager()->deleteExpiredListings()) {
-                    $this->setFlash('acme_classifieds success', 'Expired ads have been successfully deleted');
+                    $this->setFlash('mgi_classifieds success', 'Expired ads have been successfully deleted');
                 }
 
                 return $this->getRedirectToListResponse();
@@ -818,7 +818,7 @@ be cleaned up::
         }
     }
 
-.. _Resources/config/services.yml: https://github.com/mgiagnoni/AcmeClassifiedsBundle/blob/master/Resources/config/services.yml
+.. _Resources/config/services.yml: https://github.com/mgiagnoni/MGIClassifiedsBundle/blob/master/Resources/config/services.yml
 
 Customizing routes
 ------------------
@@ -869,11 +869,11 @@ Adding an associated model
 
 Create a ``Category`` entity with the **SensioGeneratorBundle**::
 
-    app/console generate:doctrine:entity --entity=AcmeClassifiedsBundle:Category --fields="name:string(255) description:text" --with-repository --no-interaction
+    app/console generate:doctrine:entity --entity=MGIClassifiedsBundle:Category --fields="name:string(255) description:text" --with-repository --no-interaction
 
 Implement a *__toString()* method in the newly created entity::
 
-    // Acme/ClassifiedsBundle/Entity/Category.php
+    // MGI/ClassifiedsBundle/Entity/Category.php
 
     // ...
     class Category
@@ -892,7 +892,7 @@ on the listing form.
 Edit the ``Listing`` entity to add a **many-to-one** relation with
 ``Category``::
 
-    // Acme/ClassifiedsBundle/Entity/Listing.php
+    // MGI/ClassifiedsBundle/Entity/Listing.php
     // ...
     class Listing
     {
@@ -927,7 +927,7 @@ Create a model ``category`` in LyraAdminBundle configuration::
             listing:
                 # ... #
             category:
-                class: 'Acme\ClassifiedsBundle\Entity\Category'
+                class: 'MGI\ClassifiedsBundle\Entity\Category'
                 # title displayed in top menu
                 title: Categories
                 list:
@@ -998,9 +998,9 @@ that you set ``sortable`` to *false* everything works.
 But if you want to make the category colum sortable you will need to make a
 small change to the custom Listing model manager you have previously created::
 
-    // Acme/ClassifiedsBundle/Model/ListingManager.php
+    // MGI/ClassifiedsBundle/Model/ListingManager.php
 
-    namespace Acme\ClassifiedsBundle\Model;
+    namespace MGI\ClassifiedsBundle\Model;
 
     use Lyra\AdminBundle\Model\ORM\ModelManager as BaseManager;
 
@@ -1055,8 +1055,8 @@ seen up to this point::
         #theme: css/ui_themes/redmond
         models:
             listing:
-                class: 'Acme\ClassifiedsBundle\Entity\Listing'
-                controller: 'AcmeClassifiedsBundle:Admin'
+                class: 'MGI\ClassifiedsBundle\Entity\Listing'
+                controller: 'MGIClassifiedsBundle:Admin'
                 # title displayed in top menu
                 title: Listings
                 actions:
@@ -1138,7 +1138,7 @@ seen up to this point::
                     # service id of user defined model manager
                     model_manager: classifieds_listing_manager
             category:
-                class: 'Acme\ClassifiedsBundle\Entity\Category'
+                class: 'MGI\ClassifiedsBundle\Entity\Category'
                 list:
                     title: Categories
                     columns:
