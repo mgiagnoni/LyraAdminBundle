@@ -24,5 +24,6 @@
     "autoload": {
         "psr-0": { "Lyra\\AdminBundle": "" }
     },
-    "target-dir": "Lyra/AdminBundle"
+    "target-dir": "Lyra/AdminBundle",
+    "minimum-stability": "dev"
 }
