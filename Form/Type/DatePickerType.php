@@ -99,6 +99,8 @@ class DatePickerType extends AbstractType
             // them like immutable value objects
             'by_reference'   => false,
             'error_bubbling' => false,
+            'data_class' => null,
+            'compound' => false
         ));
 
         $resolver->setAllowedValues(array(

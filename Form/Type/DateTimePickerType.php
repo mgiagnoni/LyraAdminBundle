@@ -136,6 +136,8 @@ class DateTimePickerType extends AbstractType
             // Don't modify \DateTime classes by reference, we treat
             // them like immutable value objects
             'by_reference'  => false,
+            'data_class' => null,
+            'compound' => false
         ));
 
         $resolver->setAllowedValues(array(
