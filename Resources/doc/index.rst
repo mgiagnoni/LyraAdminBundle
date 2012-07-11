@@ -1041,6 +1041,96 @@ only listings of a given category, you can update filters configuration::
                         posted_at: ~
                         published: ~
 
+Adding another associated model (many-to-many)
+----------------------------------------------
+
+To furtherly improve our classifieds bundle let's give backend users the
+opportunity to select **multiple tags** (in addition to a single category)
+for each listing.
+
+Create a ``Tag`` entity::
+
+    app/console generate:doctrine:entity --entity=MGIClassifiedsBundle:Tag --fields="name:string(255) description:text" --with-repository --no-interaction
+
+Implement a *__toString()* method in the ``Tag`` class as explained above
+for ``Category`` entity.
+
+Edit the ``Listing`` entity to add a **many-to-many** relation with ``Tag``::
+
+    // MGI/ClassifiedsBundle/Entity/Listing.php
+    namespace MGI\ClassifiedsBundle\Entity;
+
+    use Doctrine\ORM\Mapping as ORM;
+    use Symfony\Component\Validator\Constraints as Assert;
+    use Doctrine\Common\Collections\ArrayCollection;
+
+    // ...
+    class Listing
+    {
+        // ...
+
+        /**
+         * @ORM\ManyToMany(targetEntity="Tag")
+         * @ORM\JoinTable(name="listing_tags")
+         */
+        private $tags;
+
+        public function __construct()
+        {
+            $this->tags = new ArrayCollection();
+        }
+
+        public function setTags(ArrayCollection $tags)
+        {
+            $this->tags = $tags;
+        }
+
+        public function getTags()
+        {
+            return $this->tags;
+        }
+    }
+
+Update the database::
+
+    app/console doctrine:schema:update --force
+
+Create a model ``tag`` in LyraAdminBundle configuration::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+            category:
+                # ... #
+            tag:
+                class: 'MGI\ClassifiedsBundle\Entity\Tag'
+                title: Tags
+                list:
+                    title: Listing tags
+                    columns:
+                        name: ~
+                        description: ~
+
+Add a new field in listing form::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                form:
+                    groups:
+                        listing:
+                            caption: Listing
+                            fields: [category,tags,ad_title,ad_text]
+
+Tags will be selected with a multi-select listbox displayed on the listing
+form.
+
 Configuration summary
 =====================
 
@@ -1128,7 +1218,7 @@ seen up to this point::
                         listing:
                             # panel title
                             caption: Listing
-                            fields: [ad_title,ad_text]
+                            fields: [category,tags,ad_title,ad_text]
                             # column break after this panel
                             break_after: true
                         status:
@@ -1141,6 +1231,14 @@ seen up to this point::
                 class: 'MGI\ClassifiedsBundle\Entity\Category'
                 list:
                     title: Categories
+                    columns:
+                        name: ~
+                        description: ~
+            tag:
+                class: 'MGI\ClassifiedsBundle\Entity\Tag'
+                title: Tags
+                list:
+                    title: Listing tags
                     columns:
                         name: ~
                         description: ~

@@ -58,7 +58,7 @@
     margin: 0 0 2px 139px;
     padding: 0;
 } 
-.ly-form input[type="text"] {
+.ly-form input[type="text"], .ly-form select {
     width: 230px;
 }
 .ly-form textarea {
