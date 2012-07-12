@@ -379,10 +379,13 @@ class LyraAdminExtension extends Extension
                     $fields[$name]['widget'] = 'entity';
                     $class = $attrs['targetEntity'];
                     $info = $this->getEntityManagerInfoForClass($container, $class);
-                    $fields[$name]['options'] = array(
-                        'class' => $class,
-                        'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type'],
-                        'em' => $info['name']
+                    $fields[$name]['options'] = array_merge(
+                        isset($fields[$name]['options']) ? $fields[$name]['options'] : array(),
+                        array(
+                            'class' => $class,
+                            'multiple' => ClassMetadataInfo::MANY_TO_MANY == $attrs['type'],
+                            'em' => $info['name']
+                        )
                     );
 
                     if (isset($classes[$class])) {
