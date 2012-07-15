@@ -67,6 +67,16 @@ the symfony *Admin Generator*.
 Installation
 ============
 
+Demo project
+------------
+
+The quickest way to try out LyraAdminBundle is by installing a `demo project`_ 
+including two example bundles with a preconfigured backend area.
+The demo project is available for both Symfony 2.0.x and Symfony 2.1, see
+the README file in git repository for installation instructions.
+
+.. _demo project: https://github.com/mgiagnoni/demo-admin-bundle
+
 LyraAdminBundle can be installed as any other Symfony2 bundle.
 
 Install source code
