@@ -74,6 +74,22 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals('test2', trim($values[1]));
     }
 
+    public function testNew()
+    {
+        $client = static::createClient();
+
+        // New form
+        $crawler = $client->request('GET', '/admin/product/new');
+        $form = $crawler->filter('form.ly-form');
+        $this->assertTrue($form->count() == 1);
+        $this->assertStringEndsWith('admin/product/new', $form->attr('action'));
+
+        // Product fields
+        $this->assertEquals(1, $crawler->filter('input#product_name')->count());
+        $this->assertEquals(1, $crawler->filter('input#product_price')->count());
+        $this->assertEquals(1, $crawler->filter('textarea#product_description')->count());
+    }
+
     protected function setup()
     {
         $client = static::createClient();
