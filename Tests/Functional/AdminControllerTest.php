@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class AdminControllerTest extends WebTestCase
 {
-    public function testIndex()
+    public function testIndexAction()
     {
         $client = static::createClient();
         $container = $client->getContainer();
@@ -74,7 +74,7 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals('test2', trim($values[1]));
     }
 
-    public function testNew()
+    public function testNewAction()
     {
         $client = static::createClient();
 
@@ -88,6 +88,22 @@ class AdminControllerTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('input#product_name')->count());
         $this->assertEquals(1, $crawler->filter('input#product_price')->count());
         $this->assertEquals(1, $crawler->filter('textarea#product_description')->count());
+
+        // Submit form
+        $form = $crawler->filter('input.button')->form();
+        $client->submit($form, array(
+            'product[name]' => 'new product',
+            'product[description]' => 'test',
+            'product[price]' => '1.5'
+        ));
+
+        $this->assertTrue($client->getResponse()->isRedirect('/admin/product/list'));
+        $crawler = $client->followRedirect();
+
+        // Check inserted record;
+        $this->assertEquals('new product', trim($crawler->filter('table.product td.string')->text()));
+        $this->assertEquals('test', trim($crawler->filter('table.product td.text')->text()));
+        $this->assertEquals('1.50', trim($crawler->filter('table.product td.float')->text()));
     }
 
     protected function setup()
