@@ -80,7 +80,7 @@ the README file in git repository for installation instructions.
 LyraAdminBundle can be installed as any other Symfony2 bundle.
 
 Install source code
-----------------------
+-------------------
 
 You can retrieve LyraAdminBundle source code from GitHub repository by editing the
 standard Symfony2 vendor script or directly utilizing git.
@@ -252,6 +252,8 @@ Create the table in the database::
 
     app/console doctrine:schema:update --force
 
+.. _MGIClassifiedsBundle source code: https://github.com/mgiagnoni/MGIClassifiedsBundle
+
 Minimal backend configuration
 -----------------------------
 
@@ -275,8 +277,6 @@ CRUD operations on the ``Listing`` entity::
 Do not forget to clear cache before proceeding::
 
     app/console cache:clear
-
-.. _MGIClassifiedsBundle source code: https://github.com/mgiagnoni/MGIClassifiedsBundle
 
 Access backend area
 -------------------
@@ -407,7 +407,6 @@ and in what order::
             list:
                 columns:
                     # ... #
-
 
 Filter configuration
 --------------------
