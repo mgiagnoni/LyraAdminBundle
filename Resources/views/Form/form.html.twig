@@ -62,6 +62,7 @@
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
+<script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_dual_list.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/form.js') }}"></script>
 {% include 'LyraAdminBundle:Admin:datepicker_js.html.twig' with { 'renderer' : form } %}
 {% endblock %}

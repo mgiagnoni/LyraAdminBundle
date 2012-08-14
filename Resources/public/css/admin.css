@@ -42,3 +42,12 @@ h3 {
     padding: 0 15px 0 20px;
     font-weight: normal !important;
 }
+.dlist-button {
+    width: 40px;
+}
+.dlist-button-wrapper {
+    display: inline-block;
+    width: 40px;
+    margin: 0 5px;
+    vertical-align: top;
+}

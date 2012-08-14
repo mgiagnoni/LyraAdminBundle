@@ -101,4 +101,19 @@ jQuery().ready(function() {
             buttons: buttonsOpts
         })
     };
+
+    // Dual listbox
+
+    $('.dual-list').each(function() {
+        $(this).dlist({
+            buttonWidth: '50',
+            buttons: {
+                select: {text: '>'},
+                remove: {text: '<'},
+                selectAll: false,
+                removeAll: false
+            }
+        });
+    });
+
 });
