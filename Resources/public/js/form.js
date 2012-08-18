@@ -73,47 +73,20 @@ jQuery().ready(function() {
     $(".dialog")
         .click(function(e) {
             e.preventDefault();
-
-            $("<div></div>")
-                .appendTo("body")
-                .load(this.href, showDialog);
+            $(this).confirm({
+                loadUrl: this.href
+            })
         });
-
-    var showDialog = function() {
-        $(".buttons", this).hide()
-        var buttonOk = $("input[type='submit']", this);
-        var buttonsOpts = {};
-        buttonsOpts[buttonOk.hide().val()] = function() {
-            buttonOk.click();
-            $(this).dialog("close");
-        };
-        buttonsOpts[buttonOk.next().hide().text()] = function() {
-            $(this).dialog("close");
-        };
-        $(this).dialog({
-            modal: true,
-            autoOpen: true,
-            resizable: false,
-            minHeight: 90,
-            width: 450,
-            title: $("h1", this).hide().text(),
-            close: function() {$(this).remove()},
-            buttons: buttonsOpts
-        })
-    };
 
     // Dual listbox
 
-    $('.dual-list').each(function() {
-        $(this).dlist({
-            buttonWidth: '50',
-            buttons: {
-                select: {text: '>'},
-                remove: {text: '<'},
-                selectAll: false,
-                removeAll: false
-            }
-        });
+    $('.dual-list').dlist({
+        buttonWidth: '50',
+        buttons: {
+            select: {text: '>'},
+            remove: {text: '<'},
+            selectAll: false,
+            removeAll: false
+        }
     });
-
 });
