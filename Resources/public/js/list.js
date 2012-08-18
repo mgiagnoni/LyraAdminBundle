@@ -75,31 +75,21 @@ jQuery().ready(function() {
             showSearch();
         });
 
-    $('.action-show')
+    $('.action-show, .show-filter')
         .click(function(e) {
             e.preventDefault();
-
-            $('<div></div>')
-                .appendTo('body')
-                .load(this.href, showRecord);
+            $(this).confirm({
+                loadUrl: this.href,
+                dialogWidth: 550
+            });
         });
 
-    $('.show-filter')
+     $(".dialog")
         .click(function(e) {
             e.preventDefault();
-
-            $('<div></div>')
-                .appendTo('body')
-                .load(this.href, showFilter);
-        });
-
-    $(".dialog")
-        .click(function(e) {
-            e.preventDefault();
-
-            $("<div></div>")
-                .appendTo("body")
-                .load(this.href, showDialog);
+            $(this).confirm({
+                loadUrl: this.href
+            })
         });
 
     // Batch actions
@@ -108,7 +98,7 @@ jQuery().ready(function() {
     });
 
 
-    // 'Go' buttom
+    // 'Go' button
     $('.batch-actions input[type="submit"]')
         .button()
         .click(function() {
@@ -149,9 +139,10 @@ jQuery().ready(function() {
             return true;
         }
 
-        $("<div></div>")
-            .appendTo("body")
-            .load(this.action, {'action[batch]' : '','ids[]' : ids, 'batch_action' : 'delete'}, showDialog);
+        $(this).confirm({
+            loadUrl: this.action,
+            loadData: {'action[batch]' : '','ids[]' : ids, 'batch_action' : 'delete'}
+        });
 
         return false;
     });
@@ -187,31 +178,6 @@ jQuery().ready(function() {
         })
     });
 
-    // Modal dialog for confirmation messages
-
-    var showDialog = function() {
-        $(".buttons", this).hide()
-        var buttonOk = $("input[type='submit']", this);
-        var buttonsOpts = {};
-        buttonsOpts[buttonOk.hide().val()] = function() {
-            buttonOk.click();
-            $(this).dialog("close");
-        };
-        buttonsOpts[buttonOk.next().hide().text()] = function() {
-            $(this).dialog("close");
-        };
-        $(this).dialog({
-            modal: true,
-            autoOpen: true,
-            resizable: false,
-            minHeight: 90,
-            width: 450,
-            title: $("h1", this).hide().text(),
-            close: function() {$(this).remove()},
-            buttons: buttonsOpts
-        })
-    };
-
     // Filter modal dialog
     var showSearch = function() {
         var title = $('#ly-filter-wrapper h2').hide().text();
@@ -238,44 +204,5 @@ jQuery().ready(function() {
                 }
             ]
         });
-    };
-
-    // Show record dialog
-    var showRecord = function() {
-        $('li', this).addClass('ui-widget-content');
-        $(this).dialog({
-            modal: true,
-            autoOpen: true,
-            resizable: false,
-            width: 550,
-            title: $('h1', this).hide().text(),
-            close: function() { $(this).remove() },
-            buttons: [
-                {
-                    'text': $('.close', this).hide().text(),
-                    'click': function() {$(this).dialog("close");}
-                }
-            ]
-        });
-    };
-
-    // Show filter criteria dialog
-    var showFilter = function() {
-        $('li', this).addClass('ui-widget-content');
-        $(this).dialog({
-            modal: true,
-            autoOpen: true,
-            resizable: false,
-            width: 550,
-            title: $('h1', this).hide().text(),
-            close: function() { $(this).remove() },
-            buttons: [
-                {
-                    'text': $('.close', this).hide().text(),
-                    'click': function() {$(this).dialog("close");}
-                }
-            ]
-        });
-
     };
 });

@@ -4,7 +4,7 @@
     <h1>{{ renderer.title|trans({'%model%' : renderer.modelName}, 'LyraAdminBundle') }}</h1>
     <ol>
     {% for fld in renderer.fields %}
-        <li>
+        <li class="ui-widget-content">
             <div class="label">{{ fld.label }}</div>
             <div class="content">
             {% if fld.type == 'boolean' %}
@@ -17,6 +17,6 @@
         </li>
     {% endfor %}
     </ol>
-    <a class="close" href="{{ path('lyra_admin_'~renderer.modelName~'_index') }}">{{ 'show.button.close'|trans({}, 'LyraAdminBundle') }}</a>
+    <a class="dialog-cancel" href="{{ path('lyra_admin_'~renderer.modelName~'_index') }}">{{ 'show.button.close'|trans({}, 'LyraAdminBundle') }}</a>
 </div>
 {% endblock %}

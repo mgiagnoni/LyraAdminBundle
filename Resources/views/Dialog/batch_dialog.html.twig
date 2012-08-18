@@ -9,7 +9,7 @@
     {% endfor %}
     <input type="hidden" name="_token" value="{{ csrf }}" />
     <hr class="clear" />
-    <input type="submit" name ="action[batch]" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
-    <a href="{{ path(cancel.routeName) }}">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
+    <input type="submit" class="dialog-submit" name="action[batch]" value="{{ 'dialog.submit'|trans({}, 'LyraAdminBundle') }}" />
+    <a href="{{ path(cancel.routeName) }}" class="dialog-cancel">{{ 'dialog.cancel'|trans({}, 'LyraAdminBundle') }}</a>
     </form>
 {% endblock %}

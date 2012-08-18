@@ -39,6 +39,7 @@
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
+<script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_confirm.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/list.js') }}"></script>
 {% if grid.hasBatchActions %}
     <script type="text/javascript" src="{{ asset('bundles/lyraadmin/js/lyra_select.js') }}"></script>

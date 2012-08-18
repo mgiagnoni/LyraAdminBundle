@@ -6,7 +6,7 @@
         {% set criteria = filter.criteria %}
         {% for field in filter.fields %}
             {% if criteria[field.name] is defined %}
-                <li>
+                <li class="ui-widget-content">
                     <div class="label">{{ field.label }}</div>
                     <div class="content">
                     {% if field.type == 'date' or field.type == 'datetime' %}
@@ -27,6 +27,6 @@
             {% endif %}
         {% endfor %}
     </ol>
-    <a class="close" href="{{ path(filter.actions.index.routeName) }}">{{ 'filter.button.close'|trans({}, 'LyraAdminBundle') }}</a>
+    <a class="dialog-cancel" href="{{ path(filter.actions.index.routeName) }}">{{ 'filter.button.close'|trans({}, 'LyraAdminBundle') }}</a>
 </div>
 {% endblock %}
