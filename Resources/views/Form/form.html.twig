@@ -1,9 +1,12 @@
 {% extends 'LyraAdminBundle::layout.html.twig' %}
 {% form_theme form.view 'LyraAdminBundle:Form:form_theme.html.twig' %}
+{% block title %}
+    {{ form.title|trans({}, form.transDomain) }}
+{% endblock %}
 {% block content %}
 <div id="ly-form-wrapper">
     {% block form_title %}
-        <h1>{{ form.title|trans({}, form.transDomain) }}</h1>   
+        <h1>{{ block('title') }}</h1>
     {% endblock %}
     {% block form_actions %}
     <div class="form-actions">

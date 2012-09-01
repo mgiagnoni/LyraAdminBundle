@@ -1,8 +1,11 @@
 {% extends "LyraAdminBundle::layout.html.twig" %}
+{% block title %}
+    {{ grid.title|trans({}, grid.transDomain) }}
+{% endblock %}
 {% block content %}
 <div id="ly-list-wrapper">
     {% block list_title %}
-        <h1>{{ grid.title|trans({}, grid.transDomain) }}</h1>
+        <h1>{{ block('title') }}</h1>
     {% endblock %}
     {% include 'LyraAdminBundle:List:list_actions.html.twig' %}
         <form action="{{ path(grid.actions.object.routeName) }}" method="post">
