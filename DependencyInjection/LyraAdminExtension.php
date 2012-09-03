@@ -398,7 +398,8 @@ class LyraAdminExtension extends Extension
                 if (!isset($attrs['get_method'])) {
                     $fields[$field]['get_method'] = 'get'.Util::camelize($field);
                 }
-
+                $class = isset($attrs['options']['attr']['class']) ? $attrs['options']['attr']['class'].' ' : '';
+                $fields[$field]['options']['attr']['class'] = $class.'widget-'.$attrs['widget'];
                 $fields[$field]['tag'] = Util::underscore($field);
             }
         }
