@@ -1140,6 +1140,29 @@ Add a new field in listing form::
 Tags will be selected with a multi-select listbox displayed on the listing
 form.
 
+Configuring a dual list box
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the standard multiple select box a more user friendly jQuery
+**dual list box** can be made available to select listing tags::
+
+    # app/config/config.yml
+
+    lyra_admin:
+        models:
+            listing:
+                # ... #
+                fields:
+                    tags:
+                        options:
+                            attr: { class: dual-list }
+
+Adding ``dual-list`` as class attribute of the field will dinamically transform
+a standard HTML select (with multiple attribute) in a dual list box. This is
+managed by a `jQuery plugin`_ provided by the bundle.
+
+.. _jQuery plugin: https://github.com/mgiagnoni/LyraAdminBundle/blob/master/Resources/public/js/lyra_dual_list.js
+
 Configuration summary
 =====================
 
@@ -1222,6 +1245,10 @@ seen up to this point::
                 fields:
                     expires_at:
                         widget: datetime_picker
+                    tags:
+                        options:
+                            # activate jQuery dual list box
+                            attr: { class: dual-list }
                 form:
                     groups:
                         listing:
