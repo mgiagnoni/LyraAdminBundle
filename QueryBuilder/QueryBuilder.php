@@ -130,11 +130,15 @@ class QueryBuilder implements QueryBuilderInterface
                         $qb->andWhere(
                             $qb->expr()->eq($alias.'.'.$field, $value === 'on' ? 1 : 0)
                         );
-
-                         break;
+                        break;
                     case 'entity':
                         $qb->andWhere(
                             $qb->expr()->eq($field.'.id', $value->getId())
+                        );
+                        break;
+                    case 'integer':
+                        $qb->andWhere(
+                            $qb->expr()->eq($alias.'.'.$field, (int) $value)
                         );
                         break;
                 }
