@@ -126,12 +126,12 @@ class QueryBuilder implements QueryBuilderInterface
                             );
                         }
                         break;
+                    case 'integer':
                     case 'boolean':
                         $qb->andWhere(
                             $qb->expr()->eq($alias.'.'.$field, $value)
                         );
-
-                         break;
+                        break;
                     case 'entity':
                         $qb->andWhere(
                             $qb->expr()->eq($field.'.id', $value->getId())
